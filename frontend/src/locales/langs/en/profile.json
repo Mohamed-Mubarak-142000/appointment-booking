@@ -1,0 +1,22 @@
+{
+  "profile": {
+    "profile_info": "Profile Information",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "age": "Age",
+    "gender": "Gender",
+    "photo": "Photo",
+    "gender_male": "Male",
+    "gender_female": "Female",
+    "gender_other": "Other",
+    "saving": "Saving...",
+    "save_changes": "Save Changes",
+    "booked_doctors": "Booked Doctors",
+    "no_booked_doctors": "No Doctors Booked",
+    "booked_appointments": "Booked Appointments",
+    "doctor": "Doctor",
+    "patient": "Patient",
+    "logout": "Logout"
+  }
+}

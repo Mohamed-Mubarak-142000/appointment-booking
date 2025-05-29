@@ -1,0 +1,62 @@
+{
+  "logo": {
+    "part1_title": "Tabee",
+    "part2_title": "bak"
+  },
+  "navbar": {
+    "home": "Home",
+    "about": "About",
+    "doctors": "All Doctors",
+    "contact": "Contact Us",
+    "login": "Login",
+    "register": "Register"
+  },
+
+  "login_form": {
+    "login_description": " Please enter your email and password to log in",
+    "email_label": "Email",
+    "password_label": "Password",
+    "password_placeholder": "Enter your password",
+    "login_button": "Login",
+    "email_placeholder": "Enter your email",
+    "cancel_button": "Cancel"
+  },
+
+  "footer": {
+    "about": {
+      "description": "Tabeebak platform enables you to easily book medical appointments with the best doctors and specialists in Egypt.",
+      "tagline": "Premium medical care at your fingertips"
+    },
+    "services": {
+      "title": "Our Services",
+      "links": {
+        "book_appointment": "Book Appointment",
+        "find_doctors": "Find Doctors",
+        "specialties": "Medical Specialties",
+        "clinics": "Hospitals & Medical Centers"
+      }
+    },
+    "contact": {
+      "title": "Contact Us",
+      "address": "Cairo, Egypt",
+      "email": "Email: info@tabeebak.com.eg",
+      "phone": "Hotline: 16328",
+      "emergency": "Emergency: 123"
+    },
+    "social": {
+      "title": "Follow Us",
+      "emergency_section": {
+        "title": "Medical Emergencies:",
+        "number": "123"
+      }
+    },
+    "copyright": {
+      "main": "Tabeebak Platform. All rights reserved.",
+      "subtext": "Egypt's premier medical booking system"
+    }
+  },
+  "all_doctors": {
+    "title": "Find the Best Doctors",
+    "subtitle": "Search for doctors by specialty, location, and more."
+  }
+}

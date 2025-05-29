@@ -1,0 +1,47 @@
+import { Box, CircularProgress, Alert } from "@mui/material";
+import { useGetCurrentUser } from "../apis/use-case/get-me";
+import LeftSide from "../components/patient-profile/left-side";
+import ProfileForm from "../components/patient-profile/profile-form";
+import BookedDoctors from "../components/patient-profile/booked-doctors";
+
+const ProfilePage = () => {
+  const { data: user, isPending, isError, error } = useGetCurrentUser();
+
+  if (isPending) {
+    return (
+      <Box display="flex" justifyContent="center" mt={4}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        {error?.message || "Failed to load profile data"}
+      </Alert>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        gap: 4,
+        flexDirection: { xs: "column", md: "row" },
+      }}
+    >
+      {user && (
+        <>
+          <LeftSide user={user} />
+          <Box sx={{ flex: 2 }}>
+            <ProfileForm user={user} />
+            <BookedDoctors user={user} />
+          </Box>
+        </>
+      )}
+    </Box>
+  );
+};
+
+export default ProfilePage;

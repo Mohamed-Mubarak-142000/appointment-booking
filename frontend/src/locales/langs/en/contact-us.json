@@ -1,0 +1,29 @@
+{
+  "contact_page": {
+    "title": "Contact Us",
+    "subtitle": "We're here to help you",
+    "description1": "At Tabeebak, we value your communication with us. Whether you have a question about our services, need technical assistance, or would like to make suggestions to improve your experience, our support team is ready to respond to your inquiries as quickly as possible.",
+    "description2": "We welcome all your feedback and comments, as they help us provide better service for you and all our users."
+  },
+  "contact_info": {
+    "title": "Contact Information",
+    "email": "Email",
+    "email_value": "info@tabeebak.com",
+    "phone": "Phone",
+    "phone_value": "+966 12 345 6789",
+    "address": "Address",
+    "address_value": "Riyadh, Saudi Arabia"
+  },
+  "contact_form": {
+    "title": "Send a Message",
+    "name": "Full Name",
+    "name_placeholder": "Enter your full name",
+    "email": "Email",
+    "email_placeholder": "Enter your email",
+    "phone": "Phone Number",
+    "phone_placeholder": "Enter your phone number",
+    "message": "Message",
+    "message_placeholder": "Write your message",
+    "submit": "Send Message"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "hero": {
+    "title": "Book Appointment With Trusted Doctors.",
+    "description": "Simply browse through our extensive list of trusted doctors, schedule your appointment hassle-free."
+  },
+  "speciality": {
+    "title": "Find by Specialty",
+    "subtitle": "Simply browse through our extensive list of trusted doctors, schedule your appointment hassle-free.",
+    "specialities": {
+      "General_physician": "General physician",
+      "Gynecologist": "Gynecologist",
+      "Dermatologist": "Dermatologist",
+      "Pediatricians": "Pediatricians",
+      "Neurologist": "Neurologist",
+      "Gastroenterologist": "Gastroenterologist"
+    }
+  },
+  "top_doctors": {
+    "view_all": "View All",
+    "title": "Top Doctors",
+    "description": "Simply browse through our extensive list of trusted doctors, schedule your appointment hassle-free."
+  },
+  "booking_appointment": {
+    "title": "Book Appointment With 100+ Trusted Doctors",
+    "contact_us": "Contact Us"
+  }
+}

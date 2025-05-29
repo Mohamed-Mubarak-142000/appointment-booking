@@ -1,0 +1,1 @@
+import{as as t,r as e,j as s}from"./index-Dt41Njyc.js";function i(o,n){function r(a,m){return s.jsx(t,{"data-testid":`${n}Icon`,ref:m,...a,children:o})}return r.muiName=t.muiName,e.memo(e.forwardRef(r))}export{i as c};

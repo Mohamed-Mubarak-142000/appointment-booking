@@ -1,0 +1,26 @@
+{
+  "title": "About Us",
+  "subtitle": "Your Trusted Partner in Managing Your Healthcare Needs Easily and Efficiently",
+  "mission": {
+    "title": "Our Mission",
+    "content1": "At tabeebak, we understand the challenges individuals face when it comes to booking doctor appointments and managing their health records. We are committed to excellence in healthcare technology and continuously strive to enhance our platform, integrating the latest advancements to improve user experience and deliver exceptional service.",
+    "content2": "Whether you're booking your first appointment or managing ongoing care, tabeebak is here to support you every step of the way."
+  },
+  "vision": {
+    "title": "Our Vision",
+    "content": "Our vision at tabeebak is to create a seamless healthcare experience for every user. We aim to bridge the gap between patients and healthcare providers, making it easier for you to access the care you need, when you need it."
+  },
+  "why_choose": {
+    "title": "Why Choose tabeebak?",
+    "subtitle": "We offer you a unique and convenient healthcare experience.",
+    "efficiency": "Efficiency",
+    "efficiency_desc": "Simplified appointment scheduling that fits your busy lifestyle.",
+    "comfort": "Comfort",
+    "comfort_desc": "Access to a network of trusted healthcare specialists in your area.",
+    "personalization": "Personalization",
+    "personalization_desc": "Customized recommendations and reminders to help you keep up with your health.",
+    "technology": "Technology",
+    "technology_desc": "A modern platform that provides all healthcare services in one place."
+  },
+  "cta": "Join tabeebak today and start your journey toward better healthcare."
+}

@@ -1,0 +1,20 @@
+{
+  "profile": {
+    "profile_info": "معلومات الملف الشخصي",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "age": "العمر",
+    "gender": "الجنس",
+    "photo": "صورة شخصية",
+    "gender_male": "ذكر",
+    "gender_female": "انثى",
+    "gender_other": "اخرى",
+    "saving": "جارٍ الحفظ...",
+    "save_changes": "حفظ التغييرات",
+    "booked_doctors": "الأطباء المحجوزين",
+    "no_booked_doctors": "لا يوجد أطباء محجوزين",
+    "booked_appointments": "المواعيد المحجوزة",
+    "logout": "تسجيل الخروج"
+  }
+}
