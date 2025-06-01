@@ -1,19 +1,28 @@
 const express = require("express");
 const {
   registerDoctor,
+  loginDoctor,
+  getDoctorProfile,
   registerPatient,
-  login,
-  getMe,
+  loginPatient,
+  getPatientProfile,
   logout,
 } = require("../controllers/auth-controller");
-const { protect } = require("../middleware/auth");
+const { protectDoctor, protectPatient } = require("../middleware/auth");
 
 const router = express.Router();
 
-router.post("/register/doctor", registerDoctor);
-router.post("/register/patient", registerPatient);
-router.post("/login", login);
-router.get("/me", protect, getMe);
-router.post("/logout", protect, logout);
+// Doctor Routes
+router.post("/doctor/register", registerDoctor);
+router.post("/doctor/login", loginDoctor);
+router.get("/doctor/me", protectDoctor, getDoctorProfile);
+
+// Patient Routes
+router.post("/patient/register", registerPatient);
+router.post("/patient/login", loginPatient);
+router.get("/patient/me", protectPatient, getPatientProfile);
+
+// Common Logout
+router.post("/logout", logout);
 
 module.exports = router;

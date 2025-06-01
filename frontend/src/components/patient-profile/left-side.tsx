@@ -1,11 +1,11 @@
 import { Avatar, Button, Chip, Paper, Stack, Typography } from "@mui/material";
 import { assets } from "../../assets/assets_frontend/assets";
 import { useTranslate } from "../../locales";
-import type { UserData } from "../../types";
-import { useLogout } from "../../apis/use-case/logout";
+import type { PatientData } from "../../apis/use-case/types";
+import { usePatientLogout } from "../../apis/use-case/patient/auth";
 
-const LeftSide = ({ user }: { user: UserData }) => {
-  const { mutate: logout } = useLogout();
+const LeftSide = ({ user }: { user: PatientData }) => {
+  const { mutate: logout } = usePatientLogout();
   const { t } = useTranslate("profile");
 
   return (
@@ -34,9 +34,7 @@ const LeftSide = ({ user }: { user: UserData }) => {
           {user?.name}
         </Typography>
         <Chip
-          label={
-            user?.role === "Doctor" ? t("profile.doctor") : t("profile.patient")
-          }
+          label={t("profile.patient")}
           sx={{
             color: (theme) => theme.palette.primary.dark,
             fontWeight: "bold",
@@ -61,7 +59,7 @@ const LeftSide = ({ user }: { user: UserData }) => {
               backgroundColor: (theme) => theme.palette.error.darker,
             },
           }}
-          onClick={() => logout()}
+          onClick={() => logout(undefined)}
         >
           {t("profile.logout")}
         </Button>

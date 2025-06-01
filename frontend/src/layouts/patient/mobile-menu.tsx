@@ -13,8 +13,8 @@ import { useTheme } from "@mui/material/styles";
 import { useTranslate } from "../../locales";
 import Logo from "../../components/logo";
 import type { AuthTab, NavItem } from "../../types";
-import { AuthDialog } from "../../components/auth/auth-dialog";
 import { useState } from "react";
+import { PatientAuthDialog } from "../../components/auth/auth-dialog";
 
 interface MobileMenuProps {
   mobileOpen: boolean;
@@ -121,7 +121,7 @@ export const MobileMenu = ({
         </Box>
       </Drawer>
 
-      <AuthDialog
+      <PatientAuthDialog
         open={authDialogOpen}
         onClose={handleAuthDialogClose}
         initialTab={authDialogTab}

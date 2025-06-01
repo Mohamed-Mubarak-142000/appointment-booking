@@ -1,3 +1,4 @@
+// components/auth/patient-login-form.tsx
 import {
   Box,
   Button,
@@ -9,41 +10,46 @@ import {
 import { assets } from "../../assets/assets_frontend/assets";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, type LoginFormData } from "../../schemas/auth";
-import { useTranslate } from "../../locales";
-import { useLogin } from "../../apis/use-case/login-use-case";
 
-const LoginForm = ({ onclose }: { onclose: () => void }) => {
-  const { t } = useTranslate("common");
-  const { mutate: login } = useLogin();
+import { useTranslate } from "../../locales";
+import { usePatientLogin } from "../../apis/use-case/patient/auth";
+import { patientLoginSchema, type PatientLoginFormData } from "./schema";
+
+interface PatientLoginFormProps {
+  onClose: () => void;
+}
+
+export const PatientLoginForm = ({ onClose }: PatientLoginFormProps) => {
+  const { t } = useTranslate();
+  const { mutate: login, isPending } = usePatientLogin();
 
   const {
-    register: loginRegister,
-    handleSubmit: handleLoginSubmit,
-    formState: { errors: loginErrors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<PatientLoginFormData>({
+    resolver: zodResolver(patientLoginSchema),
   });
 
-  const onLoginSubmit = (data: LoginFormData) => {
-    login(data);
-    console.log("data", data);
+  const onSubmit = (data: PatientLoginFormData) => {
+    login(data, {
+      onSuccess: () => onClose(),
+    });
   };
 
   return (
     <Box
       component="form"
-      onSubmit={handleLoginSubmit(onLoginSubmit)}
+      onSubmit={handleSubmit(onSubmit)}
       sx={{
         height: "100%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         gap: 3,
-        mt: 2,
       }}
     >
-      <Stack spacing={2} sx={{ alignItems: "center" }}>
+      <Stack spacing={3} sx={{ alignItems: "center" }}>
         <Box
           component={"img"}
           src={assets.logo}
@@ -54,46 +60,45 @@ const LoginForm = ({ onclose }: { onclose: () => void }) => {
             objectFit: "contain",
           }}
         />
-        <Typography
-          variant="h3"
-          sx={{
-            fontWeight: "bold",
-            mb: 3,
-            textAlign: "center",
-            fontSize: { xs: ".5rem", md: ".75rem", lg: "1rem" },
-          }}
-          gutterBottom
-        >
-          {t("login_form.login_description")}
+        <Typography variant="h6" textAlign="center" color="text.secondary">
+          {t("patient.login.welcome_message")}
         </Typography>
 
         <TextField
           fullWidth
-          placeholder={t("login_form.email_placeholder")}
+          label={t("patient.login.email_label")}
           type="email"
-          {...loginRegister("email")}
-          error={!!loginErrors.email}
-          helperText={loginErrors.email?.message}
+          {...register("email")}
+          error={!!errors.email}
+          helperText={errors.email?.message}
+          autoComplete="username"
         />
 
         <TextField
           fullWidth
+          label={t("patient.login.password_label")}
           type="password"
-          placeholder={t("login_form.password_placeholder")}
-          {...loginRegister("password")}
-          error={!!loginErrors.password}
-          helperText={loginErrors.password?.message}
+          {...register("password")}
+          error={!!errors.password}
+          helperText={errors.password?.message}
+          autoComplete="current-password"
         />
       </Stack>
 
-      <DialogActions sx={{ p: 3, pt: 0, mt: "auto" }}>
-        <Button onClick={onclose}>{t("login_form.cancel_button")}</Button>
-        <Button variant="contained" color="primary" type="submit">
-          {t("login_form.login_button")}
+      <DialogActions sx={{ px: 0, py: 2 }}>
+        <Button onClick={onClose} color="inherit" sx={{ mr: 2 }}>
+          {t("common.cancel")}
+        </Button>
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={isPending}
+          fullWidth
+          size="large"
+        >
+          {isPending ? t("common.loading") : t("patient.login.submit_button")}
         </Button>
       </DialogActions>
     </Box>
   );
 };
-
-export default LoginForm;

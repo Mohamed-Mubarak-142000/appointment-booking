@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const Doctor = require("../models/Doctor.js");
 const Patient = require("../models/Patient");
 
+// Doctor Functions
 const registerDoctor = asyncHandler(async (req, res) => {
   const {
     name,
@@ -43,7 +44,8 @@ const registerDoctor = asyncHandler(async (req, res) => {
       name: doctor.name,
       email: doctor.email,
       specialty: doctor.specialty,
-      token: generateToken(doctor._id),
+      role: "Doctor",
+      token: generateDoctorToken(doctor._id),
     });
   } else {
     res.status(400);
@@ -51,6 +53,49 @@ const registerDoctor = asyncHandler(async (req, res) => {
   }
 });
 
+const loginDoctor = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const doctor = await Doctor.findOne({ email }).select("+password");
+
+  if (doctor && (await doctor.matchPassword(password))) {
+    res.json({
+      _id: doctor._id,
+      name: doctor.name,
+      email: doctor.email,
+      role: "Doctor",
+      specialty: doctor.specialty,
+      token: generateDoctorToken(doctor._id),
+    });
+  } else {
+    res.status(401);
+    throw new Error("Invalid doctor credentials");
+  }
+});
+
+const getDoctorProfile = asyncHandler(async (req, res) => {
+  const doctor = await Doctor.findById(req.doctor._id);
+
+  if (doctor) {
+    res.json({
+      _id: doctor._id,
+      name: doctor.name,
+      email: doctor.email,
+      specialty: doctor.specialty,
+      address: doctor.address,
+      governorate: doctor.governorate,
+      phone: doctor.phone,
+      age: doctor.age,
+      bio: doctor.bio,
+      experience: doctor.experience,
+    });
+  } else {
+    res.status(404);
+    throw new Error("Doctor not found");
+  }
+});
+
+// Patient Functions
 const registerPatient = asyncHandler(async (req, res) => {
   const { name, email, password, phone, age, gender } = req.body;
 
@@ -75,7 +120,8 @@ const registerPatient = asyncHandler(async (req, res) => {
       _id: patient._id,
       name: patient.name,
       email: patient.email,
-      token: generateToken(patient._id),
+      role: "Patient",
+      token: generatePatientToken(patient._id),
     });
   } else {
     res.status(400);
@@ -83,40 +129,57 @@ const registerPatient = asyncHandler(async (req, res) => {
   }
 });
 
-const login = asyncHandler(async (req, res) => {
+const loginPatient = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  let user = await Doctor.findOne({ email }).select("+password");
+  const patient = await Patient.findOne({ email }).select("+password");
 
-  if (!user) {
-    user = await Patient.findOne({ email }).select("+password");
-  }
-
-  if (user && (await user.matchPassword(password))) {
+  if (patient && (await patient.matchPassword(password))) {
     res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.constructor.modelName,
-      token: generateToken(user._id),
+      _id: patient._id,
+      name: patient.name,
+      email: patient.email,
+      role: "Patient",
+      token: generatePatientToken(patient._id),
     });
   } else {
     res.status(401);
-    throw new Error("Invalid credentials");
+    throw new Error("Invalid patient credentials");
   }
 });
 
-const getMe = asyncHandler(async (req, res) => {
-  const user = req.user;
-  res.status(200).json(user);
+const getPatientProfile = asyncHandler(async (req, res) => {
+  const patient = await Patient.findById(req.patient._id);
+
+  if (patient) {
+    res.json({
+      _id: patient._id,
+      name: patient.name,
+      email: patient.email,
+      phone: patient.phone,
+      age: patient.age,
+      gender: patient.gender,
+    });
+  } else {
+    res.status(404);
+    throw new Error("Patient not found");
+  }
 });
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+// Token Generation
+const generateDoctorToken = (id) => {
+  return jwt.sign({ id, role: "Doctor" }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
   });
 };
 
+const generatePatientToken = (id) => {
+  return jwt.sign({ id, role: "Patient" }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE,
+  });
+};
+
+// Logout (common for both)
 const logout = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
@@ -125,9 +188,16 @@ const logout = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
+  // Doctor exports
   registerDoctor,
+  loginDoctor,
+  getDoctorProfile,
+
+  // Patient exports
   registerPatient,
-  login,
-  getMe,
+  loginPatient,
+  getPatientProfile,
+
+  // Common exports
   logout,
 };

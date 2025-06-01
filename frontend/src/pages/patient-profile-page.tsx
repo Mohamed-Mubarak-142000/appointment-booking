@@ -1,11 +1,11 @@
 import { Box, CircularProgress, Alert } from "@mui/material";
-import { useGetCurrentUser } from "../apis/use-case/get-me";
 import LeftSide from "../components/patient-profile/left-side";
 import ProfileForm from "../components/patient-profile/profile-form";
 import BookedDoctors from "../components/patient-profile/booked-doctors";
+import { useGetPatientProfile } from "../apis/use-case/patient/profile";
 
 const ProfilePage = () => {
-  const { data: user, isPending, isError, error } = useGetCurrentUser();
+  const { data: user, isPending, isError, error } = useGetPatientProfile();
 
   if (isPending) {
     return (

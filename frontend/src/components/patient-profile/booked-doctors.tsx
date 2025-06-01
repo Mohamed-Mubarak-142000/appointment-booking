@@ -1,8 +1,8 @@
 import { Divider, List, Paper, Typography } from "@mui/material";
-import type { UserData } from "../../types";
 import { useTranslate } from "../../locales";
+import type { PatientData } from "../../apis/use-case/types";
 
-const BookedDoctors = ({ user }: { user: UserData }) => {
+const BookedDoctors = ({ user }: { user: PatientData }) => {
   const { t } = useTranslate("profile");
 
   return (

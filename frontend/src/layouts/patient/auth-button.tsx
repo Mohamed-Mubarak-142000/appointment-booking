@@ -1,22 +1,22 @@
 // components/navbar/AuthButtons.tsx
 import { Box, Button, Typography } from "@mui/material";
 import { useTranslate } from "../../locales";
-import { useAuth } from "../../context/auth-context";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets_frontend/assets";
-import { useGetCurrentUser } from "../../apis/use-case/get-me";
+import { useAuth } from "../../context/auth-context";
+import { useGetPatientProfile } from "../../apis/use-case/patient/profile";
 
 interface AuthButtonsProps {
   onLogin: () => void;
 }
 
 export const AuthButtons = ({ onLogin }: AuthButtonsProps) => {
-  const { data } = useGetCurrentUser();
+  const { data } = useGetPatientProfile();
   const { t } = useTranslate("common");
-  const { user } = useAuth();
+  const { patient: user } = useAuth();
   const navigate = useNavigate();
+  console.log("user", user);
   console.log("data", data);
-
   // const photoUrl = data?.photo || assets.Avatar;
 
   return (

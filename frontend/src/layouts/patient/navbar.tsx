@@ -9,7 +9,7 @@ import {
   styled,
 } from "@mui/material";
 import { CustomerLanguagePopover } from "../../components/lang-switch";
-import { AuthDialog } from "../../components/auth/auth-dialog";
+import { PatientAuthDialog } from "../../components/auth/auth-dialog";
 import { NavLink } from "react-router-dom";
 import Logo from "../../components/logo";
 import { NavItems } from "./nav-item";
@@ -111,7 +111,7 @@ export const Navbar = () => {
         </Toolbar>
       </AppBar>
 
-      <AuthDialog
+      <PatientAuthDialog
         open={authDialogOpen}
         onClose={handleAuthDialogClose}
         initialTab={authDialogTab}

@@ -1,12 +1,12 @@
-// components/auth/auth-dialog.tsx
+// components/auth/patient-auth-dialog.tsx
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, Typography } from "@mui/material";
 import type { AuthTab } from "../../types";
-import LoginForm from "./login-form";
-import RegisterForm from "./register-form";
 import AuthTabsToggle from "./auth-tabs";
+import { PatientLoginForm } from "./login-form";
+import { PatientRegisterForm } from "./register-form";
 
-interface AuthDialogProps {
+interface PatientAuthDialogProps {
   open: boolean;
   onClose: () => void;
   initialTab?: AuthTab;
@@ -14,32 +14,45 @@ interface AuthDialogProps {
 
 const HEIGHT_DIALOG = 600;
 
-export const AuthDialog = ({
+export const PatientAuthDialog = ({
   open,
   onClose,
   initialTab = "login",
-}: AuthDialogProps) => {
+}: PatientAuthDialogProps) => {
   const [currentTab, setCurrentTab] = useState<AuthTab>(initialTab);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" sx={{ p: 2 }} fullWidth>
-      <DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      sx={{
+        p: 2,
+        "& .MuiDialog-paper": {
+          borderRadius: 3,
+        },
+      }}
+    >
+      <DialogTitle sx={{ textAlign: "center", py: 3 }}>
+        <Typography variant="h5" fontWeight="bold">
+          Patient Portal
+        </Typography>
         <AuthTabsToggle currentTab={currentTab} setCurrentTab={setCurrentTab} />
       </DialogTitle>
 
       <DialogContent
         sx={{
-          maxHeight: HEIGHT_DIALOG,
+          height: HEIGHT_DIALOG,
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
-          borderRadius: 2,
+          py: 0,
         }}
       >
         {currentTab === "login" ? (
-          <LoginForm onclose={onClose} />
+          <PatientLoginForm onClose={onClose} />
         ) : (
-          <RegisterForm onclose={onClose} />
+          <PatientRegisterForm onClose={onClose} />
         )}
       </DialogContent>
     </Dialog>

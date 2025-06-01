@@ -11,10 +11,21 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 // Register form schema
 export const registerSchema = z
   .object({
-    fullName: z.string().min(3, "Full name must be at least 3 characters"),
+    name: z.string().min(1, "Name is required"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
+    confirmPassword: z
+      .string()
+      .min(6, "Password must be at least 6 characters"),
+    phone: z.string().min(10, "Phone number must be at least 10 digits"),
+    age: z.number().min(1, "Age must be at least 1").max(120, "Invalid age"),
+    gender: z.enum(["male", "female"]),
+    role: z.enum(["doctor", "patient"]).optional(),
+    specialty: z.string().optional(),
+    governorate: z.string().optional(),
+    address: z.string().optional(),
+    experience: z.coerce.number().optional(),
+    bio: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",

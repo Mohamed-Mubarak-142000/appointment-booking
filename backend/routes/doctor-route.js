@@ -5,14 +5,17 @@ const {
   updateDoctor,
   addAvailableSlots,
 } = require("../controllers/doctor-controller");
-const { protect, isDoctor } = require("../middleware/auth");
+const { protectDoctor } = require("../middleware/auth");
 
 const router = express.Router();
 
+// Public routes (accessible without authentication)
 router.route("/").get(getDoctors);
+router.route("/:id").get(getDoctor);
 
-router.route("/:id").get(getDoctor).put(protect, isDoctor, updateDoctor);
+// Doctor-only routes
+router.route("/:id").put(protectDoctor, updateDoctor);
 
-router.route("/:id/slots").put(protect, isDoctor, addAvailableSlots);
+router.route("/:id/slots").put(protectDoctor, addAvailableSlots);
 
 module.exports = router;

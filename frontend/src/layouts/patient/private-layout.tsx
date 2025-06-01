@@ -1,15 +1,15 @@
 // src/layouts/PrivateLayout.tsx
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Navbar from "./navbar";
 import Footer from "./footer";
 import { Stack } from "@mui/material";
-import { useAuth } from "../../context/auth-context";
+import { useGetPatientProfile } from "../../apis/use-case/patient/profile";
 
 const PrivateLayout = () => {
-  const { isAuthenticated } = useAuth();
+  const { data } = useGetPatientProfile();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+  if (!data) {
+    return null; // or a loading spinner
   }
 
   return (

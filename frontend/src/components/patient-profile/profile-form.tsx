@@ -14,14 +14,14 @@ import {
   updateProfileSchema,
   type UpdateProfileFormData,
 } from "../../schemas/auth";
-import { useUpdatePatient } from "../../apis/use-case/get-me";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { UserData } from "../../types";
+import type { PatientData } from "../../apis/use-case/types";
+import { useUpdatePatientProfile } from "../../apis/use-case/patient/profile";
 
-const ProfileForm = ({ user }: { user: UserData }) => {
+const ProfileForm = ({ user }: { user: PatientData }) => {
   const { t } = useTranslate("profile");
-  const { mutate: updatePatient } = useUpdatePatient();
+  const { mutate: updatePatient } = useUpdatePatientProfile();
 
   const onSubmit = (data: UpdateProfileFormData) => {
     if (!user?._id) return;

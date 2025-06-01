@@ -1,9 +1,10 @@
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
-const Doctor = require("../models/Doctor.js");
-const Patient = require("../models/Patient.js");
+const Doctor = require("../models/Doctor");
+const Patient = require("../models/Patient");
 
-const protect = asyncHandler(async (req, res, next) => {
+// Doctor Protection Middleware
+const protectDoctor = asyncHandler(async (req, res, next) => {
   let token;
 
   if (
@@ -14,16 +15,12 @@ const protect = asyncHandler(async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Check if user is doctor or patient
-      req.user =
-        (await Doctor.findById(decoded.id).select("-password")) ||
-        (await Patient.findById(decoded.id).select("-password"));
-
-      if (!req.user) {
+      if (decoded.role !== "Doctor") {
         res.status(401);
-        throw new Error("Not authorized, user not found");
+        throw new Error("Not authorized as a doctor");
       }
 
+      req.doctor = await Doctor.findById(decoded.id).select("-password");
       next();
     } catch (error) {
       console.error(error);
@@ -38,22 +35,36 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
-const isDoctor = (req, res, next) => {
-  if (req.user && req.user.constructor.modelName === "Doctor") {
-    next();
-  } else {
-    res.status(403);
-    throw new Error("Not authorized as a doctor");
-  }
-};
+// Patient Protection Middleware
+const protectPatient = asyncHandler(async (req, res, next) => {
+  let token;
 
-const isPatient = (req, res, next) => {
-  if (req.user && req.user.constructor.modelName === "Patient") {
-    next();
-  } else {
-    res.status(403);
-    throw new Error("Not authorized as a patient");
-  }
-};
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-module.exports = { protect, isDoctor, isPatient };
+      if (decoded.role !== "Patient") {
+        res.status(401);
+        throw new Error("Not authorized as a patient");
+      }
+
+      req.patient = await Patient.findById(decoded.id).select("-password");
+      next();
+    } catch (error) {
+      console.error(error);
+      res.status(401);
+      throw new Error("Not authorized, token failed");
+    }
+  }
+
+  if (!token) {
+    res.status(401);
+    throw new Error("Not authorized, no token");
+  }
+});
+
+module.exports = { protectDoctor, protectPatient };

@@ -33,10 +33,16 @@ export interface NavItem {
 }
 
 /********************************************************************** */
-// types/auth.ts
 export interface LoginCredentials {
   email: string;
   password: string;
+  // role: "doctor" | "patient";
+}
+
+export interface RegisterFormData extends LoginCredentials {
+  name: string;
+  confirmPassword: string;
+  // يمكن إضافة حقول أخرى حسب الحاجة
 }
 
 export interface UserData {
@@ -52,14 +58,6 @@ export interface UserData {
   token: string;
 }
 
-export interface AuthContextType {
-  user: UserData | null;
-  login: (userData: UserData) => void;
-  logout: () => void;
-  isAuthenticated: boolean;
-}
-
-// types.ts
 export interface UpdatePatientData {
   _id: string;
   name?: string;
@@ -67,5 +65,15 @@ export interface UpdatePatientData {
   age?: number;
   gender?: "male" | "female" | "other";
   photo?: string;
-  // Add other updatable fields
+}
+
+export type AuthRole = "doctor" | "patient";
+
+export interface AuthContextType {
+  patient: UserData | null;
+  doctor: UserData | null;
+  login: (userData: UserData, role: AuthRole) => void;
+  logout: (role: AuthRole) => void;
+  isAuthenticated: (role?: AuthRole) => boolean;
+  getCurrentUser: (role: AuthRole) => UserData | null;
 }
