@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Box, Card, useTheme } from "@mui/material";
-import type { Doctor } from "../../types";
 import { Available } from "./available";
 import DoctorInfo from "./doctor-info";
 import { motion } from "framer-motion";
 import { styled } from "@mui/material/styles"; // Use MUI's styled instead
+import type { DoctorData } from "../../apis/use-case/types";
+import { assets } from "../../assets/assets_frontend/assets";
 
 // Define proper theme type
 interface CustomTheme {
@@ -45,7 +46,7 @@ const ImageContainer = styled(Box)(({ theme }: { theme: CustomTheme }) => ({
   transition: "background-color 0.4s ease",
 }));
 
-const DoctorItem = ({ doctor }: { doctor: Doctor }) => {
+const DoctorItem = ({ doctor }: { doctor: DoctorData }) => {
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
 
@@ -70,7 +71,7 @@ const DoctorItem = ({ doctor }: { doctor: Doctor }) => {
         }}
       >
         <motion.img
-          src={doctor.image}
+          src={assets.doc1}
           alt={doctor.name}
           initial={{ scale: 1 }}
           animate={{ scale: isHovered ? 1.1 : 1 }}

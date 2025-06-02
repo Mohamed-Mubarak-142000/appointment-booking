@@ -53,11 +53,12 @@ const CustomTabs: React.FC<CustomTabsProps> = ({
         scrollButtons="auto"
         aria-label="Custom Tabs"
         sx={{
+          borderRadius: 1,
+          backgroundColor: (theme) => theme.palette.primary.lighter,
           "& .MuiTabs-flexContainer": {
-            backgroundColor: (theme) => theme.palette.primary.lighter,
             justifyContent: "start",
             borderRadius: 1,
-            width: "fit-content",
+            gap: 0.5,
           },
           "& .MuiTabs-indicator": {
             display: "none",
@@ -74,7 +75,7 @@ const CustomTabs: React.FC<CustomTabsProps> = ({
             value={index}
             sx={{
               color: (theme) => theme.palette.text.primary,
-              fontSize: { xs: ".5rem", md: ".75rem", lg: "1rem" },
+              fontSize: { xs: ".5rem", md: ".75rem", lg: ".9rem" },
               fontWeight: (theme) => theme.typography.fontWeightBold,
               paddingX: 2,
               borderRadius: "inherit",

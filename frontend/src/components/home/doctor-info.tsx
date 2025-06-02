@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
-import type { Doctor } from "../../types";
+import type { DoctorData } from "../../apis/use-case/types";
 
-const DoctorInfo = ({ doctor }: { doctor: Doctor }) => {
+const DoctorInfo = ({ doctor }: { doctor: DoctorData }) => {
   return (
     <>
       <Typography
@@ -23,7 +23,7 @@ const DoctorInfo = ({ doctor }: { doctor: Doctor }) => {
           color: "inherit", // يرث اللون من الأب (يصبح أبيض عند hover)
         }}
       >
-        {doctor.speciality}
+        {doctor.specialty}
       </Typography>
     </>
   );
