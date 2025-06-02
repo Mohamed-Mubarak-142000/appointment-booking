@@ -10,7 +10,8 @@ connectDB();
 const authRoutes = require("./routes/auth-route");
 const doctorRoutes = require("./routes/doctor-route");
 const patientRoutes = require("./routes/patient-route");
-
+const specialtyRoutes = require("./routes/special-route");
+const governmentRoutes = require("./routes/governament-route");
 const app = express();
 
 app.use(express.json());
@@ -30,6 +31,8 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/auth", authRoutes);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/patients", patientRoutes);
+app.use("/api/specialties", specialtyRoutes);
+app.use("/api/governments", governmentRoutes);
 
 const PORT = process.env.PORT || 5000;
 
