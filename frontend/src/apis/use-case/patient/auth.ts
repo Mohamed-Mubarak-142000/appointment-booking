@@ -44,8 +44,6 @@ export function usePatientRegister(): UseMutationResult<
   AxiosError,
   RegisterFormData
 > {
-  const { login } = usePatientAuth();
-
   return useMutation({
     mutationFn: async (registerData: RegisterFormData) => {
       const { data } = await patientApiClient.post<UserData>(
@@ -54,9 +52,7 @@ export function usePatientRegister(): UseMutationResult<
       );
       return data;
     },
-    onSuccess: (data) => {
-      login(data);
-      // navigate("");
+    onSuccess: () => {
       toast.success("Patient registration successful!");
     },
     onError: (error) => {

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   Box,
   Button,
@@ -18,15 +17,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { PatientData } from "../../apis/use-case/types";
 import { useUpdatePatientProfile } from "../../apis/use-case/patient/profile";
+import { useEffect } from "react";
 
 const ProfileForm = ({ user }: { user: PatientData }) => {
   const { t } = useTranslate("profile");
-  const { mutate: updatePatient } = useUpdatePatientProfile();
+  const { mutate: updatePatient, isPending } = useUpdatePatientProfile();
 
   const onSubmit = (data: UpdateProfileFormData) => {
     if (!user?._id) return;
     updatePatient({ _id: user._id, ...data });
   };
+
   const {
     register,
     handleSubmit,
@@ -38,10 +39,20 @@ const ProfileForm = ({ user }: { user: PatientData }) => {
     mode: "onBlur",
     reValidateMode: "onChange",
     shouldUnregister: true,
+    defaultValues: {
+      name: user.name || "",
+      email: user.email || "",
+      phone: user.phone || "",
+      age: user.age || undefined,
+      gender:
+        user.gender === "male" ||
+        user.gender === "female" ||
+        user.gender === "other"
+          ? user.gender
+          : undefined,
+      photo: undefined,
+    },
   });
-
-  // Watch for photo changes if you implement upload
-  // const photoUrl = watch("photo") || user?.photo || assets.logo;
 
   useEffect(() => {
     if (user) {
@@ -50,16 +61,13 @@ const ProfileForm = ({ user }: { user: PatientData }) => {
         email: user.email || "",
         phone: user.phone || "",
         age: user.age || undefined,
-        gender:
-          user.gender === "male" ||
-          user.gender === "female" ||
-          user.gender === "other"
-            ? user.gender
-            : undefined,
-        photo: undefined,
+        gender: user.gender || undefined,
       });
     }
   }, [user, reset]);
+
+  // Watch for photo changes if you implement upload
+  // const photoUrl = watch("photo") || user?.photo || assets.logo;
 
   return (
     <Paper sx={{ p: 3, mb: 4 }}>
@@ -141,10 +149,14 @@ const ProfileForm = ({ user }: { user: PatientData }) => {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={!isDirty || isSubmitting}
-            startIcon={isSubmitting && <CircularProgress size={20} />}
+            disabled={!isDirty || isSubmitting || isPending}
+            sx={{ minWidth: 120 }}
           >
-            {isSubmitting ? t("profile.saving") : t("profile.save_changes")}
+            {isPending ? (
+              <CircularProgress size={22} sx={{ color: "primary.darker" }} />
+            ) : (
+              t("profile.save_changes")
+            )}
           </Button>
         </Box>
       </Box>

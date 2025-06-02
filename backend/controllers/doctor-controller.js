@@ -1,9 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Doctor = require("../models/Doctor.js");
 
-// @desc    Get all doctors
-// @route   GET /api/doctors
-// @access  Public
 const getDoctors = asyncHandler(async (req, res) => {
   let query;
 
@@ -79,9 +76,6 @@ const getDoctors = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Get single doctor
-// @route   GET /api/doctors/:id
-// @access  Public
 const getDoctor = asyncHandler(async (req, res) => {
   const doctor = await Doctor.findById(req.params.id);
 
@@ -96,24 +90,15 @@ const getDoctor = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Update doctor profile
-// @route   PUT /api/doctors/:id
-// @access  Private/Doctor
 const updateDoctor = asyncHandler(async (req, res) => {
-  let doctor = await Doctor.findById(req.params.id);
+  const doctorId = req.doctor._id;
+  let doctor = await Doctor.findById(doctorId);
 
   if (!doctor) {
     res.status(404);
-    throw new Error("Doctor not found");
+    throw new Error("doctor not found");
   }
-
-  // Make sure user is doctor owner
-  if (doctor._id.toString() !== req.user._id.toString()) {
-    res.status(401);
-    throw new Error("Not authorized to update this doctor");
-  }
-
-  doctor = await Doctor.findByIdAndUpdate(req.params.id, req.body, {
+  doctor = await Doctor.findByIdAndUpdate(doctorId, req.body, {
     new: true,
     runValidators: true,
   });
@@ -124,9 +109,6 @@ const updateDoctor = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Add available slots
-// @route   PUT /api/doctors/:id/slots
-// @access  Private/Doctor
 const addAvailableSlots = asyncHandler(async (req, res) => {
   const { date, times } = req.body;
   let doctor = await Doctor.findById(req.params.id);

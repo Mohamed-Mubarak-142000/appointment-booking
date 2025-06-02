@@ -1,28 +1,66 @@
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
+import { motion } from "framer-motion";
 import { assets } from "../../assets/assets_frontend/assets";
+import { AnimatedTitle } from "../animate-title";
 
-export const FormHeader = () => (
-  <Stack spacing={2} sx={{ alignItems: "center" }}>
-    <Box
-      component={"img"}
-      src={assets.logo}
-      alt={"logo"}
-      sx={{
-        width: 100,
-        height: "auto",
-        objectFit: "contain",
-      }}
-    />
-    <Typography
-      variant="h3"
-      sx={{
-        fontWeight: "bold",
-        mb: 3,
-        fontSize: { xs: ".5rem", md: ".75rem", lg: "1rem" },
-      }}
-      gutterBottom
-    >
-      welcome to our tabeebak app
-    </Typography>
-  </Stack>
-);
+export const FormHeader = ({
+  title = "Welcome to Our Platform",
+}: {
+  title?: string;
+}) => {
+  return (
+    <Stack spacing={1} sx={{ alignItems: "center" }}>
+      {/* Logo with continuous rotation and scale animation */}
+      <Box
+        component={motion.div}
+        initial={{ rotateZ: 0, scale: 1 }}
+        animate={{
+          rotateZ: 360,
+          scale: [1, 1.1, 1], // Scale animation sequence
+        }}
+        transition={{
+          rotateZ: {
+            duration: 8,
+            repeat: Infinity,
+            ease: "linear",
+          },
+          scale: {
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          },
+        }}
+        sx={{
+          width: 100,
+          height: "auto",
+        }}
+      >
+        <Box
+          component="img"
+          src={assets.logo}
+          alt="logo"
+          sx={{
+            width: "100%",
+            height: "auto",
+            objectFit: "contain",
+          }}
+        />
+      </Box>
+
+      {/* Using the new AnimatedTitle component */}
+      <AnimatedTitle
+        text={title}
+        fontWeight="bold"
+        mb={3}
+        textAlign="center"
+        color="primary.darker"
+        fontSize={{ xs: ".6rem", md: ".9rem", lg: "1.2rem" }}
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      />
+    </Stack>
+  );
+};

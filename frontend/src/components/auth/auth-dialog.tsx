@@ -1,6 +1,6 @@
 // components/auth/patient-auth-dialog.tsx
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle, Typography } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import type { AuthTab } from "../../types";
 import AuthTabsToggle from "./auth-tabs";
 import { PatientLoginForm } from "./login-form";
@@ -20,7 +20,6 @@ export const PatientAuthDialog = ({
   initialTab = "login",
 }: PatientAuthDialogProps) => {
   const [currentTab, setCurrentTab] = useState<AuthTab>(initialTab);
-
   return (
     <Dialog
       open={open}
@@ -35,9 +34,6 @@ export const PatientAuthDialog = ({
       }}
     >
       <DialogTitle sx={{ textAlign: "center", py: 3 }}>
-        <Typography variant="h5" fontWeight="bold">
-          Patient Portal
-        </Typography>
         <AuthTabsToggle currentTab={currentTab} setCurrentTab={setCurrentTab} />
       </DialogTitle>
 

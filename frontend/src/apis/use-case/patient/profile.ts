@@ -38,13 +38,16 @@ export function useUpdatePatientProfile(): UseMutationResult<
   return useMutation({
     mutationFn: async (updateData: UpdatePatientData) => {
       const { data } = await patientApiClient.put<PatientData>(
-        `/auth/patient/${updateData._id}`,
+        `/patients/${updateData._id}`,
         updateData
       );
       return data;
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["patientProfile"], data);
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["patientProfile"],
+        refetchType: "active",
+      });
       toast.success("Patient profile updated successfully");
     },
     onError: (error) => {

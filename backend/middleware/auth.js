@@ -38,7 +38,6 @@ const protectDoctor = asyncHandler(async (req, res, next) => {
 // Patient Protection Middleware
 const protectPatient = asyncHandler(async (req, res, next) => {
   let token;
-
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
@@ -46,7 +45,6 @@ const protectPatient = asyncHandler(async (req, res, next) => {
     try {
       token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
       if (decoded.role !== "Patient") {
         res.status(401);
         throw new Error("Not authorized as a patient");

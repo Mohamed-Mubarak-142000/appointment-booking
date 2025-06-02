@@ -16,7 +16,10 @@ export const patientRegisterSchema = z
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
     phone: z.string().min(10, "Phone number must be at least 10 digits"),
-    age: z.number().min(1, "Age must be at least 1").max(120, "Invalid age"),
+    age: z.coerce
+      .number() // Converts strings to numbers
+      .min(1, "Age must be at least 1")
+      .max(120, "Invalid age"),
     gender: z.enum(["male", "female", "other"]),
   })
   .refine((data) => data.password === data.confirmPassword, {

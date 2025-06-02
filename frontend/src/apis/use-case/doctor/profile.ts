@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import type { DoctorData, UpdateDoctorData } from "../types";
 import { doctorApiClient } from "../../api-client";
 import { getErrorMessage } from "./auth";
+
 export function useGetDoctorProfile(): UseQueryResult<DoctorData, AxiosError> {
   return useQuery({
     queryKey: ["doctorProfile"],
@@ -31,13 +32,16 @@ export function useUpdateDoctorProfile(): UseMutationResult<
   return useMutation({
     mutationFn: async (updateData: UpdateDoctorData) => {
       const { data } = await doctorApiClient.put<DoctorData>(
-        `/auth/doctor/${updateData._id}`,
+        `/doctors/${updateData._id}`,
         updateData
       );
       return data;
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["doctorProfile"], data);
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["doctorProfile"],
+        refetchType: "active",
+      });
       toast.success("Doctor profile updated successfully");
     },
     onError: (error) => {

@@ -16,5 +16,23 @@
     "no_booked_doctors": "لا يوجد أطباء محجوزين",
     "booked_appointments": "المواعيد المحجوزة",
     "logout": "تسجيل الخروج"
+  },
+  "doctor_profile": {
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "age": "العمر",
+    "gender": "الجنس",
+    "photo": "صورة شخصية  ",
+    "specialty": "التخصص",
+    "experience": "الخبرة",
+    "education": "التعليم",
+    "bio": "السيرة الذاتية",
+    "governorate": "المحافظة",
+    "gender_male": "ذكر",
+    "gender_female": "انثى",
+    "gender_other": "اخرى",
+    "address": "العنوان",
+    "save_changes": "حفظ التغييرات"
   }
 }

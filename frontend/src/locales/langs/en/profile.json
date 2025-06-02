@@ -18,5 +18,22 @@
     "doctor": "Doctor",
     "patient": "Patient",
     "logout": "Logout"
+  },
+  "doctor_profile": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "age": "Age",
+    "gender": "Gender",
+    "photo": "Photo",
+    "specialty": "Specialty",
+    "experience": "Experience",
+    "education": "Education",
+    "bio": "Bio",
+    "governorate": "Governorate",
+    "address": "Address",
+    "saving": "Saving...",
+    "save_changes": "Save Changes",
+    "logout": "Logout"
   }
 }

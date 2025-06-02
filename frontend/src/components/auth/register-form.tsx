@@ -6,22 +6,22 @@ import {
   Stack,
   Grid,
   TextField,
-  Typography,
+  CircularProgress,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslate } from "../../locales";
 
-import { assets } from "../../assets/assets_frontend/assets";
 import { usePatientRegister } from "../../apis/use-case/patient/auth";
 import { patientRegisterSchema, type PatientRegisterFormData } from "./schema";
+import { FormHeader } from "./header-form";
 
 interface PatientRegisterFormProps {
   onClose: () => void;
 }
 
 export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
-  const { t } = useTranslate();
+  const { t } = useTranslate("common");
   const { mutate: registerMutation, isPending } = usePatientRegister();
 
   const {
@@ -50,28 +50,18 @@ export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
         gap: 3,
       }}
     >
-      <Stack spacing={3}>
-        <Box
-          component={"img"}
-          src={assets.logo}
-          alt={"logo"}
-          sx={{
-            width: 100,
-            height: "auto",
-            mx: "auto",
-            display: "block",
-          }}
-        />
-        <Typography variant="h6" textAlign="center">
-          {t("patient.register.title")}
-        </Typography>
+      <Stack
+        spacing={3}
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+      >
+        <FormHeader title={t("register_form.register_description")} />
 
         <Grid container spacing={2}>
           {/* Basic Info */}
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label={t("patient.register.name_label")}
+              placeholder={t("register_form.name_placeholder")}
               {...register("name")}
               error={!!errors.name}
               helperText={errors.name?.message}
@@ -81,7 +71,7 @@ export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label={t("patient.register.email_label")}
+              placeholder={t("register_form.email_placeholder")}
               type="email"
               {...register("email")}
               error={!!errors.email}
@@ -93,7 +83,7 @@ export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label={t("patient.register.password_label")}
+              placeholder={t("register_form.password_placeholder")}
               type="password"
               {...register("password")}
               error={!!errors.password}
@@ -104,7 +94,7 @@ export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label={t("patient.register.confirm_password_label")}
+              placeholder={t("register_form.confirm_password_placeholder")}
               type="password"
               {...register("confirmPassword")}
               error={!!errors.confirmPassword}
@@ -116,7 +106,7 @@ export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label={t("patient.register.phone_label")}
+              placeholder={t("register_form.phone_placeholder")}
               {...register("phone")}
               error={!!errors.phone}
               helperText={errors.phone?.message}
@@ -126,7 +116,7 @@ export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label={t("patient.register.age_label")}
+              placeholder={t("register_form.age_placeholder")}
               type="number"
               {...register("age")}
               error={!!errors.age}
@@ -138,7 +128,7 @@ export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label={t("patient.register.gender_label")}
+              placeholder={t("register_form.gender_placeholder")}
               select
               SelectProps={{ native: true }}
               {...register("gender")}
@@ -146,32 +136,37 @@ export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
               helperText={errors.gender?.message}
             >
               <option value=""></option>
-              <option value="male">{t("patient.register.gender_male")}</option>
-              <option value="female">
-                {t("patient.register.gender_female")}
-              </option>
-              <option value="other">
-                {t("patient.register.gender_other")}
-              </option>
+              <option value="male">{t("register_form.gender_male")}</option>
+              <option value="female">{t("register_form.gender_female")}</option>
+              <option value="other">{t("register_form.gender_other")}</option>
             </TextField>
           </Grid>
         </Grid>
       </Stack>
 
-      <DialogActions sx={{ px: 0, py: 2 }}>
+      <DialogActions sx={{ px: 0, py: 3 }}>
         <Button onClick={onClose} color="inherit" sx={{ mr: 2 }}>
-          {t("common.cancel")}
+          {t("register_form.cancel_button")}
         </Button>
+
         <Button
+          sx={{
+            width: 200,
+            borderRadius: 0.5,
+            backgroundColor: "primary.darker",
+            "&:hover": {
+              backgroundColor: "primary.dark",
+            },
+          }}
           type="submit"
           variant="contained"
           disabled={isPending}
-          fullWidth
-          size="large"
         >
-          {isPending
-            ? t("common.loading")
-            : t("patient.register.submit_button")}
+          {isPending ? (
+            <CircularProgress size={20} sx={{ color: "primary.darker" }} />
+          ) : (
+            t("register_form.register_button")
+          )}
         </Button>
       </DialogActions>
     </Box>

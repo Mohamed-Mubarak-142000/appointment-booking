@@ -21,6 +21,25 @@
     "email_placeholder": "Enter your email",
     "cancel_button": "Cancel"
   },
+  "register_form": {
+    "register_description": "Please fill out the form below to create a new account",
+    "name_label": "Full Name",
+    "email_label": "Email",
+    "password_label": "Password",
+    "confirm_password_label": "Confirm Password",
+    "name_placeholder": "Enter your full name",
+    "email_placeholder": "Enter your email",
+    "password_placeholder": "Enter your password",
+    "phone_placeholder": "Enter your phone number",
+    "age_placeholder": "Enter your age",
+    "gender_placeholder": "Select your gender",
+    "gender_male": "Male",
+    "gender_female": "Female",
+    "gender_other": "Other",
+    "confirm_password_placeholder": "Re-enter your password",
+    "register_button": "Create Account",
+    "cancel_button": "Cancel"
+  },
 
   "footer": {
     "about": {

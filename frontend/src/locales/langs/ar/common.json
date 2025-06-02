@@ -20,6 +20,25 @@
     "email_placeholder": "أدخل بريدك الإلكتروني",
     "cancel_button": "إلغاء"
   },
+  "register_form": {
+    "register_description": "يرجى ملء النموذج أدناه لإنشاء حساب جديد",
+    "name_label": "الاسم الكامل",
+    "email_label": "البريد الإلكتروني",
+    "password_label": "كلمة المرور",
+    "confirm_password_label": "تأكيد كلمة المرور",
+    "name_placeholder": "أدخل اسمك الكامل",
+    "email_placeholder": "أدخل بريدك الإلكتروني",
+    "password_placeholder": "أدخل كلمة المرور الخاصة بك",
+    "phone_placeholder": "أدخل رقم هاتفك",
+    "age_placeholder": "أدخل عمرك",
+    "gender_placeholder": "اختر الجنس",
+    "gender_male": "ذكر",
+    "gender_female": "انثى",
+    "gender_other": "اخرى",
+    "confirm_password_placeholder": "أعد إدخال كلمة المرور الخاصة بك",
+    "register_button": "إنشاء حساب",
+    "cancel_button": "إلغاء"
+  },
 
   "footer": {
     "about": {

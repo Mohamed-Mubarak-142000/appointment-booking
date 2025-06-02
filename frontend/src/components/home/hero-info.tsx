@@ -1,6 +1,7 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { assets } from "../../assets/assets_frontend/assets";
 import { useTranslate } from "../../locales";
+import { AnimatedTitle } from "../animate-title";
 
 const HeroInfo = () => {
   const { t } = useTranslate("home");
@@ -18,17 +19,16 @@ const HeroInfo = () => {
         p: { xs: 2, md: 4 },
       }}
     >
-      <Typography
+      <AnimatedTitle
+        text={t("hero.title")}
         variant="h3"
         sx={{
           color: "common.white",
-          fontSize: { xs: "1.5rem", md: "2rem", lg: "4rem" },
+          fontSize: { xs: "1.5rem", md: "2rem", lg: "3.5rem" },
           fontWeight: (theme) => theme.typography.fontWeightBold,
           lineHeight: 1.2,
         }}
-      >
-        {t("hero.title")}
-      </Typography>
+      />
 
       <Box
         sx={{

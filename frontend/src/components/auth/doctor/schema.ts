@@ -9,6 +9,7 @@ export const doctorLoginSchema = z.object({
 export type DoctorLoginFormData = z.infer<typeof doctorLoginSchema>;
 
 // Doctor Register Schema
+
 export const doctorRegisterSchema = z
   .object({
     name: z.string().min(3, "Name must be at least 3 characters"),
@@ -16,11 +17,53 @@ export const doctorRegisterSchema = z
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
     specialty: z.string().min(3, "Specialty must be at least 3 characters"),
-    phone: z.string().min(10, "Phone must be at least 10 characters"),
+    governorate: z.string().min(3, "Governorate is required"),
+    address: z.string().min(5, "Address must be at least 5 characters"),
+    phone: z.string().min(10, "Phone must be at least 10 digits"),
+    age: z
+      .number()
+      .min(25, "Doctor must be at least 25 years old")
+      .max(80, "Invalid age"),
+    bio: z.string().min(20, "Bio must be at least 20 characters").optional(),
+    experience: z.number().min(0, "Experience cannot be negative"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
-
 export type DoctorRegisterFormData = z.infer<typeof doctorRegisterSchema>;
+
+// Doctor Profile Update Schema
+export const doctorUpdateSchema = z
+  .object({
+    name: z.string().min(3, "Name must be at least 3 characters").optional(),
+    email: z.string().email("Invalid email address").optional(),
+    specialty: z
+      .string()
+      .min(3, "Specialty must be at least 3 characters")
+      .optional(),
+    governorate: z.string().min(1, "Governorate is required").optional(),
+    address: z
+      .string()
+      .min(5, "Address must be at least 5 characters")
+      .optional(),
+    phone: z
+      .string()
+      .min(10, "Phone must be at least 10 digits")
+      .regex(/^[0-9]+$/, "Phone must contain only numbers")
+      .optional(),
+    age: z
+      .number()
+      .min(25, "Doctor must be at least 25 years old")
+      .max(80, "Invalid age")
+      .optional(),
+    bio: z.string().min(20, "Bio must be at least 20 characters").optional(),
+    experience: z.number().min(0, "Experience cannot be negative").optional(),
+
+    photo: z.string().optional(), // Assuming photo is a URL or base64 string
+    gender: z.enum(["male", "female", "other"]).optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field must be provided for update",
+  });
+export type DoctorUpdateFormData = z.infer<typeof doctorUpdateSchema>;

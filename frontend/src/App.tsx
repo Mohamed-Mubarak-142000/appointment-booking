@@ -1,4 +1,4 @@
-import { useEffect,  } from "react";
+import { useEffect } from "react";
 import { LocalizationProvider } from "./locales";
 import { CssBaseline } from "@mui/material";
 import { themeConfig, ThemeProvider } from "./theme";
@@ -25,7 +25,12 @@ function App() {
     <SettingsProvider defaultSettings={defaultSettings}>
       <LocalizationProvider>
         <CssBaseline />
-        <ToastContainer />
+        <ToastContainer
+          autoClose={1000}
+          hideProgressBar
+          position="top-center"
+          theme="dark"
+        />
         <ThemeProvider
           noSsr
           defaultMode={themeConfig.defaultMode}
