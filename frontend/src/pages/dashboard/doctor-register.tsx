@@ -1,56 +1,71 @@
-import { Box, Container, Typography, Button } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import { useDoctorAuth } from "../../context/auth-context";
-import { Navigate } from "react-router-dom";
-import { assets } from "../../assets/assets_frontend/assets";
+import { Link, Navigate } from "react-router-dom";
 import { DoctorRegisterForm } from "../../components/auth/doctor/doctor-register";
+import { useTranslate } from "../../locales";
+import { AnimatedTitle } from "../../components/animate-title";
 
 const DoctorRegister = () => {
   const { isAuthenticated } = useDoctorAuth();
-
+  const { t } = useTranslate("common");
   if (isAuthenticated()) {
     return <Navigate to="/doctor/dashboard" replace />;
   }
 
   return (
-    <Container maxWidth="md">
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+        width: "100%",
+      }}
+    >
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          minHeight: "100vh",
-          py: 8,
+          width: "100%",
+          alignItems: "start",
+          mb: 4,
         }}
       >
-        <Box
-          component="img"
-          src={assets.logo}
-          alt="Logo"
-          sx={{ width: 150, mb: 4 }}
+        <Typography
+          variant="h3"
+          sx={{
+            fontSize: { xs: "1.5rem", md: "2rem", lg: "2.5rem" },
+            fontWeight: (theme) => theme.typography.fontWeightBold,
+          }}
+        >
+          {t("register_form.doctor_register.title")}{" "}
+        </Typography>
+
+        <AnimatedTitle
+          sx={{
+            color: "primary.darker",
+            fontSize: { xs: ".5rem", md: "1rem", lg: "1.5rem" },
+            fontWeight: (theme) => theme.typography.fontWeightBold,
+            lineHeight: 1.2,
+          }}
+          text={t("register_form.doctor_register.description")}
         />
+      </Box>
 
-        <Typography variant="h4" component="h1" gutterBottom>
-          Doctor Registration
-        </Typography>
+      <Box sx={{ width: "100%" }}>
+        <DoctorRegisterForm />
 
-        <Typography variant="body1" color="text.secondary" mb={4}>
-          Create your doctor account
-        </Typography>
-
-        <Box sx={{ width: "100%", maxWidth: 800 }}>
-          <DoctorRegisterForm />
-
-          <Box sx={{ mt: 3, textAlign: "center" }}>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              Already have an account?
-            </Typography>
-            <Button variant="outlined" href="/doctor/login" fullWidth>
-              Login as Doctor
-            </Button>
-          </Box>
+        <Box sx={{ mt: 3, textAlign: "center" }}>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            {t("register_form.doctor_register.already_have_account")}
+          </Typography>
+          <Button variant="outlined" component={Link} to="/doctor/login">
+            {t("register_form.doctor_register.login_as_doctor")}{" "}
+          </Button>
         </Box>
       </Box>
-    </Container>
+    </Box>
   );
 };
 export default DoctorRegister;

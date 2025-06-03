@@ -1,7 +1,9 @@
 {
   "logo": {
     "part1_title": "Tabee",
-    "part2_title": "bak"
+    "part2_title": "bak",
+    "tagline": "Your Health, Our Priority",
+    "description": "Connecting Patients with the Finest Healthcare Professionals Across Egypt and Beyond. Our platform bridges the gap between patients and top-tier doctors, specialists, and medical experts, ensuring accessible, personalized healthcare solutions. With cutting-edge technology and compassionate care, we're revolutionizing healthcare delivery to build a healthier future for all."
   },
   "navbar": {
     "home": "Home",
@@ -19,7 +21,19 @@
     "password_placeholder": "Enter your password",
     "login_button": "Login",
     "email_placeholder": "Enter your email",
-    "cancel_button": "Cancel"
+    "cancel_button": "Cancel",
+
+    "login_doctor": {
+      "title": "Doctor Login",
+      "description": "Please enter your email and password to log in as a doctor",
+      "email_placeholder": "Enter your email",
+      "password_placeholder": "Enter your password",
+      "login_button": "Login",
+      "cancel_button": "Cancel",
+      "forgot_password": "Forgot Password?",
+      "register_as_doctor": "Register as Doctor",
+      "don't_have_account": "Don't have an account?"
+    }
   },
   "register_form": {
     "register_description": "Please fill out the form below to create a new account",
@@ -30,15 +44,36 @@
     "name_placeholder": "Enter your full name",
     "email_placeholder": "Enter your email",
     "password_placeholder": "Enter your password",
+    "confirm_password_placeholder": "Re-enter your password",
     "phone_placeholder": "Enter your phone number",
     "age_placeholder": "Enter your age",
     "gender_placeholder": "Select your gender",
     "gender_male": "Male",
     "gender_female": "Female",
     "gender_other": "Other",
-    "confirm_password_placeholder": "Re-enter your password",
     "register_button": "Create Account",
-    "cancel_button": "Cancel"
+    "cancel_button": "Cancel",
+
+    "doctor_register": {
+      "title": "Doctor Registration",
+      "description": "Please fill out the form below to register as a doctor",
+      "name_placeholder": "Enter your full name",
+      "email_placeholder": "Enter your email",
+      "password_placeholder": "Enter your password",
+      "confirm_password_placeholder": "Re-enter your password",
+      "phone_placeholder": "Enter your phone number",
+      "age_placeholder": "Enter your age",
+      "specialty_placeholder": "Select your specialty",
+      "clinic_placeholder": "Enter your clinic name",
+      "experience_placeholder": "Enter years of experience",
+      "government_placeholder": "Select your government",
+      "address_placeholder": "Enter your address",
+      "bio_placeholder": "Write a brief bio about yourself",
+      "already_have_account": "Already have an account?",
+      "login_as_doctor": "Login as Doctor",
+      "register_button": "Create Account",
+      "cancel_button": "Cancel"
+    }
   },
 
   "footer": {

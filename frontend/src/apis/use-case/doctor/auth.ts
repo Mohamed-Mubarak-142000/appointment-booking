@@ -43,7 +43,6 @@ export function useDoctorRegister(): UseMutationResult<
   AxiosError,
   RegisterFormData
 > {
-  const { login } = useDoctorAuth();
   const navigate = useNavigate();
 
   return useMutation({
@@ -54,9 +53,8 @@ export function useDoctorRegister(): UseMutationResult<
       );
       return data;
     },
-    onSuccess: (data) => {
-      login(data);
-      navigate("/doctor/dashboard");
+    onSuccess: () => {
+      navigate("/doctor/login");
       toast.success("Doctor registration successful!");
     },
     onError: (error) => {

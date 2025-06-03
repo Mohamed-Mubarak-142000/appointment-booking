@@ -1,12 +1,20 @@
-import { Box, TextField, Button, Typography } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDoctorLogin } from "../../../apis/use-case/doctor/auth";
 import { doctorLoginSchema, type DoctorLoginFormData } from "./schema";
+import { Link } from "react-router-dom";
+import { useTranslate } from "../../../locales";
 
 export const DoctorLoginForm = () => {
   const { mutate: login, isPending } = useDoctorLogin();
-
+  const { t } = useTranslate("common");
   const {
     register,
     handleSubmit,
@@ -20,10 +28,18 @@ export const DoctorLoginForm = () => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        mt: 3,
+        padding: 3,
+        borderRadius: 2,
+      }}
+    >
       <TextField
         fullWidth
-        label="Email"
+        placeholder={t("login_form.login_doctor.email_placeholder")}
         margin="normal"
         {...register("email")}
         error={!!errors.email}
@@ -33,7 +49,7 @@ export const DoctorLoginForm = () => {
 
       <TextField
         fullWidth
-        label="Password"
+        placeholder={t("login_form.login_doctor.password_placeholder")}
         type="password"
         margin="normal"
         {...register("password")}
@@ -47,14 +63,26 @@ export const DoctorLoginForm = () => {
         fullWidth
         variant="contained"
         size="large"
-        sx={{ mt: 3 }}
+        sx={{
+          mt: 3,
+          backgroundColor: (theme) => theme.palette.primary.darker,
+          "&:hover": {
+            backgroundColor: (theme) => theme.palette.primary.dark,
+          },
+        }}
         disabled={isPending}
       >
-        {isPending ? "Signing in..." : "Sign In"}
+        {isPending ? (
+          <CircularProgress size={24} />
+        ) : (
+          t("login_form.login_doctor.login_button")
+        )}
       </Button>
 
       <Typography variant="body2" sx={{ mt: 2, textAlign: "center" }}>
-        <a href="/doctor/forgot-password">Forgot password?</a>
+        <Link to="/doctor/forgot-password">
+          {t("login_form.login_doctor.forgot_password")}
+        </Link>
       </Typography>
     </Box>
   );

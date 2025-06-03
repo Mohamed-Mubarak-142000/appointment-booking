@@ -82,4 +82,5 @@ const getSpecialties = asyncHandler(async (req, res) => {
 
 module.exports = {
   getSpecialties,
+  specialties,
 };

@@ -35,7 +35,6 @@ export const AnimatedTitle = ({
 
   const segments = useMemo(() => {
     if (isArabic(text)) {
-      // للغة العربية: نعامل كل كلمة مع المسافات المحيطة بها كقطعة واحدة
       const wordsWithSpaces = text
         .split(/([\u0600-\u06FF]+|\s+)/)
         .filter(Boolean);

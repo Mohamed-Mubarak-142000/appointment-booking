@@ -16,16 +16,22 @@ export const doctorRegisterSchema = z
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
-    specialty: z.string().min(3, "Specialty must be at least 3 characters"),
-    governorate: z.string().min(3, "Governorate is required"),
+    specialty: z.string({
+      required_error: "Specialty is required",
+      invalid_type_error: "Specialty must be a string",
+    }),
+    governorate: z.string({
+      required_error: "Governorate is required",
+      invalid_type_error: "Governorate must be a string",
+    }),
     address: z.string().min(5, "Address must be at least 5 characters"),
     phone: z.string().min(10, "Phone must be at least 10 digits"),
-    age: z
-      .number()
-      .min(25, "Doctor must be at least 25 years old")
-      .max(80, "Invalid age"),
+    age: z.coerce
+      .number() // Converts strings to numbers
+      .min(1, "Age must be at least 1")
+      .max(120, "Invalid age"),
     bio: z.string().min(20, "Bio must be at least 20 characters").optional(),
-    experience: z.number().min(0, "Experience cannot be negative"),
+    experience: z.coerce.number().min(0, "Experience cannot be negative"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -52,13 +58,15 @@ export const doctorUpdateSchema = z
       .min(10, "Phone must be at least 10 digits")
       .regex(/^[0-9]+$/, "Phone must contain only numbers")
       .optional(),
-    age: z
-      .number()
-      .min(25, "Doctor must be at least 25 years old")
-      .max(80, "Invalid age")
-      .optional(),
+    age: z.coerce
+      .number() // Converts strings to numbers
+      .min(1, "Age must be at least 1")
+      .max(120, "Invalid age"),
     bio: z.string().min(20, "Bio must be at least 20 characters").optional(),
-    experience: z.number().min(0, "Experience cannot be negative").optional(),
+    experience: z.coerce
+      .number()
+      .min(0, "Experience cannot be negative")
+      .optional(),
 
     photo: z.string().optional(), // Assuming photo is a URL or base64 string
     gender: z.enum(["male", "female", "other"]).optional(),

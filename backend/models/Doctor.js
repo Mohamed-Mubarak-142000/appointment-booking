@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const { governorates } = require("../controllers/government-controller");
+const { specialties } = require("../controllers/special-controller");
 
 const DoctorSchema = new mongoose.Schema({
   name: {
@@ -24,14 +26,16 @@ const DoctorSchema = new mongoose.Schema({
   specialty: {
     type: String,
     required: [true, "Please add a specialty"],
-  },
-  address: {
-    type: String,
-    required: [true, "Please add an address"],
+    enum: specialties.map((spec) => spec.value),
   },
   governorate: {
     type: String,
     required: [true, "Please add a governorate"],
+    enum: governorates.map((gov) => gov.value),
+  },
+  address: {
+    type: String,
+    required: [true, "Please add an address"],
   },
   phone: {
     type: String,

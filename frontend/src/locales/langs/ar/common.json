@@ -1,7 +1,9 @@
 {
   "logo": {
     "part1_title": "طبي",
-    "part2_title": "بك"
+    "part2_title": "بك",
+    "tagline": "صحتك.. أولويتنا",
+    "description": "منصة رائدة تربط المرضى بأفضل الأطباء والمتخصصين الصحيين في مصر والوطن العربي. نقدم حلاً شاملاً للرعاية الصحية يسهل الوصول إلى الاستشارات الطبية، حجز المواعيد، والمتابعة المستمرة مع نخبة من الأطباء المعتمدين."
   },
   "navbar": {
     "home": "الصفحة الرئيسية",
@@ -18,7 +20,19 @@
     "password_placeholder": "أدخل كلمة المرور الخاصة بك",
     "login_button": "تسجيل الدخول",
     "email_placeholder": "أدخل بريدك الإلكتروني",
-    "cancel_button": "إلغاء"
+    "cancel_button": "إلغاء",
+
+    "login_doctor": {
+      "title": "تسجيل دخول الطبيب",
+      "description": "يرجى إدخال بريدك الإلكتروني وكلمة المرور لتسجيل الدخول كطبيب",
+      "email_placeholder": "أدخل بريدك الإلكتروني",
+      "password_placeholder": "أدخل كلمة المرور الخاصة بك",
+      "login_button": "تسجيل الدخول",
+      "cancel_button": "إلغاء",
+      "forgot_password": "نسيت كلمة المرور؟",
+      "register_as_doctor": "سجل كطبيب",
+      "don't_have_account": "ليس لديك حساب؟"
+    }
   },
   "register_form": {
     "register_description": "يرجى ملء النموذج أدناه لإنشاء حساب جديد",
@@ -37,7 +51,28 @@
     "gender_other": "اخرى",
     "confirm_password_placeholder": "أعد إدخال كلمة المرور الخاصة بك",
     "register_button": "إنشاء حساب",
-    "cancel_button": "إلغاء"
+    "cancel_button": "إلغاء",
+
+    "doctor_register": {
+      "title": "تسجيل الطبيب",
+      "description": "يرجى ملء النموذج أدناه للتسجيل كطبيب",
+      "name_placeholder": "أدخل اسمك الكامل",
+      "email_placeholder": "أدخل بريدك الإلكتروني",
+      "password_placeholder": "أدخل كلمة المرور الخاصة بك",
+      "confirm_password_placeholder": "أعد إدخال كلمة المرور الخاصة بك",
+      "phone_placeholder": "أدخل رقم هاتفك",
+      "specialty_placeholder": "اختر التخصص الطبي",
+      "age_placeholder": "أدخل عمرك",
+      "clinic_placeholder": "اختر العيادة",
+      "experience_placeholder": "ادخل سنوات الخبرة",
+      "government_placeholder": "اختر الحكومة",
+      "address_placeholder": "ادخل عنوانك",
+      "bio_placeholder": "اكتب بيو",
+      "already_have_account": "لديك حساب؟",
+      "login_as_doctor": "تسجيل الدخول كطبيب",
+      "register_button": "تسجيل كطبيب",
+      "cancel_button": "إلغاء"
+    }
   },
 
   "footer": {

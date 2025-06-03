@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Doctor = require("../models/Doctor.js");
+const { specialties } = require("./special-controller.js");
+const { governorates } = require("./government-controller.js");
 
 const getDoctors = asyncHandler(async (req, res) => {
   let query;
@@ -133,9 +135,38 @@ const addAvailableSlots = asyncHandler(async (req, res) => {
   });
 });
 
+const getDoctorsBySpecialtyAndGovernorate = asyncHandler(async (req, res) => {
+  const { specialty, governorate } = req.query;
+
+  let query = {};
+
+  if (specialty) {
+    query.specialty = specialty;
+  }
+
+  if (governorate) {
+    query.governorate = governorate;
+  }
+
+  const doctors = await Doctor.find(query);
+
+  const response = {
+    success: true,
+    count: doctors.length,
+    data: doctors,
+    metadata: {
+      specialtyInfo: specialties.find((s) => s.value === specialty),
+      governorateInfo: governorates.find((g) => g.value === governorate),
+    },
+  };
+
+  res.status(200).json(response);
+});
+
 module.exports = {
   getDoctors,
   getDoctor,
   updateDoctor,
   addAvailableSlots,
+  getDoctorsBySpecialtyAndGovernorate,
 };

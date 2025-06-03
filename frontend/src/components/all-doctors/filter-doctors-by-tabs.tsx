@@ -6,6 +6,7 @@ import PaginationControlled from "../custom-pagination";
 import { EmptyStateContent } from "../empty-state-content";
 import { useGetAllDoctors } from "../../apis/use-case/doctor/get-all-doctors";
 import { useSpecialties } from "../../apis/use-case/get-all-specialiste";
+import { getCurrentLang } from "../../locales";
 
 const FilterDoctorsByTabs = () => {
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
@@ -72,7 +73,7 @@ const FilterDoctorsByTabs = () => {
   return (
     <CustomTabs
       tabs={specialtyData.map((spec) => ({
-        label: spec.label.en,
+        label: getCurrentLang() === "ar" ? spec.label.ar : spec.label.en,
         value: spec.value,
       }))}
       spacing={2}

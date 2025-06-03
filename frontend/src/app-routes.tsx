@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { RouteLoading } from "./components/route-loading";
 import { DoctorRoute, PatientRoute } from "./layouts/protected-routes";
+import PublicDoctorLayout from "./layouts/admin/public-doctor-layout";
 
 const HomePage = lazy(() => import("./pages/home-page"));
 // const LoginPage = lazy(() => import("./pages/login-page"));
@@ -37,6 +38,7 @@ const DoctorSettingPage = lazy(
 
 // Add new doctor auth pages
 const DoctorLoginPage = lazy(() => import("./pages/dashboard/doctor-login"));
+
 const DoctorRegisterPage = lazy(
   () => import("./pages/dashboard/doctor-register")
 );
@@ -47,16 +49,10 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/home", element: <HomePage /> },
-      // { path: "/login", element: <LoginPage /> },
-      // { path: "/register", element: <RegisterPage /> },
       { path: "/about", element: <AboutPage /> },
       { path: "/doctors", element: <DoctorsPage /> },
       { path: "/doctors/:specialty", element: <DoctorsPage /> },
       { path: "/contact", element: <ContactUsPage /> },
-
-      // Doctor auth routes
-      { path: "/doctor/login", element: <DoctorLoginPage /> },
-      { path: "/doctor/register", element: <DoctorRegisterPage /> },
     ],
   },
 
@@ -76,17 +72,29 @@ const router = createBrowserRouter([
   },
   {
     path: "/doctor",
-    element: <DoctorRoute />,
     children: [
       {
-        element: <DashboardLayout />,
+        element: <PublicDoctorLayout />,
         children: [
-          { path: "profile", element: <DoctorProfilePage /> },
-          { path: "dashboard", element: <DoctorDashboardPage /> },
-          { path: "patients", element: <DoctorPatientPage /> },
-          { path: "appointments", element: <DoctorAppointmentPage /> },
-          { path: "services", element: <DoctorServicesPage /> },
-          { path: "settings", element: <DoctorSettingPage /> },
+          { path: "login", element: <DoctorLoginPage /> },
+          { path: "register", element: <DoctorRegisterPage /> },
+        ],
+      },
+
+      {
+        element: <DoctorRoute />,
+        children: [
+          {
+            element: <DashboardLayout />,
+            children: [
+              { path: "profile", element: <DoctorProfilePage /> },
+              { path: "dashboard", element: <DoctorDashboardPage /> },
+              { path: "patients", element: <DoctorPatientPage /> },
+              { path: "appointments", element: <DoctorAppointmentPage /> },
+              { path: "services", element: <DoctorServicesPage /> },
+              { path: "settings", element: <DoctorSettingPage /> },
+            ],
+          },
         ],
       },
     ],

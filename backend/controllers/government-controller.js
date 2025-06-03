@@ -45,4 +45,5 @@ const getGovernorates = asyncHandler(async (req, res) => {
 
 module.exports = {
   getGovernorates,
+  governorates,
 };

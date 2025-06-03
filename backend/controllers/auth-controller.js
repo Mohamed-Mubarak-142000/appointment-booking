@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const Doctor = require("../models/Doctor.js");
 const Patient = require("../models/Patient");
+const { specialties } = require("./special-controller.js");
+const { governorates } = require("./government-controller.js");
 
 // Doctor Functions
 const registerDoctor = asyncHandler(async (req, res) => {
@@ -19,10 +21,23 @@ const registerDoctor = asyncHandler(async (req, res) => {
   } = req.body;
 
   const doctorExists = await Doctor.findOne({ email });
-
   if (doctorExists) {
     res.status(400);
     throw new Error("Doctor already exists");
+  }
+
+  const isValidSpecialty = specialties.some((spec) => spec.value === specialty);
+  if (!isValidSpecialty) {
+    res.status(400);
+    throw new Error("Invalid specialty");
+  }
+
+  const isValidGovernorate = governorates.some(
+    (gov) => gov.value === governorate
+  );
+  if (!isValidGovernorate) {
+    res.status(400);
+    throw new Error("Invalid governorate");
   }
 
   const doctor = await Doctor.create({
@@ -44,6 +59,7 @@ const registerDoctor = asyncHandler(async (req, res) => {
       name: doctor.name,
       email: doctor.email,
       specialty: doctor.specialty,
+      governorate: doctor.governorate,
       role: "Doctor",
       token: generateDoctorToken(doctor._id),
     });
@@ -52,7 +68,6 @@ const registerDoctor = asyncHandler(async (req, res) => {
     throw new Error("Invalid doctor data");
   }
 });
-
 const loginDoctor = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 

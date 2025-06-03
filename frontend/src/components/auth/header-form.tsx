@@ -1,15 +1,33 @@
-import { Box, Stack } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Typography,
+  type SxProps,
+  type Theme,
+  type TypographyProps,
+} from "@mui/material";
 import { motion } from "framer-motion";
 import { assets } from "../../assets/assets_frontend/assets";
 import { AnimatedTitle } from "../animate-title";
 
 export const FormHeader = ({
   title = "Welcome to Our Platform",
+  subtitle,
+  slotProps,
+  widthImage = 100,
+  sx,
 }: {
   title?: string;
+  subtitle?: string;
+  sx?: SxProps<Theme>;
+  widthImage?: number;
+  slotProps?: {
+    title: TypographyProps;
+    subtitle: TypographyProps;
+  };
 }) => {
   return (
-    <Stack spacing={1} sx={{ alignItems: "center" }}>
+    <Stack spacing={1} sx={{ alignItems: "center", ...sx }}>
       {/* Logo with continuous rotation and scale animation */}
       <Box
         component={motion.div}
@@ -31,7 +49,7 @@ export const FormHeader = ({
           },
         }}
         sx={{
-          width: 100,
+          width: `${widthImage}px`,
           height: "auto",
         }}
       >
@@ -53,14 +71,23 @@ export const FormHeader = ({
         fontWeight="bold"
         mb={3}
         textAlign="center"
-        color="primary.darker"
         fontSize={{ xs: ".6rem", md: ".9rem", lg: "1.2rem" }}
         sx={{
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
+          ...slotProps?.title?.sx,
         }}
       />
+      {subtitle && (
+        <Typography
+          variant={slotProps?.subtitle?.variant ?? "subtitle1"}
+          color="text.secondary"
+          {...slotProps?.subtitle}
+        >
+          {subtitle}
+        </Typography>
+      )}
     </Stack>
   );
 };

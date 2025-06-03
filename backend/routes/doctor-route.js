@@ -4,6 +4,7 @@ const {
   getDoctor,
   updateDoctor,
   addAvailableSlots,
+  getDoctorsBySpecialtyAndGovernorate,
 } = require("../controllers/doctor-controller");
 const { protectDoctor } = require("../middleware/auth");
 
@@ -15,7 +16,7 @@ router.route("/:id").get(getDoctor);
 
 // Doctor-only routes
 router.route("/:id").put(protectDoctor, updateDoctor);
-
+router.get("/filter", getDoctorsBySpecialtyAndGovernorate);
 router.route("/:id/slots").put(protectDoctor, addAvailableSlots);
 
 module.exports = router;

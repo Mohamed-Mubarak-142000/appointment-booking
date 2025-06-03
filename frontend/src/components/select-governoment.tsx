@@ -1,7 +1,7 @@
 import {
-  useSpecialties,
-  type Specialty,
-} from "../apis/use-case/get-all-specialiste";
+  useGovernorates,
+  type Governorate,
+} from "../apis/use-case/get-all-government";
 import { getCurrentLang, useTranslate } from "../locales";
 import {
   CircularProgress,
@@ -13,9 +13,9 @@ import {
 } from "@mui/material";
 import { Controller } from "react-hook-form";
 
-export function SpecialtySelector({
+export function GovernorateSelector({
   control,
-  name = "specialty",
+  name = "governorate",
   placeholder,
   error,
   helperText,
@@ -28,14 +28,14 @@ export function SpecialtySelector({
   helperText?: string;
 }) {
   const { t } = useTranslate("common");
-  const { data, isPending, error: apiError } = useSpecialties();
+  const { data, isPending, error: apiError } = useGovernorates();
 
   if (isPending) {
     return <CircularProgress size={24} />;
   }
 
   if (apiError) {
-    return <Typography color="error">Error loading specialties</Typography>;
+    return <Typography color="error">Error loading governorates</Typography>;
   }
 
   return (
@@ -47,13 +47,13 @@ export function SpecialtySelector({
           <Select {...field} displayEmpty value={field.value || ""}>
             <MenuItem value="">
               {placeholder ||
-                t("register_form.doctor_register.specialty_placeholder")}
+                t("register_form.doctor_register.governorate_placeholder")}
             </MenuItem>
-            {data?.data.map((specialty: Specialty) => (
-              <MenuItem key={specialty.id} value={specialty.value}>
+            {data?.data.map((governorate: Governorate) => (
+              <MenuItem key={governorate.id} value={governorate.value}>
                 {getCurrentLang() === "ar"
-                  ? specialty.label.ar
-                  : specialty.label.en}
+                  ? governorate.label.ar
+                  : governorate.label.en}
               </MenuItem>
             ))}
           </Select>
