@@ -9,15 +9,16 @@ import {
   Divider,
 } from "@mui/material";
 import { useTranslate } from "../../locales";
-import {
-  updateProfileSchema,
-  type UpdateProfileFormData,
-} from "../../schemas/auth";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { PatientData } from "../../apis/use-case/types";
 import { useUpdatePatientProfile } from "../../apis/use-case/patient/profile";
 import { useEffect } from "react";
+import {
+  updateProfileSchema,
+  type UpdateProfileFormData,
+} from "../../schemas/patient-schema";
 
 const ProfileForm = ({ user }: { user: PatientData }) => {
   const { t } = useTranslate("profile");

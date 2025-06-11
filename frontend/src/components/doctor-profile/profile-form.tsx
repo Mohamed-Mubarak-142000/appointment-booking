@@ -12,11 +12,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { DoctorData } from "../../apis/use-case/types";
 import { useEffect } from "react";
+
+import { useUpdateDoctorProfile } from "../../apis/use-case/doctor/profile";
 import {
   doctorUpdateSchema,
   type DoctorUpdateFormData,
-} from "../auth/doctor/schema";
-import { useUpdateDoctorProfile } from "../../apis/use-case/doctor/profile";
+} from "../../schemas/doctor-schema";
 
 const ProfileForm = ({ user }: { user: DoctorData }) => {
   const { t } = useTranslate("profile");

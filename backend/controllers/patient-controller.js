@@ -41,7 +41,20 @@ const getBookedDoctors = asyncHandler(async (req, res) => {
   });
 });
 
+const getPatient = asyncHandler(async (req, res) => {
+  const patient = await Patient.findById(req.params.id);
+  if (!patient) {
+    res.status(404);
+    throw new Error("Patient not found");
+  }
+  res.status(200).json({
+    success: true,
+    data: patient,
+  });
+});
+
 module.exports = {
   updatePatient,
   getBookedDoctors,
+  getPatient,
 };

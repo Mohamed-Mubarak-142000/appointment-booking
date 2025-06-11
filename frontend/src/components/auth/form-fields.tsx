@@ -1,6 +1,6 @@
 import { TextField, Grid, MenuItem, InputAdornment } from "@mui/material";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
-import type { RegisterFormData } from "../../schemas/auth";
+import type { RegisterFormData } from "../../apis/use-case/types";
 
 interface FormFieldProps {
   register: UseFormRegister<RegisterFormData>;

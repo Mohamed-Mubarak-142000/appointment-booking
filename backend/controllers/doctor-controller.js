@@ -1,7 +1,9 @@
 const asyncHandler = require("express-async-handler");
-const Doctor = require("../models/Doctor.js");
-const { specialties } = require("./special-controller.js");
-const { governorates } = require("./government-controller.js");
+const Appointment = require("../models/Appointment");
+const Doctor = require("../models/Doctor");
+const Review = require("../models/Review");
+const ArchivePatient = require("../models/Archive-patient");
+const mongoose = require("mongoose");
 
 const getDoctors = asyncHandler(async (req, res) => {
   let query;
@@ -77,17 +79,18 @@ const getDoctor = asyncHandler(async (req, res) => {
 });
 
 const updateDoctor = asyncHandler(async (req, res) => {
-  const doctorId = req.doctor._id;
-  let doctor = await Doctor.findById(doctorId);
+  const { id } = req.params;
+  const { availableSlots } = req.body;
 
+  const doctor = await Doctor.findById(id);
   if (!doctor) {
-    res.status(404);
-    throw new Error("doctor not found");
+    return res
+      .status(404)
+      .json({ success: false, message: "Doctor not found" });
   }
-  doctor = await Doctor.findByIdAndUpdate(doctorId, req.body, {
-    new: true,
-    runValidators: true,
-  });
+
+  doctor.availableSlots = availableSlots;
+  await doctor.save();
 
   res.status(200).json({
     success: true,
@@ -95,78 +98,917 @@ const updateDoctor = asyncHandler(async (req, res) => {
   });
 });
 
-const addAvailableSlots = asyncHandler(async (req, res) => {
-  const { date, times } = req.body;
-  let doctor = await Doctor.findById(req.params.id);
+const getDoctorsBySpecialtyAndGovernorate = asyncHandler(async (req, res) => {
+  // Clone the query object to avoid modifying the original
+  const queryParams = { ...req.query };
 
-  if (!doctor) {
-    res.status(404);
-    throw new Error("Doctor not found");
+  // Remove pagination and fields that shouldn't be in the query
+  const { page = 1, limit = 10, ...filters } = queryParams;
+
+  console.log("Filter params:", filters);
+
+  // Validate page and limit
+  const pageNumber = parseInt(page, 10) || 1;
+  const limitNumber = parseInt(limit, 10) || 10;
+  const skip = (pageNumber - 1) * limitNumber;
+
+  // Build query carefully - only include allowed fields
+  let query = {};
+
+  if (filters.specialty) query.specialty = filters.specialty;
+  if (filters.governorate) query.governorate = filters.governorate;
+  if (filters.name) query.name = { $regex: filters.name, $options: "i" };
+
+  try {
+    const [doctors, total] = await Promise.all([
+      Doctor.find(query)
+        .skip(skip)
+        .limit(limitNumber)
+        .sort({ rating: -1 })
+        .lean(),
+      Doctor.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      count: doctors.length,
+      total,
+      page: pageNumber,
+      pages: Math.ceil(total / limitNumber),
+      data: doctors,
+    });
+  } catch (error) {
+    console.error("Error in getDoctorsBySpecialtyAndGovernorate:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
   }
+});
 
-  // Make sure user is doctor owner
-  if (doctor._id.toString() !== req.user._id.toString()) {
-    res.status(401);
-    throw new Error("Not authorized to update this doctor");
-  }
+const getDashboardStats = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
 
-  // Check if date already exists
-  const dateIndex = doctor.availableSlots.findIndex(
-    (slot) =>
-      slot.date.toISOString().split("T")[0] ===
-      new Date(date).toISOString().split("T")[0]
-  );
+  // حساب تواريخ الشهر الحالي والسابق
+  const now = new Date();
+  const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
-  if (dateIndex >= 0) {
-    // Add new times to existing date
-    doctor.availableSlots[dateIndex].times = [
-      ...new Set([...doctor.availableSlots[dateIndex].times, ...times]),
-    ];
-  } else {
-    // Add new date with times
-    doctor.availableSlots.push({ date, times });
-  }
+  // استعلامات للمواعيد النشطة
+  const activeAppointmentsQuery = { doctor: doctorId };
+  const activeCurrentMonthQuery = {
+    doctor: doctorId,
+    createdAt: { $gte: currentMonthStart },
+  };
+  const activePreviousMonthQuery = {
+    doctor: doctorId,
+    createdAt: { $gte: previousMonthStart, $lte: previousMonthEnd },
+  };
 
-  await doctor.save();
+  // استعلامات للمواعيد المؤرشفة
+  const archivedAppointmentsQuery = { doctor: doctorId };
+  const archivedCurrentMonthQuery = {
+    doctor: doctorId,
+    completedAt: { $gte: currentMonthStart },
+  };
+  const archivedPreviousMonthQuery = {
+    doctor: doctorId,
+    completedAt: { $gte: previousMonthStart, $lte: previousMonthEnd },
+  };
+
+  // إجمالي عدد المواعيد (نشطة + مؤرشفة)
+  const [totalActive, totalArchived] = await Promise.all([
+    Appointment.countDocuments(activeAppointmentsQuery),
+    ArchivePatient.countDocuments(archivedAppointmentsQuery),
+  ]);
+  const totalAppointments = totalActive + totalArchived;
+
+  // عدد مواعيد الشهر الحالي (نشطة + مؤرشفة)
+  const [currentMonthActive, currentMonthArchived] = await Promise.all([
+    Appointment.countDocuments(activeCurrentMonthQuery),
+    ArchivePatient.countDocuments(archivedCurrentMonthQuery),
+  ]);
+  const currentMonthAppointments = currentMonthActive + currentMonthArchived;
+
+  // عدد مواعيد الشهر السابق (نشطة + مؤرشفة)
+  const [previousMonthActive, previousMonthArchived] = await Promise.all([
+    Appointment.countDocuments(activePreviousMonthQuery),
+    ArchivePatient.countDocuments(archivedPreviousMonthQuery),
+  ]);
+  const previousMonthAppointments = previousMonthActive + previousMonthArchived;
+
+  const appointmentsChange =
+    previousMonthAppointments > 0
+      ? Math.round(
+          ((currentMonthAppointments - previousMonthAppointments) /
+            previousMonthAppointments) *
+            100
+        )
+      : 100;
+
+  // عدد المرضى الفريدين الكلي (نشطة + مؤرشفة)
+  const [activePatients, archivedPatients] = await Promise.all([
+    Appointment.distinct("patient", activeAppointmentsQuery),
+    ArchivePatient.distinct("patient", archivedAppointmentsQuery),
+  ]);
+  const totalPatients = [...new Set([...activePatients, ...archivedPatients])];
+
+  // عدد المرضى الفريدين في الشهر الحالي (نشطة + مؤرشفة)
+  const [currentMonthActivePatients, currentMonthArchivedPatients] =
+    await Promise.all([
+      Appointment.distinct("patient", activeCurrentMonthQuery),
+      ArchivePatient.distinct("patient", archivedCurrentMonthQuery),
+    ]);
+  const currentMonthPatients = [
+    ...new Set([
+      ...currentMonthActivePatients,
+      ...currentMonthArchivedPatients,
+    ]),
+  ];
+
+  // عدد المرضى الفريدين في الشهر السابق (نشطة + مؤرشفة)
+  const [previousMonthActivePatients, previousMonthArchivedPatients] =
+    await Promise.all([
+      Appointment.distinct("patient", activePreviousMonthQuery),
+      ArchivePatient.distinct("patient", archivedPreviousMonthQuery),
+    ]);
+  const previousMonthPatients = [
+    ...new Set([
+      ...previousMonthActivePatients,
+      ...previousMonthArchivedPatients,
+    ]),
+  ];
+
+  const patientsChange =
+    previousMonthPatients.length > 0
+      ? Math.round(
+          ((currentMonthPatients.length - previousMonthPatients.length) /
+            previousMonthPatients.length) *
+            100
+        )
+      : 100;
+
+  // إحصائيات الإيرادات (من المواعيد المكتملة فقط - نشطة + مؤرشفة)
+  const [activeRevenueStats, archivedRevenueStats] = await Promise.all([
+    Appointment.aggregate([
+      {
+        $match: {
+          doctor: new mongoose.Types.ObjectId(doctorId),
+          status: "completed",
+          createdAt: { $gte: currentMonthStart },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$price" },
+        },
+      },
+    ]),
+    ArchivePatient.aggregate([
+      {
+        $match: {
+          doctor: new mongoose.Types.ObjectId(doctorId),
+          completedAt: { $gte: currentMonthStart },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$price" },
+        },
+      },
+    ]),
+  ]);
+
+  const totalRevenue =
+    (activeRevenueStats[0]?.totalRevenue || 0) +
+    (archivedRevenueStats[0]?.totalRevenue || 0);
+
+  // إحصائيات الإيرادات للشهر السابق
+  const [prevActiveRevenueStats, prevArchivedRevenueStats] = await Promise.all([
+    Appointment.aggregate([
+      {
+        $match: {
+          doctor: new mongoose.Types.ObjectId(doctorId),
+          status: "completed",
+          createdAt: { $gte: previousMonthStart, $lte: previousMonthEnd },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$price" },
+        },
+      },
+    ]),
+    ArchivePatient.aggregate([
+      {
+        $match: {
+          doctor: new mongoose.Types.ObjectId(doctorId),
+          completedAt: { $gte: previousMonthStart, $lte: previousMonthEnd },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$price" },
+        },
+      },
+    ]),
+  ]);
+
+  const previousRevenue =
+    (prevActiveRevenueStats[0]?.totalRevenue || 0) +
+    (prevArchivedRevenueStats[0]?.totalRevenue || 0);
+
+  const revenueChange =
+    previousRevenue > 0
+      ? Math.round(((totalRevenue - previousRevenue) / previousRevenue) * 100)
+      : 100;
+
+  // التقييم المتوسط (من المراجعات النشطة فقط - عادة المراجعات لا تؤرشف)
+  const ratingStats = await Review.aggregate([
+    {
+      $match: {
+        doctor: new mongoose.Types.ObjectId(doctorId),
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        averageRating: { $avg: "$rating" },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const previousRatingStats = await Review.aggregate([
+    {
+      $match: {
+        doctor: new mongoose.Types.ObjectId(doctorId),
+        createdAt: { $gte: previousMonthStart, $lte: previousMonthEnd },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        averageRating: { $avg: "$rating" },
+      },
+    },
+  ]);
+
+  const averageRating = ratingStats[0]?.averageRating || 0;
+  const previousRating = previousRatingStats[0]?.averageRating || 0;
+
+  const ratingChange =
+    previousRating > 0
+      ? Math.round(((averageRating - previousRating) / previousRating) * 100)
+      : 0;
+
+  // عدد الـ availableSlots المتاحة حاليًا
+  const doctor = await Doctor.findById(doctorId).lean();
+  const availableSlotsCount =
+    doctor?.availableSlots?.filter((slot) => slot.isAvailable).length || 0;
 
   res.status(200).json({
     success: true,
-    data: doctor.availableSlots,
+    data: {
+      totalAppointments,
+      appointmentsChange,
+      totalPatients: totalPatients.length,
+      patientsChange,
+      totalRevenue,
+      revenueChange,
+      averageRating: parseFloat(averageRating.toFixed(1)),
+      ratingChange,
+      availableSlotsCount,
+      includeArchived: true,
+    },
   });
 });
 
-const getDoctorsBySpecialtyAndGovernorate = asyncHandler(async (req, res) => {
-  const { specialty, governorate } = req.query;
+const getAppointmentStats = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
+  const now = new Date();
 
-  let query = {};
+  // Weekly stats - last 7 days (بما في ذلك المحذوفة)
+  const weeklyLabels = [];
+  const weeklyScheduled = [];
+  const weeklyCompleted = [];
+  const weeklyCancelled = [];
 
-  if (specialty) {
-    query.specialty = specialty;
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+    weeklyLabels.push(dayName);
+
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
+    // استعلامات للمواعيد النشطة
+    const [activeScheduled, activeCompleted, activeCancelled] =
+      await Promise.all([
+        Appointment.countDocuments({
+          doctor: doctorId,
+          createdAt: { $gte: startOfDay, $lte: endOfDay },
+        }),
+        Appointment.countDocuments({
+          doctor: doctorId,
+          status: "completed",
+          createdAt: { $gte: startOfDay, $lte: endOfDay },
+        }),
+        Appointment.countDocuments({
+          doctor: doctorId,
+          status: "cancelled",
+          createdAt: { $gte: startOfDay, $lte: endOfDay },
+        }),
+        Appointment.countDocuments({
+          doctor: doctorId,
+          status: "confirmed",
+          createdAt: { $gte: startOfDay, $lte: endOfDay },
+        }),
+      ]);
+
+    // استعلامات للمواعيد المؤرشفة
+    const [archivedScheduled, archivedCompleted] = await Promise.all([
+      ArchivePatient.countDocuments({
+        doctor: doctorId,
+        completedAt: { $gte: startOfDay, $lte: endOfDay },
+      }),
+      ArchivePatient.countDocuments({
+        doctor: doctorId,
+        completedAt: { $gte: startOfDay, $lte: endOfDay },
+      }),
+    ]);
+
+    weeklyScheduled.push(activeScheduled + archivedScheduled);
+    weeklyCompleted.push(activeCompleted + archivedCompleted);
+    weeklyCancelled.push(activeCancelled); // عادة لا يتم أرشفة المواعيد الملغاة
   }
 
-  if (governorate) {
-    query.governorate = governorate;
+  // Monthly stats - current year (بما في ذلك المحذوفة)
+  const monthlyLabels = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const monthlyScheduled = [];
+  const monthlyCompleted = [];
+  const monthlyCancelled = [];
+
+  for (let i = 0; i < 12; i++) {
+    const startOfMonth = new Date(now.getFullYear(), i, 1);
+    const endOfMonth = new Date(now.getFullYear(), i + 1, 0);
+
+    // استعلامات للمواعيد النشطة
+    const [activeScheduled, activeCompleted, activeCancelled] =
+      await Promise.all([
+        Appointment.countDocuments({
+          doctor: doctorId,
+          createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        }),
+        Appointment.countDocuments({
+          doctor: doctorId,
+          status: "completed",
+          createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        }),
+        Appointment.countDocuments({
+          doctor: doctorId,
+          status: "cancelled",
+          createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        }),
+      ]);
+
+    // استعلامات للمواعيد المؤرشفة
+    const [archivedScheduled, archivedCompleted] = await Promise.all([
+      ArchivePatient.countDocuments({
+        doctor: doctorId,
+        completedAt: { $gte: startOfMonth, $lte: endOfMonth },
+      }),
+      ArchivePatient.countDocuments({
+        doctor: doctorId,
+        completedAt: { $gte: startOfMonth, $lte: endOfMonth },
+      }),
+    ]);
+
+    monthlyScheduled.push(activeScheduled + archivedScheduled);
+    monthlyCompleted.push(activeCompleted + archivedCompleted);
+    monthlyCancelled.push(activeCancelled); // عادة لا يتم أرشفة المواعيد الملغاة
   }
 
-  const doctors = await Doctor.find(query);
-
-  const response = {
+  res.status(200).json({
     success: true,
-    count: doctors.length,
-    data: doctors,
-    metadata: {
-      specialtyInfo: specialties.find((s) => s.value === specialty),
-      governorateInfo: governorates.find((g) => g.value === governorate),
+    data: {
+      weekly: {
+        labels: weeklyLabels,
+        scheduled: weeklyScheduled,
+        completed: weeklyCompleted,
+        cancelled: weeklyCancelled,
+        includeArchived: true,
+      },
+      monthly: {
+        labels: monthlyLabels.slice(0, now.getMonth() + 1),
+        scheduled: monthlyScheduled.slice(0, now.getMonth() + 1),
+        completed: monthlyCompleted.slice(0, now.getMonth() + 1),
+        cancelled: monthlyCancelled.slice(0, now.getMonth() + 1),
+        includeArchived: true,
+      },
     },
-  };
+  });
+});
 
-  res.status(200).json(response);
+const getPatientStats = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const labels = [];
+  const newPatients = { archive: [], notArchive: [] };
+  const returningPatients = { archive: [], notArchive: [] };
+
+  for (let i = 5; i >= 0; i--) {
+    const month = new Date();
+    month.setMonth(month.getMonth() - i);
+    labels.push(months[month.getMonth()]);
+
+    const startOfMonth = new Date(month.getFullYear(), month.getMonth(), 1);
+    const endOfMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+
+    // المرضى الجدد من الأرشيف
+    const newArchive = await ArchivePatient.aggregate([
+      {
+        $match: {
+          doctor: doctorId,
+          completedAt: { $gte: startOfMonth, $lte: endOfMonth },
+        },
+      },
+      {
+        $group: {
+          _id: "$patient",
+          firstAppointment: { $min: "$completedAt" },
+        },
+      },
+      {
+        $match: {
+          firstAppointment: { $gte: startOfMonth, $lte: endOfMonth },
+        },
+      },
+    ]);
+
+    // المرضى الجدد من غير الأرشيف
+    const newNotArchive = await Appointment.aggregate([
+      {
+        $match: {
+          doctor: doctorId,
+          createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        },
+      },
+      {
+        $group: {
+          _id: "$patient",
+          firstAppointment: { $min: "$createdAt" },
+        },
+      },
+      {
+        $match: {
+          firstAppointment: { $gte: startOfMonth, $lte: endOfMonth },
+        },
+      },
+    ]);
+
+    // المرضى العائدين من الأرشيف
+    const returningArchive = await ArchivePatient.aggregate([
+      {
+        $match: {
+          doctor: doctorId,
+          completedAt: { $gte: startOfMonth, $lte: endOfMonth },
+        },
+      },
+      {
+        $group: {
+          _id: "$patient",
+          firstAppointment: { $min: "$completedAt" },
+        },
+      },
+      {
+        $match: {
+          firstAppointment: { $lt: startOfMonth },
+        },
+      },
+    ]);
+
+    // المرضى العائدين من غير الأرشيف
+    const returningNotArchive = await Appointment.aggregate([
+      {
+        $match: {
+          doctor: doctorId,
+          createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        },
+      },
+      {
+        $group: {
+          _id: "$patient",
+          firstAppointment: { $min: "$createdAt" },
+        },
+      },
+      {
+        $match: {
+          firstAppointment: { $lt: startOfMonth },
+        },
+      },
+    ]);
+
+    // إضافة الأعداد للمصفوفات
+    newPatients.archive.push(newArchive.length);
+    newPatients.notArchive.push(newNotArchive.length);
+    returningPatients.archive.push(returningArchive.length);
+    returningPatients.notArchive.push(returningNotArchive.length);
+  }
+
+  res.status(200).json({
+    success: true,
+    labels,
+    newPatients,
+    returningPatients,
+  });
+});
+
+const getRevenueStats = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
+
+  // Get revenue by category (assuming appointments have 'type' and 'price' fields)
+  const revenueByCategory = await Appointment.aggregate([
+    {
+      $match: {
+        doctor: doctorId,
+        status: "completed",
+      },
+    },
+    {
+      $group: {
+        _id: "$type",
+        total: { $sum: "$price" },
+      },
+    },
+  ]);
+
+  // Format data for chart
+  const labels = [];
+  const data = [];
+  const colors = [
+    "rgba(255, 99, 132, 0.6)",
+    "rgba(54, 162, 235, 0.6)",
+    "rgba(255, 206, 86, 0.6)",
+    "rgba(75, 192, 192, 0.6)",
+  ];
+
+  revenueByCategory.forEach((category, index) => {
+    labels.push(category._id);
+    data.push(category.total);
+  });
+
+  res.status(200).json({
+    success: true,
+    labels,
+    data,
+  });
+});
+
+const getRatingStats = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
+  const now = new Date();
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const labels = [];
+  const ratings = [];
+
+  for (let i = 5; i >= 0; i--) {
+    const month = new Date();
+    month.setMonth(month.getMonth() - i);
+    labels.push(months[month.getMonth()]);
+
+    const startOfMonth = new Date(month.getFullYear(), month.getMonth(), 1);
+    const endOfMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+
+    // ✅ هنا نجيب المراجعات من الـ Review collection
+    const monthlyReviews = await Review.find({
+      doctor: doctorId,
+      createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+    });
+
+    console.log(
+      `Month: ${months[month.getMonth()]}, Reviews Count: ${
+        monthlyReviews.length
+      }`
+    );
+
+    if (monthlyReviews.length > 0) {
+      const sum = monthlyReviews.reduce(
+        (acc, review) => acc + review.rating,
+        0
+      );
+      ratings.push(parseFloat((sum / monthlyReviews.length).toFixed(1)));
+    } else {
+      ratings.push(0);
+    }
+  }
+
+  res.status(200).json({
+    success: true,
+    labels,
+    ratings,
+  });
+});
+
+const getAvailableSlotsStats = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
+
+  const doctor = await Doctor.findById(doctorId).lean();
+
+  const availableSlots = doctor?.availableSlots || [];
+
+  const availableCount = availableSlots.filter(
+    (slot) => slot.isAvailable
+  ).length;
+  const unavailableCount = availableSlots.filter(
+    (slot) => !slot.isAvailable
+  ).length;
+
+  res.status(200).json({
+    success: true,
+    data: {
+      available: availableCount,
+      unavailable: unavailableCount,
+    },
+  });
+});
+
+/*********** */
+
+const getAvailableSlots = asyncHandler(async (req, res) => {
+  const { doctorId } = req.params;
+
+  const doctor = await Doctor.findById(doctorId)
+    .select("availableSlots name specialty")
+    .lean();
+
+  if (!doctor) {
+    return res
+      .status(404)
+      .json({ success: false, message: "الطبيب غير موجود" });
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      doctor: {
+        name: doctor.name,
+        specialty: doctor.specialty,
+      },
+      slots: doctor.availableSlots,
+    },
+  });
+});
+
+const addAvailableSlot = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
+  const { day, startTime, endTime, slotDuration } = req.body;
+
+  // التحقق من صحة البيانات
+  if (!day || !startTime || !endTime) {
+    return res.status(400).json({
+      success: false,
+      message: "الرجاء إدخال جميع الحقول المطلوبة",
+    });
+  }
+
+  // التحقق من أن وقت البداية قبل وقت النهاية
+  if (
+    new Date(`1970-01-01T${startTime}`) >= new Date(`1970-01-01T${endTime}`)
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "وقت البداية يجب أن يكون قبل وقت النهاية",
+    });
+  }
+
+  try {
+    const doctor = await Doctor.findByIdAndUpdate(
+      doctorId,
+      {
+        $push: {
+          availableSlots: {
+            day: day.toLowerCase(), // توحيد تنسيق اليوم
+            startTime,
+            endTime,
+            slotDuration: slotDuration || 30,
+            isAvailable: true,
+          },
+        },
+      },
+      { new: true, runValidators: true }
+    ).select("availableSlots");
+
+    res.status(201).json({
+      success: true,
+      data: doctor.availableSlots,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ أثناء إضافة الموعد",
+      error: error.message,
+    });
+  }
+});
+
+const updateAvailableSlot = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
+  const slotId = req.params.slotId;
+  const updateData = req.body;
+
+  try {
+    // التحقق من أن الموعد موجود
+    const doctor = await Doctor.findOne({
+      _id: doctorId,
+      "availableSlots._id": slotId,
+    });
+
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "الموعد غير موجود",
+      });
+    }
+
+    // تحديث البيانات
+    const updatedDoctor = await Doctor.findOneAndUpdate(
+      {
+        _id: doctorId,
+        "availableSlots._id": slotId,
+      },
+      {
+        $set: {
+          "availableSlots.$.day": updateData.day.toLowerCase(),
+          "availableSlots.$.startTime": updateData.startTime,
+          "availableSlots.$.endTime": updateData.endTime,
+          "availableSlots.$.slotDuration": updateData.slotDuration || 30,
+        },
+      },
+      { new: true, runValidators: true }
+    ).select("availableSlots");
+
+    res.status(200).json({
+      success: true,
+      data: updatedDoctor.availableSlots,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ أثناء تحديث الموعد",
+      error: error.message,
+    });
+  }
+});
+
+const deleteAvailableSlot = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
+  const slotId = req.params.slotId;
+
+  try {
+    const doctor = await Doctor.findByIdAndUpdate(
+      doctorId,
+      {
+        $pull: {
+          availableSlots: { _id: slotId },
+        },
+      },
+      { new: true }
+    ).select("availableSlots");
+
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "الطبيب غير موجود",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: doctor.availableSlots,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ أثناء حذف الموعد",
+      error: error.message,
+    });
+  }
+});
+
+const toggleSlotAvailability = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
+  const slotId = req.params.slotId;
+
+  try {
+    // البحث عن الطبيب والتحقق من وجود الموعد
+    const doctor = await Doctor.findOne({
+      _id: doctorId,
+      "availableSlots._id": slotId,
+    });
+
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "الموعد غير موجود",
+      });
+    }
+
+    // العثور على الـ slot المحدد
+    const slot = doctor.availableSlots.find((s) => s._id.toString() === slotId);
+
+    // تحديث حالة isAvailable
+    const updatedDoctor = await Doctor.findOneAndUpdate(
+      {
+        _id: doctorId,
+        "availableSlots._id": slotId,
+      },
+      {
+        $set: {
+          "availableSlots.$.isAvailable": !slot.isAvailable,
+        },
+      },
+      { new: true, runValidators: true }
+    ).select("availableSlots");
+
+    res.status(200).json({
+      success: true,
+      data: updatedDoctor.availableSlots,
+      message: `تم ${slot.isAvailable ? "تعطيل" : "تفعيل"} الموعد بنجاح`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ أثناء تحديث حالة الموعد",
+      error: error.message,
+    });
+  }
 });
 
 module.exports = {
+  getDashboardStats,
+  getAppointmentStats,
+  getPatientStats,
+  getRevenueStats,
+  getRatingStats,
+  getAvailableSlotsStats,
+
   getDoctors,
   getDoctor,
   updateDoctor,
-  addAvailableSlots,
   getDoctorsBySpecialtyAndGovernorate,
+
+  getAvailableSlots,
+  addAvailableSlot,
+  updateAvailableSlot,
+  deleteAvailableSlot,
+  toggleSlotAvailability,
 };

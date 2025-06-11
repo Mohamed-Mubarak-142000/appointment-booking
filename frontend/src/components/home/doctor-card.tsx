@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { styled } from "@mui/material/styles"; // Use MUI's styled instead
 import type { DoctorData } from "../../apis/use-case/types";
 import { assets } from "../../assets/assets_frontend/assets";
+import { Link } from "react-router-dom";
 
 // Define proper theme type
 interface CustomTheme {
@@ -58,43 +59,53 @@ const DoctorItem = ({ doctor }: { doctor: DoctorData }) => {
   };
 
   return (
-    <StyledMotionCard
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
-      whileHover={whileHoverCard}
+    <Box
+      component={Link}
+      to={`/doctor-details/${doctor._id}`}
+      sx={{
+        textDecoration: "none",
+        color: "inherit",
+        width: "100%",
+      }}
     >
-      <ImageContainer
-        sx={{
-          backgroundColor: isHovered
-            ? theme.palette.primary.dark
-            : theme.palette.background.paper,
-        }}
+      <StyledMotionCard
+        onHoverStart={() => setIsHovered(true)}
+        onHoverEnd={() => setIsHovered(false)}
+        whileHover={whileHoverCard}
       >
-        <motion.img
-          src={assets.doc1}
-          alt={doctor.name}
-          initial={{ scale: 1 }}
-          animate={{ scale: isHovered ? 1.1 : 1 }}
-          transition={{ duration: 0.4 }}
-          style={{
-            width: "100%",
-            height: "auto",
-            objectFit: "cover",
+        <ImageContainer
+          sx={{
+            backgroundColor: isHovered
+              ? theme.palette.primary.dark
+              : theme.palette.background.paper,
           }}
-        />
-      </ImageContainer>
+        >
+          <motion.img
+            src={assets.doc1}
+            alt={doctor.name}
+            initial={{ scale: 1 }}
+            animate={{ scale: isHovered ? 1.1 : 1 }}
+            transition={{ duration: 0.4 }}
+            style={{
+              width: "100%",
+              height: "auto",
+              objectFit: "cover",
+            }}
+          />
+        </ImageContainer>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          p: 1,
-        }}
-      >
-        <Available />
-        <DoctorInfo doctor={doctor} />
-      </Box>
-    </StyledMotionCard>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            p: 1,
+          }}
+        >
+          <Available />
+          <DoctorInfo doctor={doctor} />
+        </Box>
+      </StyledMotionCard>
+    </Box>
   );
 };
 

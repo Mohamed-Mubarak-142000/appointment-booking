@@ -18,8 +18,8 @@ import {
   People as PatientsIcon,
   CalendarToday as AppointmentsIcon,
   MedicalServices as ServicesIcon,
-  Settings as SettingsIcon,
   Logout as LogoutIcon,
+  Archive as ArchiveIcon,
 } from "@mui/icons-material";
 import Logo from "../../components/logo";
 import { useDoctorLogout } from "../../apis/use-case/doctor/auth";
@@ -54,6 +54,7 @@ const Sidebar = ({
       path: "/doctor/appointments",
     },
     { text: "Services", icon: <ServicesIcon />, path: "/doctor/services" },
+    { text: "Archive", icon: <ArchiveIcon />, path: "/doctor/archive" },
   ];
 
   return (
@@ -110,18 +111,6 @@ const Sidebar = ({
       <Divider />
 
       <List sx={{ marginTop: "auto", paddingBottom: 0 }}>
-        <ListItem>
-          <ListItemButton onClick={() => handleNavigation("/doctor/settings")}>
-            <ListItemIcon sx={{ color: (theme) => theme.palette.common.white }}>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText
-              sx={{ color: (theme) => theme.palette.common.white }}
-              primary="Settings"
-            />
-          </ListItemButton>
-        </ListItem>
-
         {/* logout button  */}
         <ListItem sx={{ backgroundColor: (theme) => theme.palette.error.dark }}>
           <ListItemButton onClick={() => handleLogout()}>

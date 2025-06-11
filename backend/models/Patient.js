@@ -32,18 +32,13 @@ const PatientSchema = new mongoose.Schema({
   gender: {
     type: String,
     enum: ["male", "female"],
-    // required: [true, "Please specify gender"],
   },
+
   photo: {
     type: String,
     default: "default.jpg",
   },
-  bookedDoctors: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "Doctor",
-    },
-  ],
+
   createdAt: {
     type: Date,
     default: Date.now,

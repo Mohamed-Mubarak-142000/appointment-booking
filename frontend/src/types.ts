@@ -42,7 +42,6 @@ export interface LoginCredentials {
 export interface RegisterFormData extends LoginCredentials {
   name: string;
   confirmPassword: string;
-  // يمكن إضافة حقول أخرى حسب الحاجة
 }
 
 export interface UserData {

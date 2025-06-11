@@ -13,14 +13,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslate } from "../../locales";
 
 import { usePatientRegister } from "../../apis/use-case/patient/auth";
-import { patientRegisterSchema, type PatientRegisterFormData } from "./schema";
+
 import { FormHeader } from "./header-form";
+import {
+  patientRegisterSchema,
+  type PatientRegisterFormData,
+} from "../../schemas/patient-schema";
+import type { AuthTab } from "../../types";
 
 interface PatientRegisterFormProps {
   onClose: () => void;
+  setCurrentTab: (tab: AuthTab) => void;
 }
 
-export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
+export const PatientRegisterForm = ({
+  onClose,
+  setCurrentTab,
+}: PatientRegisterFormProps) => {
   const { t } = useTranslate("common");
   const { mutate: registerMutation, isPending } = usePatientRegister();
 
@@ -34,7 +43,7 @@ export const PatientRegisterForm = ({ onClose }: PatientRegisterFormProps) => {
 
   const onSubmit = (data: PatientRegisterFormData) => {
     registerMutation(data, {
-      onSuccess: () => onClose(),
+      onSuccess: () => setCurrentTab("login"),
     });
   };
 

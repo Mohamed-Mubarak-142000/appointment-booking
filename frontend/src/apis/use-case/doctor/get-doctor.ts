@@ -16,7 +16,7 @@ export function useGetDoctor(
     queryKey: ["doctor", id],
     queryFn: async () => {
       const { data } = await doctorApiClient.get<DoctorResponse>(
-        `/doctors/${id}`
+        `/doctors/doctor-details/${id}`
       );
       return data;
     },

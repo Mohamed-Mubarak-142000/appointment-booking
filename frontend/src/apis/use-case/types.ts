@@ -9,6 +9,20 @@ export interface BaseUser {
   age?: number;
   createdAt: string;
   updatedAt: string;
+  photo?: string;
+  gender?: "male" | "female" | "other";
+}
+
+export interface Review {
+  _id: string;
+  patient: {
+    _id: string;
+    name: string;
+    photo?: string;
+  };
+  rating: number;
+  comment: string;
+  createdAt: string;
 }
 
 // Doctor Specific Types
@@ -20,14 +34,23 @@ export interface DoctorData extends BaseUser {
   bio?: string;
   experience?: number;
   availableSlots?: AvailableSlot[];
+  reviews?: Review[];
+  averageRating?: number;
+  consultationFee?: number;
+  procedureFee?: number;
+  testFee?: number;
+  medicationFee?: number;
 }
 
-export interface AvailableSlot {
-  date: string;
-  startTime: string;
-  endTime: string;
-  isBooked: boolean;
-}
+// export interface AvailableSlot {
+//   _id: string;
+//   day: string;
+//   startTime: string;
+//   endTime: string;
+//   isAvailable: boolean;
+//   slotDuration?: number;
+//   type?: "Consultation" | "Procedure" | "Test" | "Medication";
+// }
 
 export interface AddSlotData {
   doctorId: string;
@@ -54,31 +77,34 @@ export interface UpdatePatientData
   > {
   _id: string;
 }
-
-// Appointment Types
 export interface Appointment {
   _id: string;
-  doctorId: string;
-  patientId: string;
+  doctor: string | DoctorData;
+  patient: string | PatientData;
   date: string;
   startTime: string;
   endTime: string;
-  reason?: string;
+  reason: string;
   status: "pending" | "confirmed" | "cancelled" | "completed";
   createdAt: string;
   updatedAt: string;
 }
 
-export interface BookAppointmentData {
-  patientId: string;
+export interface CreateAppointmentData {
   doctorId: string;
-  slot: {
-    date: string;
-    startTime: string;
-  };
-  reason?: string;
+  date: Date;
+  startTime: string;
+  endTime: string;
+  reason: string;
+  slotId?: string;
 }
 
+export type AppointmentStatusUpdate = "confirmed" | "cancelled" | "completed";
+
+export interface UpdateAppointmentStatusRequest {
+  appointmentId: string;
+  status: "confirmed" | "cancelled";
+}
 // Auth Types
 export interface UserData {
   _id: string;
@@ -133,4 +159,137 @@ export interface AuthContextType {
   logout: (role: AuthRole) => void;
   isAuthenticated: (role?: AuthRole) => boolean;
   getCurrentUser: (role: AuthRole) => UserData | null;
+}
+
+// src/types.ts
+export interface Appointment {
+  _id: string;
+  doctor: DoctorData | string;
+  patient: PatientData | string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  status: "pending" | "confirmed" | "cancelled" | "completed";
+  reason: string;
+  price?: number;
+  type?: "Consultation" | "Procedure" | "Test" | "Medication";
+  createdAt: string;
+}
+
+export interface DashboardStats {
+  totalAppointments: number;
+  appointmentsChange: number;
+  totalPatients: number;
+  patientsChange: number;
+  totalRevenue: number;
+  revenueChange: number;
+  averageRating: number;
+  ratingChange: number;
+  availableSlotsCount: number;
+}
+
+export interface AppointmentStats {
+  weekly: {
+    labels: string[];
+    scheduled: number[];
+    completed: number[];
+    cancelled: number[];
+  };
+  monthly: {
+    labels: string[];
+    scheduled: number[];
+    completed: number[];
+    cancelled: number[];
+  };
+}
+
+export interface PatientStats {
+  success: boolean;
+  labels: string[];
+  newPatients: {
+    archive: number[];
+    notArchive: number[];
+  };
+  returningPatients: {
+    archive: number[];
+    notArchive: number[];
+  };
+}
+
+export interface RevenueStats {
+  labels: string[];
+  data: number[];
+}
+
+export interface RatingStats {
+  labels: string[];
+  ratings: number[];
+}
+
+export interface DoctorSlots {
+  name: string;
+  specialty: string;
+}
+
+export interface AvailableSlot {
+  _id: string;
+  day: string;
+  startTime: string;
+  endTime: string;
+  slotDuration: number;
+  isAvailable: boolean;
+  type: string;
+}
+
+export interface DoctorSlotsResponse {
+  success: boolean;
+  data: {
+    doctor: DoctorSlots;
+    slots: AvailableSlot[];
+  };
+}
+/************************ */
+// types.ts
+export type Column<T> = {
+  id: keyof T;
+  label: string;
+  align?: "left" | "right" | "center";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  format?: (value: any, row?: T) => React.ReactNode | React.ReactNode;
+  sortable?: boolean;
+};
+
+export type PaginationProps = {
+  page: number;
+  rowsPerPage: number;
+  totalRows: number;
+  onPageChange: (page: number) => void;
+  onRowsPerPageChange: (rowsPerPage: number) => void;
+};
+
+export type SortingProps<T> = {
+  sortBy: keyof T;
+  sortOrder: "asc" | "desc";
+  onSort: (columnId: keyof T) => void;
+};
+
+export interface DataTableProps<T> {
+  title?: string;
+  columns: Column<T>[];
+  data: T[];
+  loading?: boolean;
+  error?: string | null;
+  onAdd?: () => void;
+  onEdit?: (row: T) => void;
+  onDelete?: (row: T) => void;
+  addButtonText?: string;
+  emptyMessage?: string;
+  pagination?: PaginationProps;
+  sorting?: SortingProps<T>;
+  // New props for search
+  searchTerm?: string;
+  onSearchChange?: (searchTerm: string) => void;
+  searchPlaceholder?: string;
+  showSearch?: boolean;
+  onView?: (row: T) => void;
 }

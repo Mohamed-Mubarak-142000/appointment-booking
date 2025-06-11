@@ -48,7 +48,10 @@ export const PatientAuthDialog = ({
         {currentTab === "login" ? (
           <PatientLoginForm onClose={onClose} />
         ) : (
-          <PatientRegisterForm onClose={onClose} />
+          <PatientRegisterForm
+            onClose={onClose}
+            setCurrentTab={setCurrentTab}
+          />
         )}
       </DialogContent>
     </Dialog>

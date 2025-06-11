@@ -32,16 +32,25 @@ const DoctorAppointmentPage = lazy(
 const DoctorServicesPage = lazy(
   () => import("./pages/dashboard/doctor-services-page")
 );
-const DoctorSettingPage = lazy(
-  () => import("./pages/dashboard/doctor-setting-page")
-);
 
+const DoctorArchive = lazy(() => import("./pages/dashboard/doctor-archive"));
 // Add new doctor auth pages
 const DoctorLoginPage = lazy(() => import("./pages/dashboard/doctor-login"));
 
 const DoctorRegisterPage = lazy(
   () => import("./pages/dashboard/doctor-register")
 );
+
+const PatientDetailsPage = lazy(
+  () => import("./pages/dashboard/patient-details")
+);
+
+const AppointmentDetailsPage = lazy(
+  () => import("./pages/dashboard/appointment-details")
+);
+
+const FilterDoctorsPage = lazy(() => import("./pages/filter-doctors-page"));
+const DoctorDetailsPage = lazy(() => import("./pages/doctor-details-page"));
 
 const router = createBrowserRouter([
   {
@@ -51,8 +60,12 @@ const router = createBrowserRouter([
       { path: "/home", element: <HomePage /> },
       { path: "/about", element: <AboutPage /> },
       { path: "/doctors", element: <DoctorsPage /> },
-      { path: "/doctors/:specialty", element: <DoctorsPage /> },
+      { path: "/doctor-details/:id", element: <DoctorDetailsPage /> },
       { path: "/contact", element: <ContactUsPage /> },
+      {
+        path: "/filter",
+        element: <FilterDoctorsPage />,
+      },
     ],
   },
 
@@ -92,7 +105,15 @@ const router = createBrowserRouter([
               { path: "patients", element: <DoctorPatientPage /> },
               { path: "appointments", element: <DoctorAppointmentPage /> },
               { path: "services", element: <DoctorServicesPage /> },
-              { path: "settings", element: <DoctorSettingPage /> },
+              { path: "archive", element: <DoctorArchive /> },
+              {
+                path: "patient-details/:patientId",
+                element: <PatientDetailsPage />,
+              },
+              {
+                path: "appointment-details/:appointmentId",
+                element: <AppointmentDetailsPage />,
+              },
             ],
           },
         ],

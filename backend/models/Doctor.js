@@ -57,16 +57,60 @@ const DoctorSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+
   availableSlots: [
     {
-      date: Date,
-      times: [String],
+      day: {
+        type: String,
+        enum: [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday",
+        ],
+        required: true,
+      },
+      startTime: {
+        type: String,
+        required: true,
+        match: /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
+      },
+      endTime: {
+        type: String,
+        required: true,
+        match: /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
+      },
+      slotDuration: {
+        type: Number,
+        default: 30,
+      },
+      isAvailable: {
+        type: Boolean,
+        default: true,
+      },
+      type: {
+        type: String,
+        enum: ["consultation", "procedure", "test", "medication"],
+        default: "consultation",
+      },
     },
   ],
+
+  averageRating: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 5,
+  },
+
   photo: {
     type: String,
     default: "default.jpg",
   },
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -86,5 +130,16 @@ DoctorSchema.pre("save", async function (next) {
 DoctorSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
+
+// models/Doctor.js
+DoctorSchema.pre("save", function (next) {
+  if (this.reviews && this.reviews.length > 0) {
+    const sum = this.reviews.reduce((acc, review) => acc + review.rating, 0);
+    this.averageRating = parseFloat((sum / this.reviews.length).toFixed(1));
+  } else {
+    this.averageRating = 0;
+  }
+  next();
+});
 
 module.exports = mongoose.model("Doctor", DoctorSchema);

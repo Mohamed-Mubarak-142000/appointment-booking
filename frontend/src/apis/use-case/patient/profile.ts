@@ -9,7 +9,7 @@ import type { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import type { UpdatePatientData } from "../../../types";
 import { getErrorMessage } from "../doctor/auth";
-import type { PatientData } from "../types";
+import type { CreateAppointmentData, PatientData } from "../types";
 import { patientApiClient } from "../../api-client";
 
 export function useGetPatientProfile(): UseQueryResult<
@@ -56,3 +56,54 @@ export function useUpdatePatientProfile(): UseMutationResult<
     },
   });
 }
+
+export const useGetPatientStats = () => {
+  return useQuery({
+    queryKey: ["patientStats"],
+    queryFn: async () => {
+      const response = await patientApiClient.get("/dashboard/stats");
+      return response.data;
+    },
+  });
+};
+
+export const useSearchDoctors = (query: string) => {
+  return useQuery({
+    queryKey: ["doctorSearch", query],
+    queryFn: async () => {
+      const response = await patientApiClient.get(`/doctors/search?q=${query}`);
+      return response.data;
+    },
+    enabled: query.length > 2,
+  });
+};
+
+export const useBookAppointment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CreateAppointmentData) => {
+      const response = await patientApiClient.post("/appointments", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patientAppointments"] });
+      queryClient.invalidateQueries({ queryKey: ["patientStats"] });
+    },
+  });
+};
+
+export const useCancelAppointment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await patientApiClient.put(`/appointments/${id}/cancel`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patientAppointments"] });
+      queryClient.invalidateQueries({ queryKey: ["patientStats"] });
+    },
+  });
+};

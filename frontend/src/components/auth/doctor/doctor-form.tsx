@@ -8,9 +8,12 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDoctorLogin } from "../../../apis/use-case/doctor/auth";
-import { doctorLoginSchema, type DoctorLoginFormData } from "./schema";
 import { Link } from "react-router-dom";
 import { useTranslate } from "../../../locales";
+import {
+  doctorLoginSchema,
+  type DoctorLoginFormData,
+} from "../../../schemas/doctor-schema";
 
 export const DoctorLoginForm = () => {
   const { mutate: login, isPending } = useDoctorLogin();

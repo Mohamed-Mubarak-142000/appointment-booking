@@ -5,6 +5,8 @@ import { themeConfig, ThemeProvider } from "./theme";
 import { defaultSettings, SettingsProvider } from "./components/settings";
 import { ToastContainer } from "react-toastify";
 import AppRoutes from "./app-routes";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 // Lazy load pages
 
 function App() {

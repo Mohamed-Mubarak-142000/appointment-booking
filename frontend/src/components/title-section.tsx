@@ -36,8 +36,8 @@ const TitleSection = ({
       {title && (
         <Typography
           variant={slotProps?.title?.variant ?? "h5"}
+          color="primary.darker"
           sx={{
-            color: (theme) => theme.palette.text.primary,
             fontSize: (theme) => theme.typography.pxToRem(24),
             fontWeight: (theme) => theme.typography.fontWeightBold,
             textAlign: "center",

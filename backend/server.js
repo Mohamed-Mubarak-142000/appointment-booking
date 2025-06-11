@@ -12,6 +12,7 @@ const doctorRoutes = require("./routes/doctor-route");
 const patientRoutes = require("./routes/patient-route");
 const specialtyRoutes = require("./routes/special-route");
 const governmentRoutes = require("./routes/governament-route");
+const appointmentRoutes = require("./routes/appointment-route");
 const app = express();
 
 app.use(express.json());
@@ -33,8 +34,9 @@ app.use("/api/doctors", doctorRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/specialties", specialtyRoutes);
 app.use("/api/governments", governmentRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 6000;
 
 const server = app.listen(
   PORT,

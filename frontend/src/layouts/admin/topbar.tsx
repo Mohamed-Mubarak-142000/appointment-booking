@@ -70,8 +70,13 @@ const TopBar = ({
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          {currentUser?.name || "Doctor Dashboard"}
+        <Typography
+          variant="h6"
+          noWrap
+          component="div"
+          sx={{ flexGrow: 1, textTransform: "capitalize" }}
+        >
+          {currentUser?.name ? `Dr. ${currentUser.name}` : "Doctor Dashboard"}
         </Typography>
 
         <IconButton color="inherit" onClick={handleNotificationsOpen}>

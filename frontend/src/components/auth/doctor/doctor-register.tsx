@@ -1,11 +1,14 @@
 import { Box, TextField, Button, Grid, CircularProgress } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { doctorRegisterSchema, type DoctorRegisterFormData } from "./schema";
 import { useDoctorRegister } from "../../../apis/use-case/doctor/auth";
 import { useTranslate } from "../../../locales";
 import { GovernorateSelector } from "../../select-governoment";
 import { SpecialtySelector } from "../../select-specialiste";
+import {
+  doctorRegisterSchema,
+  type DoctorRegisterFormData,
+} from "../../../schemas/doctor-schema";
 
 export const DoctorRegisterForm = () => {
   const { mutate: registerMutation, isPending } = useDoctorRegister();

@@ -1,12 +1,15 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import TitleSection from "../title-section";
-import { doctors } from "./data-static-doctors";
 import DoctorItem from "./doctor-card";
 import { useTranslate } from "../../locales";
 import { useNavigate } from "react-router-dom";
+import { useGetAllDoctors } from "../../apis/use-case/doctor/get-all-doctors";
 
 const TopDoctors = () => {
   const { t } = useTranslate("home");
+  const { data } = useGetAllDoctors({
+    limit: 8,
+  });
   const navigate = useNavigate();
   const navigateToShowAll = () => {
     navigate("/doctors");
@@ -45,7 +48,7 @@ const TopDoctors = () => {
           gap: 2,
         }}
       >
-        {doctors.slice(0, 10).map((item, index) => (
+        {data?.data.map((item, index) => (
           <DoctorItem doctor={item} key={index} />
         ))}
       </Box>

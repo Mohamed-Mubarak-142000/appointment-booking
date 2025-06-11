@@ -12,8 +12,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useTranslate } from "../../locales";
 import { usePatientLogin } from "../../apis/use-case/patient/auth";
-import { patientLoginSchema, type PatientLoginFormData } from "./schema";
+
 import { FormHeader } from "./header-form";
+import {
+  patientLoginSchema,
+  type PatientLoginFormData,
+} from "../../schemas/patient-schema";
 
 interface PatientLoginFormProps {
   onClose: () => void;
@@ -33,7 +37,10 @@ export const PatientLoginForm = ({ onClose }: PatientLoginFormProps) => {
 
   const onSubmit = (data: PatientLoginFormData) => {
     login(data, {
-      onSuccess: () => onClose(),
+      onSuccess: () => {
+        onClose();
+        window.location.reload();
+      },
     });
   };
 

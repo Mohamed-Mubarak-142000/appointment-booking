@@ -9,7 +9,7 @@ const PublicLayout = () => {
     <>
       <Navbar />
       <Stack
-        spacing={{ xs: 5, md: 10, lg: 15 }}
+        spacing={{ xs: 5, md: 10 }}
         sx={{
           minHeight: "100vh",
           py: { xs: 5, md: 10 },

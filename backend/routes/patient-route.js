@@ -2,13 +2,16 @@ const express = require("express");
 const {
   updatePatient,
   getBookedDoctors,
+  getPatient,
 } = require("../controllers/patient-controller");
 const { protectPatient } = require("../middleware/auth");
 
 const router = express.Router();
 
-router.route("/:id").put(protectPatient, updatePatient);
+router.put("/:id", protectPatient, updatePatient);
 
-router.route("/:id/doctors").get(protectPatient, getBookedDoctors);
+router.get("/:id/doctors", protectPatient, getBookedDoctors);
+
+router.get("/patient-details/:id", getPatient);
 
 module.exports = router;
