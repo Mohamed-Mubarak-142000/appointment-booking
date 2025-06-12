@@ -68,6 +68,7 @@ const registerDoctor = asyncHandler(async (req, res) => {
     throw new Error("Invalid doctor data");
   }
 });
+
 const loginDoctor = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 

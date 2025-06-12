@@ -18,6 +18,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Skeleton,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
@@ -72,7 +73,7 @@ const ChartTypeSelector = ({
   value: string;
 }) => {
   const handleChange = (
-    event: React.MouseEvent<HTMLElement>,
+    _event: React.MouseEvent<HTMLElement>,
     newChartType: string | null
   ) => {
     if (newChartType !== null) {
@@ -249,7 +250,14 @@ const AppointmentsChart = () => {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <Stack spacing={2} sx={{ width: "100%", px: 2 }}>
+        <Skeleton variant="text" width={180} height={30} />
+        <Skeleton variant="rectangular" width="100%" height={40} />
+        <Skeleton variant="rectangular" width="100%" height={400} />
+      </Stack>
+    );
   if (!stats) return <div>No data available</div>;
 
   return (

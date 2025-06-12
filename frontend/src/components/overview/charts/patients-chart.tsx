@@ -1,10 +1,18 @@
+import { Skeleton, Stack } from "@mui/material";
 import { usePatientStats } from "../../../apis/use-case/doctor/dashboard";
 import ChartCommon from "../../../components/overview/common/chart-component";
 
 const PatientsChart = () => {
   const { data: stats, isLoading } = usePatientStats();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <Stack spacing={2} sx={{ width: "100%", px: 2 }}>
+        <Skeleton variant="text" width={180} height={30} />
+        <Skeleton variant="rectangular" width="100%" height={40} />
+        <Skeleton variant="rectangular" width="100%" height={400} />
+      </Stack>
+    );
   if (!stats || !stats.labels?.length) return <div>No data available</div>;
 
   // تحضير البيانات للمخطط

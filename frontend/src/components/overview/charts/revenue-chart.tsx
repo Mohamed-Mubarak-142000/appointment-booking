@@ -1,5 +1,5 @@
 // src/components/dashboard/charts/RevenueChart.tsx
-import { Stack } from "@mui/material";
+import { Skeleton, Stack } from "@mui/material";
 import { useRevenueStats } from "../../../apis/use-case/doctor/dashboard";
 import ChartCommon from "../../../components/overview/common/chart-component";
 
@@ -23,7 +23,14 @@ const RevenueChart = () => {
     ],
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <Stack spacing={2} sx={{ width: "100%", px: 2 }}>
+        <Skeleton variant="text" width={180} height={30} />
+        <Skeleton variant="rectangular" width="100%" height={40} />
+        <Skeleton variant="rectangular" width="100%" height={400} />
+      </Stack>
+    );
   if (!stats?.data?.length)
     return (
       <Stack
