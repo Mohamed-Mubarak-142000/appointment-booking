@@ -14,8 +14,12 @@ import {
 import { toast } from "react-toastify";
 import { useCreateAppointment } from "../../apis/use-case/patient/appointments";
 import { usePatientAuth } from "../../context/auth-context";
-import type { AvailableSlot, DoctorData } from "../../apis/use-case/types";
+import type {
+  AvailableSlot,
+  AvailableSlotsData,
+} from "../../apis/use-case/types";
 import { useEffect, useState } from "react";
+import { GetAvailableSlotsSelector } from "./select-available-slots";
 
 const appointmentSchema = z.object({
   doctorId: z.string().min(1, "معرف الطبيب مطلوب"),
@@ -45,7 +49,13 @@ const appointmentSchema = z.object({
 
 type AppointmentFormValues = z.infer<typeof appointmentSchema>;
 
-const AppointmentBooking = ({ doctor }: { doctor: DoctorData }) => {
+const AppointmentBooking = ({
+  doctorId,
+  data,
+}: {
+  doctorId: string;
+  data: AvailableSlotsData;
+}) => {
   const { mutateAsync: createAppointment, isPending } = useCreateAppointment();
   const { patient } = usePatientAuth();
   const [availableSlots, setAvailableSlots] = useState<AvailableSlot[]>([]);
@@ -56,11 +66,12 @@ const AppointmentBooking = ({ doctor }: { doctor: DoctorData }) => {
     formState: { errors, isValid },
     watch,
     reset,
+    control,
     setValue,
   } = useForm<AppointmentFormValues>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      doctorId: doctor._id,
+      doctorId,
       type: "consultation",
       reason: "",
     },
@@ -71,8 +82,8 @@ const AppointmentBooking = ({ doctor }: { doctor: DoctorData }) => {
   const selectedType = watch("type");
 
   useEffect(() => {
-    if (doctor?.availableSlots) {
-      const filteredSlots = doctor.availableSlots.filter(
+    if (data) {
+      const filteredSlots = data?.slots?.filter(
         (slot) =>
           slot.day.toLowerCase() === selectedDay?.toLowerCase() &&
           slot.isAvailable &&
@@ -83,27 +94,17 @@ const AppointmentBooking = ({ doctor }: { doctor: DoctorData }) => {
         setValue("startTime", "");
       }
     }
-  }, [selectedDay, selectedType, doctor?.availableSlots, setValue]);
+  }, [selectedDay, selectedType, data, setValue]);
 
-  function calculatePrice(type: string, doctor: DoctorData): number {
+  function calculatePrice(type: string): number {
     const fees = {
-      consultation: doctor.consultationFee || 100,
-      procedure: doctor.procedureFee || 200,
-      test: doctor.testFee || 150,
-      medication: doctor.medicationFee || 50,
+      consultation: 100,
+      procedure: 200,
+      test: 150,
+      medication: 50,
     };
     return fees[type as keyof typeof fees] || 100;
   }
-
-  const getAppointmentTypeLabel = (type: string) => {
-    const types: Record<string, string> = {
-      consultation: "استشارة",
-      procedure: "إجراء طبي",
-      test: "فحص",
-      medication: "وصفة طبية",
-    };
-    return types[type.toLowerCase()] || type;
-  };
 
   const getDayLabel = (day: string) => {
     const days: Record<string, string> = {
@@ -135,7 +136,7 @@ const AppointmentBooking = ({ doctor }: { doctor: DoctorData }) => {
       }
 
       await createAppointment({
-        doctor: doctor._id,
+        doctor: doctorId,
         slot: selectedSlot._id,
         patient: patient._id,
         type: data.type,
@@ -143,7 +144,7 @@ const AppointmentBooking = ({ doctor }: { doctor: DoctorData }) => {
         day: selectedDay as string,
         startTime: data.startTime,
         endTime: selectedSlot.endTime,
-        price: calculatePrice(data.type, doctor),
+        price: calculatePrice(data.type),
       });
 
       reset();
@@ -159,10 +160,10 @@ const AppointmentBooking = ({ doctor }: { doctor: DoctorData }) => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h5" gutterBottom>
-            حجز موعد مع د. {doctor.name}
+            حجز موعد مع د. {data?.doctor?.name}
           </Typography>
           <Typography variant="subtitle1" color="text.secondary">
-            تخصص: {doctor.specialty}
+            تخصص: {data?.doctor?.specialty}
           </Typography>
         </Grid>
 
@@ -176,16 +177,10 @@ const AppointmentBooking = ({ doctor }: { doctor: DoctorData }) => {
             fullWidth
             required
           >
-            <MenuItem value="consultation">
-              استشارة ({doctor.consultationFee || 100} ريال)
-            </MenuItem>
-            <MenuItem value="procedure">
-              إجراء طبي ({doctor.procedureFee || 200} ريال)
-            </MenuItem>
-            <MenuItem value="test">فحص ({doctor.testFee || 150} ريال)</MenuItem>
-            <MenuItem value="medication">
-              وصفة طبية ({doctor.medicationFee || 50} ريال)
-            </MenuItem>
+            <MenuItem value="consultation">استشارة ( 100 ريال)</MenuItem>
+            <MenuItem value="procedure">إجراء طبي (200 ريال)</MenuItem>
+            <MenuItem value="test">فحص (150 ريال)</MenuItem>
+            <MenuItem value="medication">وصفة طبية (50 ريال)</MenuItem>
           </TextField>
         </Grid>
 
@@ -201,7 +196,7 @@ const AppointmentBooking = ({ doctor }: { doctor: DoctorData }) => {
           >
             {Array.from(
               new Set(
-                doctor?.availableSlots
+                data?.slots
                   ?.filter((slot) => slot.isAvailable)
                   .map((slot) => slot.day.toLowerCase())
               )
@@ -214,31 +209,14 @@ const AppointmentBooking = ({ doctor }: { doctor: DoctorData }) => {
         </Grid>
 
         <Grid item xs={12}>
-          <TextField
-            select
-            label="المواعيد المتاحة"
-            {...register("startTime")}
+          <GetAvailableSlotsSelector
+            control={control}
+            name="startTime"
+            placeholder="اختر فترة زمنية"
             error={!!errors.startTime}
             helperText={errors.startTime?.message}
-            fullWidth
-            required
-            disabled={!selectedDay || availableSlots.length === 0}
-          >
-            {availableSlots.length > 0 ? (
-              availableSlots.map((slot) => (
-                <MenuItem key={slot._id} value={slot.startTime}>
-                  من {slot.startTime} إلى {slot.endTime} (
-                  {getAppointmentTypeLabel(slot.type || "consultation")})
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem disabled>
-                {selectedDay
-                  ? "لا توجد مواعيد متاحة لهذا اليوم"
-                  : "الرجاء اختيار يوم أولاً"}
-              </MenuItem>
-            )}
-          </TextField>
+            doctorId={doctorId}
+          />
         </Grid>
 
         <Grid item xs={12}>

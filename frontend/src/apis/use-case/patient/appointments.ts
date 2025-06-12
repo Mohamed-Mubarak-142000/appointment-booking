@@ -109,6 +109,7 @@ export const useCreateAppointment = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doctor-available-slots"] });
+      queryClient.invalidateQueries({ queryKey: ["available-slots"] });
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
     },
     onError: (error: Error) => {

@@ -5,6 +5,8 @@ import DataTable from "../../components/overview/common/data-table";
 import type { PatientColumn } from "../../components/doctor-pateints/columns";
 import columns from "../../components/doctor-pateints/columns";
 import { useNavigate } from "react-router-dom";
+import ConfirmationDialog from "../../components/confirm-dailog";
+import ButtonAction from "../../components/button-action";
 
 const DoctorPatientsList = () => {
   const { doctor } = useDoctorAuth();
@@ -28,12 +30,63 @@ const DoctorPatientsList = () => {
       data={patients}
       loading={isPending}
       error={isError ? "فشل في تحميل البيانات" : null}
-      onDelete={(row) => console.log("Delete", row)}
+      renderDeleteButton={(row, handleMenuClose) => (
+        <ConfirmationDialog
+          title="حذف المريض"
+          content="هل تريد حذف المريض؟"
+          confirmButtonLabel="حذف"
+          cancelButtonLabel="الغاء"
+          isLoading={false}
+          status="error"
+          onConfirm={() => {
+            console.log("Delete row:", row);
+            handleMenuClose();
+          }}
+          clickAction={({ openDialog }) => (
+            <ButtonAction
+              slotProps={{
+                icon: { color: "error.main" },
+                button: {
+                  fullWidth: true,
+                  variant: "text",
+                  sx: {
+                    color: "error.main",
+                    justifyContent: "space-between",
+                  },
+                },
+              }}
+              title="حذف"
+              icon="icon-park-outline:delete"
+              onClick={openDialog}
+              // isLoading={deleteSlotMutation.isPending}
+            />
+          )}
+        />
+      )}
       showSearch={true}
       searchTerm={searchTerm}
       onSearchChange={setSearchTerm}
       searchPlaceholder="ابحث عن مريض..."
-      onView={(row) => handlePatientDetails(row._id)}
+      renderViewButton={(row, handleMenuClose) => (
+        <ButtonAction
+          icon="lets-icons:view"
+          slotProps={{
+            icon: { color: "success.darker" },
+            button: {
+              fullWidth: true,
+              variant: "text",
+              sx: {
+                justifyContent: "space-between",
+              },
+            },
+          }}
+          title="عرض"
+          onClick={() => {
+            handlePatientDetails(row._id);
+            handleMenuClose();
+          }}
+        />
+      )}
     />
   );
 };

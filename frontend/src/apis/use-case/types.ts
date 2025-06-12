@@ -1,3 +1,5 @@
+import type React from "react";
+
 // Base User Types
 export type AuthRole = "doctor" | "patient";
 
@@ -231,6 +233,8 @@ export interface DoctorSlots {
   specialty: string;
 }
 
+export type SlotType = "consultation" | "procedure" | "test" | "medication";
+
 export interface AvailableSlot {
   _id: string;
   day: string;
@@ -238,15 +242,16 @@ export interface AvailableSlot {
   endTime: string;
   slotDuration: number;
   isAvailable: boolean;
-  type: string;
+  type: SlotType;
 }
 
+export interface AvailableSlotsData {
+  doctor: DoctorSlots;
+  slots: AvailableSlot[];
+}
 export interface DoctorSlotsResponse {
   success: boolean;
-  data: {
-    doctor: DoctorSlots;
-    slots: AvailableSlot[];
-  };
+  data: AvailableSlotsData;
 }
 /************************ */
 // types.ts
@@ -255,7 +260,7 @@ export type Column<T> = {
   label: string;
   align?: "left" | "right" | "center";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  format?: (value: any, row?: T) => React.ReactNode | React.ReactNode;
+  format?: (value: any, row?: T) => React.ReactNode;
   sortable?: boolean;
 };
 
@@ -279,9 +284,10 @@ export interface DataTableProps<T> {
   data: T[];
   loading?: boolean;
   error?: string | null;
-  onAdd?: () => void;
-  onEdit?: (row: T) => void;
-  onDelete?: (row: T) => void;
+  renderAddButton?: React.ReactNode;
+  renderEditButton?: (row: T, handleMenuClose: () => void) => React.ReactNode;
+  renderDeleteButton?: (row: T, handleMenuClose: () => void) => React.ReactNode;
+  renderViewButton?: (row: T, handleMenuClose: () => void) => React.ReactNode;
   addButtonText?: string;
   emptyMessage?: string;
   pagination?: PaginationProps;
@@ -292,4 +298,5 @@ export interface DataTableProps<T> {
   searchPlaceholder?: string;
   showSearch?: boolean;
   onView?: (row: T) => void;
+  deleteActionLoading?: boolean;
 }

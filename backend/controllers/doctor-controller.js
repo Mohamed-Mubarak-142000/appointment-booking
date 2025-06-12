@@ -783,8 +783,34 @@ const getAvailableSlotsStats = asyncHandler(async (req, res) => {
 
 /*********** */
 
+// const getAvailableSlots = asyncHandler(async (req, res) => {
+//   const { doctorId } = req.params;
+
+//   const doctor = await Doctor.findById(doctorId)
+//     .select("availableSlots name specialty")
+//     .lean();
+
+//   if (!doctor) {
+//     return res
+//       .status(404)
+//       .json({ success: false, message: "الطبيب غير موجود" });
+//   }
+
+//   res.status(200).json({
+//     success: true,
+//     data: {
+//       doctor: {
+//         name: doctor.name,
+//         specialty: doctor.specialty,
+//       },
+//       slots: doctor.availableSlots,
+//     },
+//   });
+// });
+
 const getAvailableSlots = asyncHandler(async (req, res) => {
   const { doctorId } = req.params;
+  const { showAll = "false" } = req.query; // Default: false (يظهر فقط المتاحة)
 
   const doctor = await Doctor.findById(doctorId)
     .select("availableSlots name specialty")
@@ -796,6 +822,12 @@ const getAvailableSlots = asyncHandler(async (req, res) => {
       .json({ success: false, message: "الطبيب غير موجود" });
   }
 
+  // فلترة السلات بناءً على القيمة المرسلة من الفرونت
+  const slots =
+    showAll === "true"
+      ? doctor.availableSlots // إظهار الكل
+      : doctor.availableSlots.filter((slot) => slot.isAvailable); // إظهار المتاحة فقط
+
   res.status(200).json({
     success: true,
     data: {
@@ -803,17 +835,17 @@ const getAvailableSlots = asyncHandler(async (req, res) => {
         name: doctor.name,
         specialty: doctor.specialty,
       },
-      slots: doctor.availableSlots,
+      slots, // نرسل السلات بعد الفلترة
     },
   });
 });
 
 const addAvailableSlot = asyncHandler(async (req, res) => {
   const doctorId = req.doctor._id;
-  const { day, startTime, endTime, slotDuration } = req.body;
+  const { day, startTime, endTime, slotDuration, type } = req.body;
 
   // التحقق من صحة البيانات
-  if (!day || !startTime || !endTime) {
+  if (!day || !startTime || !endTime || !type) {
     return res.status(400).json({
       success: false,
       message: "الرجاء إدخال جميع الحقول المطلوبة",
@@ -830,17 +862,27 @@ const addAvailableSlot = asyncHandler(async (req, res) => {
     });
   }
 
+  // التحقق من صحة نوع الموعد
+  const validTypes = ["consultation", "procedure", "test", "medication"];
+  if (!validTypes.includes(type)) {
+    return res.status(400).json({
+      success: false,
+      message: "نوع الموعد غير صالح",
+    });
+  }
+
   try {
     const doctor = await Doctor.findByIdAndUpdate(
       doctorId,
       {
         $push: {
           availableSlots: {
-            day: day.toLowerCase(), // توحيد تنسيق اليوم
+            day: day.toLowerCase(),
             startTime,
             endTime,
             slotDuration: slotDuration || 30,
             isAvailable: true,
+            type: type,
           },
         },
       },

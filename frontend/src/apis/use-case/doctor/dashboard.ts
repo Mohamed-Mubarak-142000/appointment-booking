@@ -6,8 +6,15 @@ import {
   type PatientStats,
   type RatingStats,
   type RevenueStats,
+  type SlotType,
 } from "../types";
 import { doctorApiClient } from "../../api-client";
+import { toast } from "react-toastify";
+
+interface AvailableSlotsStats {
+  available: number;
+  unavailable: number;
+}
 
 export const useDashboardStats = () => {
   return useQuery<DashboardStats>({
@@ -59,11 +66,6 @@ export const useRatingStats = () => {
   });
 };
 
-interface AvailableSlotsStats {
-  available: number;
-  unavailable: number;
-}
-
 export const useAvailableSlotsStats = () => {
   return useQuery<AvailableSlotsStats>({
     queryKey: ["available-slots-stats"],
@@ -78,12 +80,18 @@ export const useAvailableSlotsStats = () => {
 
 /********************* */
 
-export const useAvailableSlots = (doctorId: string) => {
+export const useAvailableSlots = ({
+  id,
+  showAll = false,
+}: {
+  id: string;
+  showAll?: boolean;
+}) => {
   return useQuery({
-    queryKey: ["available-slots", doctorId],
+    queryKey: ["available-slots", id],
     queryFn: async () => {
       const response = await doctorApiClient.get<DoctorSlotsResponse>(
-        `/doctors/all-slots/${doctorId}`
+        `/doctors/all-slots/${id}?showAll=${showAll}`
       );
       return response.data.data;
     },
@@ -99,12 +107,18 @@ export const useAddAvailableSlot = () => {
       startTime: string;
       endTime: string;
       slotDuration?: number;
+      type: SlotType;
     }) => {
       const response = await doctorApiClient.post("/doctors/slots", data);
       return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["available-slots"] });
+      toast.success("Slot added successfully");
+    },
+    onError: () => {
+      console.error("Error adding slot:");
+      toast.error("Failed to add slot");
     },
   });
 };
@@ -122,7 +136,11 @@ export const useUpdateAvailableSlot = () => {
       return response.data;
     },
     onSuccess: () => {
+      toast.success("Slot updated successfully");
       queryClient.invalidateQueries({ queryKey: ["available-slots"] });
+    },
+    onError: () => {
+      toast.error("Failed to update slot");
     },
   });
 };
@@ -136,7 +154,11 @@ export const useDeleteAvailableSlot = () => {
       return response.data;
     },
     onSuccess: () => {
+      toast.success("Slot deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["available-slots"] });
+    },
+    onError: () => {
+      toast.error("Failed to delete slot");
     },
   });
 };
@@ -152,7 +174,11 @@ export const useUpdateIsAvailabilitySlot = () => {
       return response.data;
     },
     onSuccess: () => {
+      toast.success("Slot updated successfully");
       queryClient.invalidateQueries({ queryKey: ["available-slots"] });
+    },
+    onError: () => {
+      toast.error("Failed to update slot");
     },
   });
 };

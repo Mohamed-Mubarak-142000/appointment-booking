@@ -7,6 +7,8 @@ import { EmptyStateContent } from "../components/empty-state-content";
 import AvailableSlotsDoctor from "../components/doctor-details/available-slots";
 import ShowVideoAndAppointmentBooking from "../components/doctor-details/show-video-appointment-booking";
 import { PatientsComments } from "../components/doctor-details/comments";
+import TitleSection from "../components/title-section";
+import { useGetAvailableSlotsForPatient } from "../apis/use-case/doctor/get-available-slots";
 
 const DoctorDetailsPage = () => {
   const { id } = useParams();
@@ -14,6 +16,12 @@ const DoctorDetailsPage = () => {
   const { data, isPending } = useGetDoctor(id || "", {
     enabled: !!id,
   });
+
+  const { data: availableSlots, isPending: isPendingAvailableSlots } =
+    useGetAvailableSlotsForPatient({
+      id: id || "",
+      showAll: false,
+    });
 
   console.log("data", data);
 
@@ -113,12 +121,33 @@ const DoctorDetailsPage = () => {
         </DoctorInfo>
       </Grid>
 
-      <AvailableSlotsDoctor
-        data={data?.data?.availableSlots || []}
-        isPending={isPending}
+      <TitleSection
+        title="Available Slots"
+        subTitle="Select a slot to book an appointment with the doctor for your convenience."
+        slotProps={{
+          title: {
+            variant: "h3",
+            sx: {
+              fontSize: { xs: "1.5rem", md: "2rem", lg: "3rem" },
+              fontWeight: (theme) => theme.typography.fontWeightBold,
+            },
+          },
+          subTitle: {
+            variant: "body1",
+            sx: {
+              fontSize: { xs: ".5rem", md: ".75rem", lg: "1rem" },
+              fontWeight: (theme) => theme.typography.fontWeightRegular,
+            },
+          },
+        }}
       />
 
-      {data?.data && <ShowVideoAndAppointmentBooking doctor={data.data} />}
+      <AvailableSlotsDoctor
+        data={availableSlots?.slots || []}
+        isPending={isPendingAvailableSlots}
+      />
+
+      <ShowVideoAndAppointmentBooking doctorId={id} data={availableSlots!} />
 
       <PatientsComments doctorId={id} />
     </>

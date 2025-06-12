@@ -13,20 +13,12 @@ import {
   Box,
   TablePagination,
   TableSortLabel,
-  Button,
   TextField,
   InputAdornment,
   Menu,
   MenuItem,
 } from "@mui/material";
-import {
-  Add,
-  Search,
-  MoreVert,
-  Visibility,
-  Edit,
-  Delete,
-} from "@mui/icons-material";
+import { Search, MoreVert } from "@mui/icons-material";
 import type { DataTableProps } from "../../../apis/use-case/types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,11 +27,10 @@ const DataTable = <T extends Record<string, any>>({
   data,
   loading = false,
   error = null,
-  onAdd,
-  onEdit,
-  onDelete,
-  onView,
-  addButtonText = "Add New",
+  renderAddButton,
+  renderEditButton,
+  renderDeleteButton,
+  renderViewButton,
   title,
   pagination,
   sorting,
@@ -49,58 +40,150 @@ const DataTable = <T extends Record<string, any>>({
   searchPlaceholder = "Search...",
   showSearch = false,
 }: DataTableProps<T>) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorElMap, setAnchorElMap] = useState<
+    Record<string, HTMLElement | null>
+  >({});
   const [selectedRow, setSelectedRow] = useState<T | null>(null);
-  const open = Boolean(anchorEl);
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>, row: T) => {
-    setAnchorEl(event.currentTarget);
+  const getRowId = (row: T, index: number) => row._id || index;
+
+  const handleMenuClick = (
+    event: React.MouseEvent<HTMLElement>,
+    row: T,
+    index: number
+  ) => {
+    const id = getRowId(row, index);
+    setAnchorElMap((prev) => ({ ...prev, [id]: event.currentTarget }));
     setSelectedRow(row);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-    setSelectedRow(null);
+  const handleMenuClose = (rowId: string | number) => {
+    setAnchorElMap((prev) => ({ ...prev, [rowId]: null }));
   };
 
-  const handleView = () => {
-    if (selectedRow && onView) {
-      onView(selectedRow);
-    }
-    handleClose();
-  };
-
-  const handleEdit = () => {
-    if (selectedRow && onEdit) {
-      onEdit(selectedRow);
-    }
-    handleClose();
-  };
-
-  const handleDelete = () => {
-    if (selectedRow && onDelete) {
-      onDelete(selectedRow);
-    }
-    handleClose();
-  };
-
-  const handleChangePage = (_event: unknown, newPage: number) => {
+  const handleChangePage = (_: unknown, newPage: number) =>
     pagination?.onPageChange(newPage);
-  };
+  const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) =>
+    pagination?.onRowsPerPageChange(parseInt(e.target.value, 10));
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    pagination?.onRowsPerPageChange(parseInt(event.target.value, 10));
-  };
+  const handleSort = (columnId: keyof T) => sorting?.onSort(columnId);
 
-  const handleSort = (columnId: keyof T) => {
-    sorting?.onSort(columnId);
+  const showActions = !!(
+    renderViewButton ||
+    renderEditButton ||
+    renderDeleteButton
+  );
+  const columnSpan = columns.length + (showActions ? 1 : 0);
+
+  const renderHeader = () => (
+    <TableHead>
+      <TableRow>
+        {columns.map(({ id, align, label, sortable }) => (
+          <TableCell
+            key={id.toString()}
+            align={align || "left"}
+            sx={{ fontWeight: "bold" }}
+          >
+            {sorting && sortable ? (
+              <TableSortLabel
+                active={sorting.sortBy === id}
+                direction={sorting.sortBy === id ? sorting.sortOrder : "asc"}
+                onClick={() => handleSort(id)}
+              >
+                {label}
+              </TableSortLabel>
+            ) : (
+              label
+            )}
+          </TableCell>
+        ))}
+        {showActions && (
+          <TableCell align="center" sx={{ fontWeight: "bold" }}>
+            الإجراءات
+          </TableCell>
+        )}
+      </TableRow>
+    </TableHead>
+  );
+
+  const renderBody = () => {
+    if (loading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columnSpan} align="center">
+            <CircularProgress />
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    if (!data.length) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columnSpan} align="center">
+            {emptyMessage}
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    return data.map((row, index) => {
+      const rowId = getRowId(row, index);
+      return (
+        <TableRow key={rowId}>
+          {columns.map(({ id, align, format }) => (
+            <TableCell key={id.toString()} align={align || "left"}>
+              {format ? format(row[id], row) : String(row[id])}
+            </TableCell>
+          ))}
+          {showActions && (
+            <TableCell align="center">
+              <IconButton
+                aria-label="actions"
+                onClick={(e) => handleMenuClick(e, row, index)}
+              >
+                <MoreVert />
+              </IconButton>
+              <Menu
+                anchorEl={anchorElMap[rowId]}
+                open={Boolean(anchorElMap[rowId])}
+                onClose={() => handleMenuClose(rowId)}
+                PaperProps={{ style: { width: "15ch" } }}
+              >
+                {renderViewButton &&
+                  selectedRow &&
+                  selectedRow._id === row._id && (
+                    <MenuItem>
+                      {renderViewButton(row, () => handleMenuClose(rowId))}
+                    </MenuItem>
+                  )}
+
+                {renderEditButton &&
+                  selectedRow &&
+                  selectedRow._id === row._id && (
+                    <MenuItem>
+                      {renderEditButton(row, () => handleMenuClose(rowId))}
+                    </MenuItem>
+                  )}
+
+                {renderDeleteButton &&
+                  selectedRow &&
+                  selectedRow._id === row._id && (
+                    <MenuItem>
+                      {renderDeleteButton(row, () => handleMenuClose(rowId))}
+                    </MenuItem>
+                  )}
+              </Menu>
+            </TableCell>
+          )}
+        </TableRow>
+      );
+    });
   };
 
   return (
     <Box sx={{ width: "100%" }}>
-      {(title || onAdd) && (
+      {(title || renderAddButton) && (
         <Box
           display="flex"
           justifyContent="space-between"
@@ -114,16 +197,7 @@ const DataTable = <T extends Record<string, any>>({
           mb={2}
         >
           {title && <Typography variant="h6">{title}</Typography>}
-          {onAdd && (
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<Add />}
-              onClick={onAdd}
-            >
-              {addButtonText}
-            </Button>
-          )}
+          {renderAddButton}
         </Box>
       )}
 
@@ -145,126 +219,13 @@ const DataTable = <T extends Record<string, any>>({
           />
         </Box>
       )}
+
       {error && <Typography color="error">{error}</Typography>}
 
       <TableContainer component={Paper}>
         <Table>
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id.toString()}
-                  align={column.align || "left"}
-                  sx={{ fontWeight: "bold" }}
-                >
-                  {sorting && column.sortable ? (
-                    <TableSortLabel
-                      active={sorting.sortBy === column.id}
-                      direction={
-                        sorting.sortBy === column.id ? sorting.sortOrder : "asc"
-                      }
-                      onClick={() => handleSort(column.id)}
-                    >
-                      {column.label}
-                    </TableSortLabel>
-                  ) : (
-                    column.label
-                  )}
-                </TableCell>
-              ))}
-              {(onView || onEdit || onDelete) && (
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  الإجراءات
-                </TableCell>
-              )}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={
-                    columns.length + (onView || onEdit || onDelete ? 1 : 0)
-                  }
-                  align="center"
-                >
-                  <CircularProgress />
-                </TableCell>
-              </TableRow>
-            ) : data.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={
-                    columns.length + (onView || onEdit || onDelete ? 1 : 0)
-                  }
-                  align="center"
-                >
-                  {emptyMessage}
-                </TableCell>
-              </TableRow>
-            ) : (
-              data.map((row, index) => (
-                <TableRow key={index}>
-                  {columns.map((column) => {
-                    const value = row[column.id];
-                    return (
-                      <TableCell
-                        key={column.id.toString()}
-                        align={column.align || "left"}
-                      >
-                        {column.format
-                          ? column.format(value, row)
-                          : String(value)}
-                      </TableCell>
-                    );
-                  })}
-                  {(onView || onEdit || onDelete) && (
-                    <TableCell align="center">
-                      <IconButton
-                        aria-label="more"
-                        aria-controls="long-menu"
-                        aria-haspopup="true"
-                        onClick={(e) => handleClick(e, row)}
-                      >
-                        <MoreVert />
-                      </IconButton>
-                      <Menu
-                        id="long-menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={open}
-                        onClose={handleClose}
-                        PaperProps={{
-                          style: {
-                            width: "20ch",
-                          },
-                        }}
-                      >
-                        {onView && (
-                          <MenuItem onClick={handleView}>
-                            <Visibility fontSize="small" sx={{ mr: 1 }} />
-                            View
-                          </MenuItem>
-                        )}
-                        {onEdit && (
-                          <MenuItem onClick={handleEdit}>
-                            <Edit fontSize="small" sx={{ mr: 1 }} />
-                            Edit
-                          </MenuItem>
-                        )}
-                        {onDelete && (
-                          <MenuItem onClick={handleDelete}>
-                            <Delete fontSize="small" sx={{ mr: 1 }} />
-                            Delete
-                          </MenuItem>
-                        )}
-                      </Menu>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
+          {renderHeader()}
+          <TableBody>{renderBody()}</TableBody>
         </Table>
       </TableContainer>
 
