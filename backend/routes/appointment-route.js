@@ -5,6 +5,7 @@ const {
   updateAppointmentStatus,
   getDoctorPatients,
   getDoctorAppointment,
+  getDoctorAppointmentFromArchive,
 } = require("../controllers/appointment-controller");
 const { protectPatient, protectDoctor } = require("../middleware/auth");
 const {
@@ -18,6 +19,7 @@ router.post("/", protectPatient, createAppointment);
 router.get("/doctor/:doctorId", protectDoctor, getDoctorAppointments);
 router.patch("/:appointmentId/status", protectDoctor, updateAppointmentStatus);
 router.get("/archive/:doctorId", protectDoctor, getCompletedAppointments);
+router.get("/archive-details/:archiveId", getDoctorAppointmentFromArchive);
 router.get("/doctor/:doctorId/patients", getDoctorPatients);
 
 router.get("/appointment-details/:appointmentId", getDoctorAppointment);

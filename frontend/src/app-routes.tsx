@@ -49,6 +49,10 @@ const AppointmentDetailsPage = lazy(
   () => import("./pages/dashboard/appointment-details")
 );
 
+const ArchiveAppointmentDetails = lazy(
+  () => import("./pages/dashboard/doctor-archive-appointment")
+);
+
 const FilterDoctorsPage = lazy(() => import("./pages/filter-doctors-page"));
 const DoctorDetailsPage = lazy(() => import("./pages/doctor-details-page"));
 
@@ -106,6 +110,10 @@ const router = createBrowserRouter([
               { path: "appointments", element: <DoctorAppointmentPage /> },
               { path: "services", element: <DoctorServicesPage /> },
               { path: "archive", element: <DoctorArchive /> },
+              {
+                path: "archive-details/:archiveId",
+                element: <ArchiveAppointmentDetails />,
+              },
               {
                 path: "patient-details/:patientId",
                 element: <PatientDetailsPage />,

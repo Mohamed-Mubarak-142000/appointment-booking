@@ -30,6 +30,7 @@ export function usePatientLogin(): UseMutationResult<
     onSuccess: (data) => {
       login(data);
       navigate("/");
+      window.location.reload();
       toast.success("Patient login successful!");
     },
     onError: (error) => {

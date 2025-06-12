@@ -208,12 +208,64 @@ export const useDoctorPatients = (doctorId: string, search: string) => {
   });
 };
 
+interface PatientDetails {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  age: number;
+  gender: string;
+  photo: string;
+  createdAt: string;
+  __v: number;
+}
+
+export interface Appointment {
+  _id: string;
+  doctor: string;
+  patient: PatientDetails;
+  slot: string;
+  type: string;
+  reason: string;
+  day: string;
+  startTime: string;
+  endTime: string;
+  price: number;
+  status: "cancelled" | "completed" | "pending" | "confirmed"; // Add other possible statuses
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  id: string;
+}
+
+interface ApiResponse {
+  success: boolean;
+  data: Appointment;
+}
+
 export const useGetAppointmentDetails = (appointmentId: string) => {
   return useQuery({
     queryKey: ["appointment-details", appointmentId],
     queryFn: async () => {
-      const response = await patientApiClient.get<AppointmentsResponse>(
+      const response = await doctorApiClient.get<ApiResponse>(
         `/appointments/appointment-details/${appointmentId}`
+      );
+      return response.data;
+    },
+  });
+};
+
+interface ArchiveDetailsResponse {
+  success: boolean;
+  data: ArchivedAppointmentRaw;
+}
+
+export const useGetArchivedAppointmentDetails = (archiveId: string) => {
+  return useQuery({
+    queryKey: ["appointment-details-archive", archiveId],
+    queryFn: async () => {
+      const response = await doctorApiClient.get<ArchiveDetailsResponse>(
+        `/appointments/archive-details/${archiveId}`
       );
       return response.data;
     },

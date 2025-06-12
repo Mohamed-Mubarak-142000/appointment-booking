@@ -9,6 +9,7 @@ import ShowVideoAndAppointmentBooking from "../components/doctor-details/show-vi
 import { PatientsComments } from "../components/doctor-details/comments";
 import TitleSection from "../components/title-section";
 import { useGetAvailableSlotsForPatient } from "../apis/use-case/doctor/get-available-slots";
+import { formatDateTimeByLang } from "../locales";
 
 const DoctorDetailsPage = () => {
   const { id } = useParams();
@@ -108,7 +109,9 @@ const DoctorDetailsPage = () => {
 
             <DoctorInfo.Item>
               <DoctorInfo.Label>Joined At:</DoctorInfo.Label>
-              <DoctorInfo.Value>{data?.data?.createdAt}</DoctorInfo.Value>
+              <DoctorInfo.Value>
+                {formatDateTimeByLang(data?.data?.createdAt)}
+              </DoctorInfo.Value>
             </DoctorInfo.Item>
           </DoctorInfo.Row>
 

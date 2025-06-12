@@ -4,6 +4,7 @@ import { useGetPatientDetails } from "../../apis/use-case/patient/get-patient";
 import { assets } from "../../assets/assets_frontend/assets";
 import DoctorInfo from "../../components/doctor-details/doctor-info";
 import TitleSection from "../../components/title-section";
+import { formatDateTimeByLang } from "../../locales";
 
 const PatientDetails = () => {
   const { patientId } = useParams();
@@ -70,7 +71,9 @@ const PatientDetails = () => {
 
           <DoctorInfo.Item>
             <DoctorInfo.Label>Created At:</DoctorInfo.Label>
-            <DoctorInfo.Value>{data?.data?.createdAt}</DoctorInfo.Value>
+            <DoctorInfo.Value>
+              {formatDateTimeByLang(data?.data?.createdAt)}
+            </DoctorInfo.Value>
           </DoctorInfo.Item>
         </DoctorInfo.Row>
       </DoctorInfo>

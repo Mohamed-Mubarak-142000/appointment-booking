@@ -36,12 +36,7 @@ export const PatientLoginForm = ({ onClose }: PatientLoginFormProps) => {
   });
 
   const onSubmit = (data: PatientLoginFormData) => {
-    login(data, {
-      onSuccess: () => {
-        onClose();
-        window.location.reload();
-      },
-    });
+    login(data);
   };
 
   return (

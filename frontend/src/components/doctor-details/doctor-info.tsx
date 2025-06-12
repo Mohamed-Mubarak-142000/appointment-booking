@@ -1,13 +1,35 @@
 import React from "react";
-import { Grid, Box, Typography, Stack } from "@mui/material";
+import { Grid, Box, Typography, Stack, type GridProps } from "@mui/material";
 
-const DoctorInfo = ({ children }: { children: React.ReactNode }) => (
-  <Grid item xs={12} md={6} lg={8} sx={{ mt: 4 }}>
-    <Stack spacing={2} sx={{ padding: 2, borderRadius: 1 }}>
-      {children}
-    </Stack>
-  </Grid>
-);
+const DoctorInfo = ({
+  children,
+  slotProps,
+}: {
+  children: React.ReactNode;
+  slotProps?: {
+    root?: GridProps;
+  };
+}) => {
+  const rootProps = {
+    item: true,
+    xs: 12,
+    md: 6,
+    lg: 8,
+    ...slotProps?.root,
+    sx: {
+      mt: 4,
+      ...(slotProps?.root?.sx || {}),
+    },
+  };
+
+  return (
+    <Grid {...rootProps}>
+      <Stack spacing={2} sx={{ padding: 2, borderRadius: 1 }}>
+        {children}
+      </Stack>
+    </Grid>
+  );
+};
 
 DoctorInfo.Row = ({ children }: { children: React.ReactNode }) => (
   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>{children}</Box>

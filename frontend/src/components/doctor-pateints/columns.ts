@@ -1,4 +1,5 @@
 import type { Column } from "../../apis/use-case/types";
+import { formatDateTimeByLang } from "../../locales";
 export interface PatientColumn {
   _id: string;
   name: string;
@@ -37,7 +38,7 @@ const columns: Column<PatientColumn>[] = [
     id: "createdAt",
     label: "تاريخ الإضافة",
     format(value, row) {
-      return row?.createdAt;
+      return formatDateTimeByLang(row?.createdAt);
     },
   },
 ];

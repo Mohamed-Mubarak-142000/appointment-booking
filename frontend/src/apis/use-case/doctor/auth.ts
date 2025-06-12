@@ -29,6 +29,8 @@ export function useDoctorLogin(): UseMutationResult<
     onSuccess: (data) => {
       login(data);
       navigate("/doctor/dashboard");
+      window.location.reload();
+
       toast.success("Doctor login successful!");
     },
     onError: (error) => {

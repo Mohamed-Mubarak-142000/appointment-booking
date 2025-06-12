@@ -6,6 +6,8 @@ import {
 import type { Column } from "../../apis/use-case/types";
 import DataTable from "../../components/overview/common/data-table";
 import { useDoctorAuth } from "../../context/auth-context";
+import ButtonAction from "../../components/button-action";
+import { useNavigate } from "react-router-dom";
 
 const DoctorArchive = () => {
   const { doctor } = useDoctorAuth();
@@ -63,6 +65,11 @@ const DoctorArchive = () => {
       doctorName: appointment.doctor?.name || "غير معروف",
     })) || [];
 
+  const navigate = useNavigate();
+  const handleAppointmentDetails = (archiveId: string) => {
+    navigate(`/doctor/archive-details/${archiveId}`);
+  };
+
   return (
     <DataTable<ArchivedAppointmentRaw>
       title="مواعيدي"
@@ -76,6 +83,26 @@ const DoctorArchive = () => {
       searchPlaceholder="ابحث عن مريض..."
       onSearchChange={setSearchTerm}
       searchTerm={searchTerm}
+      renderViewButton={(row, handleMenuClose) => (
+        <ButtonAction
+          icon="lets-icons:view"
+          slotProps={{
+            icon: { color: "success.darker" },
+            button: {
+              fullWidth: true,
+              variant: "text",
+              sx: {
+                justifyContent: "space-between",
+              },
+            },
+          }}
+          title="عرض"
+          onClick={() => {
+            handleAppointmentDetails(row._id);
+            handleMenuClose();
+          }}
+        />
+      )}
     />
   );
 };

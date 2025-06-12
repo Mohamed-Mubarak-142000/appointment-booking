@@ -79,18 +79,20 @@ const getDoctor = asyncHandler(async (req, res) => {
 });
 
 const updateDoctor = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { availableSlots } = req.body;
+  const doctorId = req.doctor._id;
+  const { availableSlots, ...updateData } = req.body;
 
-  const doctor = await Doctor.findById(id);
+  const doctor = await Doctor.findByIdAndUpdate(doctorId, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
   if (!doctor) {
-    return res
-      .status(404)
-      .json({ success: false, message: "Doctor not found" });
+    return res.status(404).json({
+      success: false,
+      message: "Doctor not found",
+    });
   }
-
-  doctor.availableSlots = availableSlots;
-  await doctor.save();
 
   res.status(200).json({
     success: true,
@@ -661,36 +663,100 @@ const getPatientStats = asyncHandler(async (req, res) => {
 const getRevenueStats = asyncHandler(async (req, res) => {
   const doctorId = req.doctor._id;
 
-  // Get revenue by category (assuming appointments have 'type' and 'price' fields)
-  const revenueByCategory = await Appointment.aggregate([
+  // حساب تواريخ الـ 12 شهراً الماضية
+  const now = new Date();
+  const twelveMonthsAgo = new Date();
+  twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+
+  // استعلام للإيرادات من المواعيد النشطة المكتملة
+  const activeRevenue = await Appointment.aggregate([
     {
       $match: {
-        doctor: doctorId,
+        doctor: new mongoose.Types.ObjectId(doctorId),
         status: "completed",
+        createdAt: { $gte: twelveMonthsAgo },
       },
     },
     {
       $group: {
-        _id: "$type",
+        _id: {
+          year: { $year: "$createdAt" },
+          month: { $month: "$createdAt" },
+        },
         total: { $sum: "$price" },
+      },
+    },
+    {
+      $sort: {
+        "_id.year": 1,
+        "_id.month": 1,
       },
     },
   ]);
 
-  // Format data for chart
-  const labels = [];
-  const data = [];
-  const colors = [
-    "rgba(255, 99, 132, 0.6)",
-    "rgba(54, 162, 235, 0.6)",
-    "rgba(255, 206, 86, 0.6)",
-    "rgba(75, 192, 192, 0.6)",
-  ];
+  // استعلام للإيرادات من المواعيد المؤرشفة
+  const archivedRevenue = await ArchivePatient.aggregate([
+    {
+      $match: {
+        doctor: new mongoose.Types.ObjectId(doctorId),
+        completedAt: { $gte: twelveMonthsAgo },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          year: { $year: "$completedAt" },
+          month: { $month: "$completedAt" },
+        },
+        total: { $sum: "$price" },
+      },
+    },
+    {
+      $sort: {
+        "_id.year": 1,
+        "_id.month": 1,
+      },
+    },
+  ]);
 
-  revenueByCategory.forEach((category, index) => {
-    labels.push(category._id);
-    data.push(category.total);
+  // دمج النتائج من المواعيد النشطة والمؤرشفة
+  const combinedRevenue = [...activeRevenue, ...archivedRevenue].reduce(
+    (acc, curr) => {
+      const key = `${curr._id.year}-${curr._id.month}`;
+      if (!acc[key]) {
+        acc[key] = { ...curr._id, total: 0 };
+      }
+      acc[key].total += curr.total;
+      return acc;
+    },
+    {}
+  );
+
+  // تحويل النتائج المدمجة إلى مصفوفة وترتيبها
+  const revenueByMonth = Object.values(combinedRevenue).sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year;
+    return a.month - b.month;
   });
+
+  // إنشاء تسميات الشهور (مثل "Jan 2023")
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const labels = revenueByMonth.map(
+    (item) => `${monthNames[item.month - 1]} ${item.year}`
+  );
+  const data = revenueByMonth.map((item) => item.total);
 
   res.status(200).json({
     success: true,
@@ -782,31 +848,6 @@ const getAvailableSlotsStats = asyncHandler(async (req, res) => {
 });
 
 /*********** */
-
-// const getAvailableSlots = asyncHandler(async (req, res) => {
-//   const { doctorId } = req.params;
-
-//   const doctor = await Doctor.findById(doctorId)
-//     .select("availableSlots name specialty")
-//     .lean();
-
-//   if (!doctor) {
-//     return res
-//       .status(404)
-//       .json({ success: false, message: "الطبيب غير موجود" });
-//   }
-
-//   res.status(200).json({
-//     success: true,
-//     data: {
-//       doctor: {
-//         name: doctor.name,
-//         specialty: doctor.specialty,
-//       },
-//       slots: doctor.availableSlots,
-//     },
-//   });
-// });
 
 const getAvailableSlots = asyncHandler(async (req, res) => {
   const { doctorId } = req.params;

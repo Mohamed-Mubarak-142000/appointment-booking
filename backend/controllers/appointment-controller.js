@@ -4,6 +4,7 @@ const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
 const Archive = require("../models/Archive-patient");
 const mongoose = require("mongoose");
+const ArchivePatient = require("../models/Archive-patient");
 
 const createAppointment = asyncHandler(async (req, res) => {
   const {
@@ -305,10 +306,46 @@ const getDoctorAppointment = asyncHandler(async (req, res) => {
   }
 });
 
+const getDoctorAppointmentFromArchive = asyncHandler(async (req, res) => {
+  const { archiveId } = req.params;
+
+  // if (!mongoose.Types.ObjectId.isValid(archiveId)) {
+  //   return res.status(400).json({
+  //     success: false,
+  //     message: "معرف الموعد غير صالح",
+  //   });
+  // }
+
+  try {
+    const archive = await ArchivePatient.findById(archiveId);
+
+    // if (!archive) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "الموعد غير موجود",
+    //   });
+    // }
+
+    res.status(200).json({
+      success: true,
+      data: archive,
+    });
+  } catch (error) {
+    console.error("خطأ في جلب الموعد:", error);
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ أثناء جلب الموعد",
+      error: error.message,
+    });
+  }
+});
+
 module.exports = {
   createAppointment,
   getDoctorAppointments,
   updateAppointmentStatus,
   getDoctorPatients,
   getDoctorAppointment,
+
+  getDoctorAppointmentFromArchive,
 };

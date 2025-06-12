@@ -8,10 +8,10 @@ import {
   Rating,
   Typography,
 } from "@mui/material";
-import { format } from "date-fns";
 import type { Review } from "../../apis/use-case/types";
 import { usePatientAuth } from "../../context/auth-context";
 import { useReviews } from "../../apis/use-case/doctor/review";
+import { formatDateTimeByLang } from "../../locales";
 
 const CommentList = ({
   reviews,
@@ -102,7 +102,7 @@ const CommentList = ({
                   {review.patient.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {format(new Date(review.createdAt), "MMMM dd, yyyy")}
+                  {formatDateTimeByLang(review.createdAt)}
                 </Typography>
               </Box>
             </Box>
