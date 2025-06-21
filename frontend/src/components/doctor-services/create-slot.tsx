@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { daysOfWeek, slotTypes } from "./columns";
 import ButtonAction from "../button-action";
+import { useTranslate } from "../../locales";
 
 const CreateSlotSchema = z.object({
   day: z.string().min(1, "اليوم مطلوب"),
@@ -34,7 +35,7 @@ type CreateSlotFormData = z.infer<typeof CreateSlotSchema>;
 const CreateSlot = () => {
   const addSlotMutation = useAddAvailableSlot();
   const [openDialog, setOpenDialog] = useState(false);
-
+  const { t } = useTranslate("overview");
   const {
     register,
     handleSubmit,
@@ -62,13 +63,13 @@ const CreateSlot = () => {
   return (
     <>
       <ButtonAction
-        title="إضافة موعد"
+        title={t("doctorServices.addNewAppointment")}
         icon="material-symbols:add"
         onClick={() => setOpenDialog(true)}
       />
 
       <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth>
-        <DialogTitle>{"إضافة موعد جديد"}</DialogTitle>
+        <DialogTitle>{t("add_appointment_dialog.title")}</DialogTitle>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
@@ -77,7 +78,7 @@ const CreateSlot = () => {
             >
               <TextField
                 select
-                label="اليوم"
+                label={t("add_appointment_dialog.day_label")}
                 {...register("day")}
                 fullWidth
                 error={!!errors.day}
@@ -92,7 +93,7 @@ const CreateSlot = () => {
 
               <TextField
                 select
-                label="نوع الموعد"
+                label={t("add_appointment_dialog.type_label")}
                 {...register("type")}
                 fullWidth
                 error={!!errors.type}
@@ -106,7 +107,7 @@ const CreateSlot = () => {
               </TextField>
 
               <TextField
-                label="وقت البدء"
+                label={t("add_appointment_dialog.start_time_label")}
                 type="time"
                 {...register("startTime")}
                 fullWidth
@@ -122,7 +123,7 @@ const CreateSlot = () => {
               />
 
               <TextField
-                label="وقت الانتهاء"
+                label={t("add_appointment_dialog.end_time_label")}
                 type="time"
                 {...register("endTime")}
                 fullWidth
@@ -138,7 +139,7 @@ const CreateSlot = () => {
               />
 
               <TextField
-                label="مدة الموعد (دقيقة)"
+                label={t("add_appointment_dialog.duration_label")}
                 type="number"
                 {...register("slotDuration", { valueAsNumber: true })}
                 fullWidth
@@ -153,7 +154,9 @@ const CreateSlot = () => {
           </DialogContent>
 
           <DialogActions>
-            <Button onClick={handleCloseDialog}>إلغاء</Button>
+            <Button onClick={handleCloseDialog}>
+              {t("add_appointment_dialog.cancel_button")}
+            </Button>
             <Button
               type="submit"
               color="primary"
@@ -163,7 +166,7 @@ const CreateSlot = () => {
               {addSlotMutation.isPending ? (
                 <CircularProgress size={24} />
               ) : (
-                "إضافة"
+                t("add_appointment_dialog.submit_button")
               )}
             </Button>
           </DialogActions>

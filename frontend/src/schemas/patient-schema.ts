@@ -71,9 +71,13 @@ export const updateProfileSchema = z.object({
       }
     ),
 
-  phone: z
-    .string()
-    .regex(/^\d{10,15}$/, "رقم الهاتف يجب أن يحتوي على 10 إلى 15 رقمًا فقط"),
+  photo: z.union([
+    z
+      .instanceof(File)
+      .refine((file) => file.size <= 5 * 1024 * 1024, "File size must be <5MB")
+      .refine((file) => file.type.startsWith("image/"), "Must be an image"),
+    z.string().url().optional(),
+  ]),
 
   age: z.coerce
     .number()
@@ -83,7 +87,6 @@ export const updateProfileSchema = z.object({
   gender: z.enum(["male", "female", "other"], {
     errorMap: () => ({ message: "اختر النوع من القيم المتاحة" }),
   }),
-  photo: z.string().optional(),
 });
 
 export type UpdateProfileFormData = z.infer<typeof updateProfileSchema>;

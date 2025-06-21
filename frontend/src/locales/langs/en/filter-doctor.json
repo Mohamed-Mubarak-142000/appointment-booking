@@ -1,0 +1,16 @@
+{
+  "allSpecialties": "All Specialties",
+  "find_doctor": "Find Doctor",
+  "search_placeholder": "Search by name",
+  "specialty": "Specialty",
+  "governorate": "Governorate",
+  "allGovernorates": "All Governorates",
+  "errorFetchingDoctors": {
+    "title": "Error fetching doctors",
+    "subtitle": "There was an error fetching the doctors. Please try again later."
+  },
+  "noDoctorsFound": {
+    "title": "No Doctors Found",
+    "subtitle": "No doctors match your search criteria. Please try adjusting your filters."
+  }
+}

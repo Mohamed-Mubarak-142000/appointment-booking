@@ -17,7 +17,7 @@ export const AuthButtons = ({ onLogin }: AuthButtonsProps) => {
   const navigate = useNavigate();
   console.log("user", user);
   console.log("data", data);
-  // const photoUrl = data?.photo || assets.Avatar;
+  // const photo = data?.photo || assets.Avatar;
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2, mx: 2 }}>
@@ -38,7 +38,7 @@ export const AuthButtons = ({ onLogin }: AuthButtonsProps) => {
           <Box
             component={"img"}
             sx={{ width: 40, height: 40, borderRadius: "50%" }}
-            src={assets.Avatar}
+            src={data?.photo || assets.Avatar}
             alt="profile_image"
           />
           <Typography variant="body1" sx={{ textWrap: "nowrap", mx: 0.5 }}>

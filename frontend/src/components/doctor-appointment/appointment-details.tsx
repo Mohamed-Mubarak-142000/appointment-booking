@@ -1,5 +1,5 @@
 import type { Appointment } from "../../apis/use-case/patient/appointments";
-import { formatDateTimeByLang } from "../../locales";
+import { formatDateTimeByLang, useTranslate } from "../../locales";
 import DoctorInfo from "../doctor-details/doctor-info";
 import TitleSection from "../title-section";
 
@@ -8,11 +8,13 @@ const AppointmentBookingDetails = ({
 }: {
   data: Omit<Appointment, "patient">;
 }) => {
+  const { t } = useTranslate("overview");
+
   return (
     <>
       <TitleSection
-        title="Appointment Details"
-        subTitle="Check your appointment details"
+        title={t("appointments_page.appointmentDetails.title")}
+        subTitle={t("appointments_page.appointmentDetails.subTitle")}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -40,74 +42,98 @@ const AppointmentBookingDetails = ({
       >
         <DoctorInfo.Row>
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Doctor Name:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.doctorName")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{data?.doctor}</DoctorInfo.Value>
           </DoctorInfo.Item>
 
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Status Appointment:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.status")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{data?.status}</DoctorInfo.Value>
           </DoctorInfo.Item>
         </DoctorInfo.Row>
 
         <DoctorInfo.Row>
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Created At:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.createdAt")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>
               {formatDateTimeByLang(data?.createdAt)}
             </DoctorInfo.Value>
           </DoctorInfo.Item>
 
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Day Booking:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.dayBooking")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{data?.day}</DoctorInfo.Value>
           </DoctorInfo.Item>
         </DoctorInfo.Row>
 
         <DoctorInfo.Row>
           <DoctorInfo.Item>
-            <DoctorInfo.Label>End Time:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.endTime")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{data?.endTime}</DoctorInfo.Value>
           </DoctorInfo.Item>
 
           <DoctorInfo.Item>
-            <DoctorInfo.Label>ID Appointment:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.id")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{data?.id}</DoctorInfo.Value>
           </DoctorInfo.Item>
         </DoctorInfo.Row>
 
         <DoctorInfo.Row>
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Price Appointment:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.price")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{data?.price}</DoctorInfo.Value>
           </DoctorInfo.Item>
 
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Reason Booking:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.reason")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{data?.reason}</DoctorInfo.Value>
           </DoctorInfo.Item>
         </DoctorInfo.Row>
 
         <DoctorInfo.Row>
           <DoctorInfo.Item>
-            <DoctorInfo.Label>ID Slot:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.slotId")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{data?.slot}</DoctorInfo.Value>
           </DoctorInfo.Item>
 
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Type Appointment:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.type")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{data?.type}</DoctorInfo.Value>
           </DoctorInfo.Item>
         </DoctorInfo.Row>
 
         <DoctorInfo.Row>
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Start Time:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.startTime")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{data?.startTime}</DoctorInfo.Value>
           </DoctorInfo.Item>
 
           <DoctorInfo.Item>
-            <DoctorInfo.Label> Last Updated At:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.appointmentDetails.updatedAt")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>
               {formatDateTimeByLang(data?.updatedAt)}
             </DoctorInfo.Value>

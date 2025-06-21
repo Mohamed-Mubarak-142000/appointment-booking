@@ -1,6 +1,7 @@
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import { Iconify } from "../iconify";
 import type { AvailableSlot } from "../../apis/use-case/types";
+import { useTranslate } from "../../locales";
 
 const AvailableSlotsDoctor = ({
   data,
@@ -9,6 +10,7 @@ const AvailableSlotsDoctor = ({
   data: AvailableSlot[];
   isPending: boolean;
 }) => {
+  const { t } = useTranslate("appointment");
   if (isPending) {
     return <CircularProgress size={24} sx={{ color: "primary.darker" }} />;
   }
@@ -16,7 +18,7 @@ const AvailableSlotsDoctor = ({
   if (!data || !data?.length) {
     return (
       <Box sx={{ textAlign: "center", padding: 2 }}>
-        <Typography variant="body1">No available slots found.</Typography>
+        <Typography variant="body1">{t("availableSlots.noSlots")}</Typography>
       </Box>
     );
   }
@@ -53,17 +55,23 @@ const AvailableSlotsDoctor = ({
             justifyContent={"start"}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography variant="h6">Day:</Typography>
+              <Typography variant="h6">
+                {t("availableSlots.dayLabel")}
+              </Typography>
               <Typography variant="body1">{slot.day}</Typography>
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography variant="h6">Start Time:</Typography>
+              <Typography variant="h6">
+                {t("availableSlots.startTimeLabel")}
+              </Typography>
               <Typography variant="body1">{slot.startTime}</Typography>
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography variant="h6">End Time:</Typography>
+              <Typography variant="h6">
+                {t("availableSlots.endTimeLabel")}
+              </Typography>
               <Typography variant="body1">{slot.endTime}</Typography>
             </Box>
           </Stack>

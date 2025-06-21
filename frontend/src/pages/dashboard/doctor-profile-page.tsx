@@ -1,6 +1,6 @@
 import { Alert, Box, CircularProgress, Stack } from "@mui/material";
 import { useGetDoctorProfile } from "../../apis/use-case/doctor/profile";
-import TopContent from "../../components/doctor-profile/top-content";
+// import TopContent from "../../components/doctor-profile/top-content";
 import ProfileForm from "../../components/doctor-profile/profile-form";
 
 const DoctorProfilePage = () => {
@@ -32,7 +32,7 @@ const DoctorProfilePage = () => {
     >
       {user && (
         <Stack spacing={2} sx={{ flex: 1 }}>
-          <TopContent user={user} />
+          {/* <TopContent user={user} /> */}
           <ProfileForm user={user} />
         </Stack>
       )}

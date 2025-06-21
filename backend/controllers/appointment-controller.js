@@ -309,22 +309,8 @@ const getDoctorAppointment = asyncHandler(async (req, res) => {
 const getDoctorAppointmentFromArchive = asyncHandler(async (req, res) => {
   const { archiveId } = req.params;
 
-  // if (!mongoose.Types.ObjectId.isValid(archiveId)) {
-  //   return res.status(400).json({
-  //     success: false,
-  //     message: "معرف الموعد غير صالح",
-  //   });
-  // }
-
   try {
     const archive = await ArchivePatient.findById(archiveId);
-
-    // if (!archive) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "الموعد غير موجود",
-    //   });
-    // }
 
     res.status(200).json({
       success: true,
@@ -340,12 +326,159 @@ const getDoctorAppointmentFromArchive = asyncHandler(async (req, res) => {
   }
 });
 
+const getPatientAppointments = asyncHandler(async (req, res) => {
+  const { patientId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(patientId)) {
+    return res.status(400).json({
+      success: false,
+      message: "معرف المريض غير صالح",
+    });
+  }
+
+  try {
+    const appointments = await Appointment.find({ patient: patientId })
+      .populate("doctor", "name specialization photo")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: appointments.length,
+      data: appointments,
+    });
+  } catch (error) {
+    console.error("خطأ في جلب مواعيد المريض:", error);
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ أثناء جلب مواعيد المريض",
+      error: error.message,
+    });
+  }
+});
+
+const updateAppointmentPatientStatus = asyncHandler(async (req, res) => {
+  const { appointmentId } = req.params;
+  const { status } = req.body;
+  const { _id: userId, role } = req.user; // افترضنا وجود معلومات المستخدم المصادق
+
+  if (!mongoose.Types.ObjectId.isValid(appointmentId)) {
+    return res.status(400).json({
+      success: false,
+      message: "معرف الموعد غير صالح",
+    });
+  }
+
+  const validStatuses = ["confirmed", "cancelled", "completed"];
+  if (!status || !validStatuses.includes(status)) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "الحالة المطلوبة غير صالحة (يجب أن تكون confirmed أو cancelled أو completed)",
+    });
+  }
+
+  try {
+    const appointment = await Appointment.findById(appointmentId)
+      .populate("doctor", "name availableSlots")
+      .populate("patient", "name phone");
+
+    if (!appointment) {
+      return res.status(404).json({
+        success: false,
+        message: "الموعد غير موجود",
+      });
+    }
+
+    // التحقق من صلاحية المستخدم لتعديل الموعد
+    if (role === "patient" && !appointment.patient._id.equals(userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "ليس لديك صلاحية لتعديل هذا الموعد",
+      });
+    }
+
+    let result;
+
+    if (status === "completed") {
+      // أرشفة الموعد المكتمل
+      const archivedAppointment = await Archive.create({
+        originalAppointmentId: appointment._id,
+        doctor: appointment.doctor._id,
+        patient: appointment.patient._id,
+        type: appointment.type,
+        reason: appointment.reason,
+        day: appointment.day,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        price: appointment.price,
+        status: "completed",
+        doctorName: appointment.doctor.name,
+        patientName: appointment.patient.name,
+        patientPhone: appointment.patient.phone,
+      });
+
+      // إضافة الموعد المكتمل إلى سجل المريض
+      await Patient.findByIdAndUpdate(appointment.patient._id, {
+        $addToSet: { completedAppointments: archivedAppointment._id },
+      });
+
+      // حذف الموعد من المواعيد الحالية
+      await Appointment.findByIdAndDelete(appointmentId);
+
+      result = archivedAppointment;
+    } else if (status === "cancelled") {
+      // إلغاء الموعد
+      const doctor = await Doctor.findById(appointment.doctor._id);
+
+      // إعادة الفترة الزمنية إلى القائمة المتاحة
+      if (appointment.slot && doctor.availableSlots) {
+        const slot = doctor.availableSlots.id(appointment.slot);
+        if (slot) {
+          slot.isAvailable = true;
+          await doctor.save();
+        }
+      }
+
+      // حذف الموعد نهائياً كما طلبت
+      await Appointment.findByIdAndDelete(appointmentId);
+
+      result = { message: "تم إلغاء الموعد وحذفه بنجاح" };
+    } else {
+      // تحديث الحالة فقط (confirmed)
+      appointment.status = status;
+      await appointment.save();
+      result = appointment;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `تم ${
+        status === "completed"
+          ? "أرشفة"
+          : status === "cancelled"
+          ? "إلغاء وحذف"
+          : "تحديث"
+      } الموعد بنجاح`,
+      data: result,
+    });
+  } catch (error) {
+    console.error("خطأ في تحديث حالة الموعد:", error);
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ أثناء تحديث حالة الموعد",
+      error: error.message,
+    });
+  }
+});
+
 module.exports = {
   createAppointment,
   getDoctorAppointments,
   updateAppointmentStatus,
   getDoctorPatients,
   getDoctorAppointment,
+  getPatientAppointments,
+  updateAppointmentPatientStatus,
 
   getDoctorAppointmentFromArchive,
 };

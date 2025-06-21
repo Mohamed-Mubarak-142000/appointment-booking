@@ -1,5 +1,5 @@
-import { Box, CircularProgress, Alert } from "@mui/material";
-import LeftSide from "../components/patient-profile/left-side";
+import { Box, CircularProgress, Alert, Stack } from "@mui/material";
+// import LeftSide from "../components/patient-profile/left-side";
 import ProfileForm from "../components/patient-profile/profile-form";
 import BookedDoctors from "../components/patient-profile/booked-doctors";
 import { useGetPatientProfile } from "../apis/use-case/patient/profile";
@@ -32,13 +32,10 @@ const ProfilePage = () => {
       }}
     >
       {user && (
-        <>
-          <LeftSide user={user} />
-          <Box sx={{ flex: 2 }}>
-            <ProfileForm user={user} />
-            <BookedDoctors user={user} />
-          </Box>
-        </>
+        <Stack spacing={2} sx={{ flex: 1 }}>
+          <ProfileForm user={user} />
+          <BookedDoctors user={user} />
+        </Stack>
       )}
     </Box>
   );

@@ -56,7 +56,7 @@ DoctorInfo.Value = ({ children }: { children: React.ReactNode }) => (
     variant="h3"
     sx={{
       color: (theme) => theme.palette.text.primary,
-      fontSize: { xs: ".8rem", sm: ".9", md: "1.1rem" },
+      fontSize: { xs: ".8rem", sm: ".9", md: "1rem" },
     }}
   >
     {children}

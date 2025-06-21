@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useAppointmentStats } from "../../../apis/use-case/doctor/dashboard";
+import { useTranslate } from "../../../locales";
 
 ChartJS.register(
   CategoryScale,
@@ -45,6 +46,7 @@ const TimeRangeSelector = ({
   onChange: (value: string) => void;
   value: string;
 }) => {
+  const { t } = useTranslate("overview");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (event: any) => {
     onChange(event.target.value);
@@ -53,12 +55,16 @@ const TimeRangeSelector = ({
   return (
     <Box sx={{ width: "50%", mb: 2 }}>
       <FormControl fullWidth size="small">
-        <InputLabel>Time Range</InputLabel>
-        <Select value={value} label="Time Range" onChange={handleChange}>
-          <MenuItem value="weekly">Weekly</MenuItem>
-          <MenuItem value="monthly">Monthly</MenuItem>
-          <MenuItem value="quarterly">Quarterly</MenuItem>
-          <MenuItem value="yearly">Yearly</MenuItem>
+        <InputLabel>{t("others.time_range")}</InputLabel>
+        <Select
+          value={value}
+          label={t("others.time_range")}
+          onChange={handleChange}
+        >
+          <MenuItem value="weekly">{t("others.weekly")}</MenuItem>
+          <MenuItem value="monthly">{t("others.monthly")}</MenuItem>
+          <MenuItem value="quarterly">{t("others.quarterly")}</MenuItem>
+          <MenuItem value="yearly">{t("others.yearly")}</MenuItem>
         </Select>
       </FormControl>
     </Box>
@@ -72,6 +78,7 @@ const ChartTypeSelector = ({
   onChange: (value: string) => void;
   value: string;
 }) => {
+  const { t } = useTranslate("overview");
   const handleChange = (
     _event: React.MouseEvent<HTMLElement>,
     newChartType: string | null
@@ -91,16 +98,16 @@ const ChartTypeSelector = ({
       sx={{ mb: 2 }}
     >
       <ToggleButton value="line" aria-label="line chart">
-        Line
+        {t("chart_types.line")}
       </ToggleButton>
       <ToggleButton value="bar" aria-label="bar chart">
-        Bar
+        {t("chart_types.bar")}
       </ToggleButton>
       <ToggleButton value="pie" aria-label="pie chart">
-        Pie
+        {t("chart_types.pie")}
       </ToggleButton>
       <ToggleButton value="doughnut" aria-label="doughnut chart">
-        Doughnut
+        {t("chart_types.doughnut")}
       </ToggleButton>
     </ToggleButtonGroup>
   );
@@ -110,16 +117,18 @@ const AppointmentsChart = () => {
   const [timeRange, setTimeRange] = useState("monthly");
   const [chartType, setChartType] = useState("line");
   const { data: stats, isLoading } = useAppointmentStats();
+  const { t } = useTranslate("overview");
 
   const commonOptions = {
     responsive: true,
     plugins: {
       legend: {
         position: "top" as const,
+        rtl: true, // Right-to-left for Arabic
       },
       title: {
         display: true,
-        text: "Appointments Trend",
+        text: t("charts_titles.appointments_chart"),
       },
       tooltip: {
         callbacks: {
@@ -130,6 +139,7 @@ const AppointmentsChart = () => {
             }`;
           },
         },
+        rtl: true, // Right-to-left for Arabic
       },
     },
   };
@@ -145,13 +155,13 @@ const AppointmentsChart = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: "Number of Appointments",
+          text: t("appointments_count_label"),
         },
       },
       x: {
         title: {
           display: true,
-          text: "Time Period",
+          text: t("time_period_label"),
         },
       },
     },
@@ -182,7 +192,11 @@ const AppointmentsChart = () => {
       );
 
       return {
-        labels: ["Scheduled", "Completed", "Cancelled"],
+        labels: [
+          t("status.scheduled"),
+          t("status.completed"),
+          t("status.cancelled"),
+        ],
         datasets: [
           {
             data: [totalScheduled, totalCompleted, totalCancelled],
@@ -206,7 +220,7 @@ const AppointmentsChart = () => {
       labels: source.labels,
       datasets: [
         {
-          label: "Scheduled",
+          label: t("status.scheduled"),
           data: source.scheduled,
           borderColor: "rgb(75, 192, 192)",
           backgroundColor: "rgba(75, 192, 192, 0.5)",
@@ -214,7 +228,7 @@ const AppointmentsChart = () => {
           borderWidth: 2,
         },
         {
-          label: "Completed",
+          label: t("status.completed"),
           data: source.completed,
           borderColor: "rgb(54, 162, 235)",
           backgroundColor: "rgba(54, 162, 235, 0.5)",
@@ -222,7 +236,7 @@ const AppointmentsChart = () => {
           borderWidth: 2,
         },
         {
-          label: "Cancelled",
+          label: t("status.cancelled"),
           data: source.cancelled,
           borderColor: "rgb(255, 99, 132)",
           backgroundColor: "rgba(255, 99, 132, 0.5)",
@@ -258,7 +272,7 @@ const AppointmentsChart = () => {
         <Skeleton variant="rectangular" width="100%" height={400} />
       </Stack>
     );
-  if (!stats) return <div>No data available</div>;
+  if (!stats) return <div>{t("no_data_message")}</div>;
 
   return (
     <Stack sx={{ width: "100%" }}>

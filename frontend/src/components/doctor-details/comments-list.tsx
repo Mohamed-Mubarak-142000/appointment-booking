@@ -11,7 +11,7 @@ import {
 import type { Review } from "../../apis/use-case/types";
 import { usePatientAuth } from "../../context/auth-context";
 import { useReviews } from "../../apis/use-case/doctor/review";
-import { formatDateTimeByLang } from "../../locales";
+import { formatDateTimeByLang, useTranslate } from "../../locales";
 
 const CommentList = ({
   reviews,
@@ -26,9 +26,9 @@ const CommentList = ({
 }) => {
   const { user } = usePatientAuth();
   const { deleteReviewMutation } = useReviews(doctorId);
-
+  const { t } = useTranslate("appointment");
   const handleDeleteReview = (reviewId: string) => {
-    if (window.confirm("Are you sure you want to delete this review?")) {
+    if (window.confirm(t("confirm_delete_comment"))) {
       deleteReviewMutation.mutate(reviewId);
     }
   };

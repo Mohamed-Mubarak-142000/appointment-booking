@@ -9,39 +9,41 @@ import RevenueChart from "../../components/overview/charts/revenue-chart";
 import ShowVideo from "../../components/show-video";
 import { videos } from "../../assets/videos";
 import ShowLocation from "../../components/show-location";
+import { useTranslate } from "../../locales";
 
 const DoctorDashboardPage = () => {
+  const { t } = useTranslate("overview");
   return (
     <>
       <AllCards />
 
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          <ChartWrapper title="Appointments Overview">
+          <ChartWrapper title={t("charts_titles.appointments_chart")}>
             <AppointmentsChart />
           </ChartWrapper>
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <ChartWrapper title="Patients Statistics">
+          <ChartWrapper title={t("charts_titles.patients_chart")}>
             <PatientsChart />
           </ChartWrapper>
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <ChartWrapper title="Rating Trends">
+          <ChartWrapper title={t("charts_titles.rating_chart")}>
             <RatingChart />
           </ChartWrapper>
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <ChartWrapper title="Available Slots">
+          <ChartWrapper title={t("charts_titles.slots_chart")}>
             <AvailableSlots />
           </ChartWrapper>
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <ChartWrapper title="Revenue by Category">
+          <ChartWrapper title={t("charts_titles.revenue_chart")}>
             <RevenueChart />
           </ChartWrapper>
         </Grid>

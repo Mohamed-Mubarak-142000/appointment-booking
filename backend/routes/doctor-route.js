@@ -23,17 +23,16 @@ const {
 } = require("../controllers/review-controller");
 const { protectPatient } = require("../middleware/auth");
 const { protectDoctor } = require("../middleware/auth");
+const upload = require("../config/multer");
 
 const router = express.Router();
 
-// Public routes (accessible without authentication)
 router.get("/", getDoctors);
 router.get("/filter", getDoctorsBySpecialtyAndGovernorate);
 router.get("/doctor-details/:id", getDoctor);
-// router.get("/doctor/patients", protectDoctor, getDoctorPatients);
 
 // Doctor-only routes
-router.put("/:id", protectDoctor, updateDoctor);
+router.put("/:id", protectDoctor, upload.single("photo"), updateDoctor);
 
 // Review routes
 router.get("/:id/reviews", getReviews);

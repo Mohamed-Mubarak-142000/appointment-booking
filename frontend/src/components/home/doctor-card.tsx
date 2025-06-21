@@ -48,6 +48,7 @@ const ImageContainer = styled(Box)(({ theme }: { theme: CustomTheme }) => ({
 }));
 
 const DoctorItem = ({ doctor }: { doctor: DoctorData }) => {
+  console.log("dddddddddddddd", doctor);
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
 
@@ -81,7 +82,7 @@ const DoctorItem = ({ doctor }: { doctor: DoctorData }) => {
           }}
         >
           <motion.img
-            src={assets.doc1}
+            src={doctor.photo || assets.doc1}
             alt={doctor.name}
             initial={{ scale: 1 }}
             animate={{ scale: isHovered ? 1.1 : 1 }}

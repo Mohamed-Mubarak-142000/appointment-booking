@@ -1,0 +1,228 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "patients": "Patients",
+    "slots": "Slots",
+    "archives": "Archives",
+    "chats": "Chats",
+    "logout": "Logout"
+  },
+  "cards": {
+    "totalAppointments": "Total Appointments",
+    "totalPatients": "Total Patients",
+    "totalSlots": "Total Slots",
+    "rating": "Rating",
+    "revenue": "Revenue"
+  },
+  "charts_titles": {
+    "appointments_chart": "Appointments Overview",
+    "patients_chart": "Patients Statistics",
+    "rating_chart": "Rating Trends",
+    "revenue_chart": "Revenue by Category",
+    "slots_chart": "Available Slots"
+  },
+  "chart_types": {
+    "bar": "Bar",
+    "line": "Line",
+    "pie": "Pie",
+    "doughnut": "Doughnut",
+    "radar": "Radar",
+    "polarArea": "Polar Area"
+  },
+  "others": {
+    "time_range": "Time Range",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "quarterly": "Quarterly"
+  },
+  "status": {
+    "scheduled": "Scheduled",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "appointments_count_label": "Number of Appointments",
+  "time_period_label": "Time Period",
+  "no_data_message": "No data available",
+
+  "patient_types": {
+    "new_archived": "New Archived Patients",
+    "returning_archived": "Returning Archived Patients",
+    "new_active": "New Active Patients",
+    "returning_active": "Returning Active Patients"
+  },
+
+  "patient_page": {
+    "title": "Patient List",
+    "patient_details": "Patient Details",
+    "subtitle": "Comprehensive overview of patient information",
+    "search_placeholder": "Search by name patient",
+    "columns": {
+      "name": "Name Patient",
+      "email": "Email",
+      "phone": "Phone",
+      "age": "Age",
+      "gender": "Gender",
+      "createdAt": "Created At",
+      "actions": "Actions",
+      "view": "View",
+
+      "delete_dialog": {
+        "title": "Delete Patient",
+        "message": "Are you sure you want to delete the patient?",
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
+    }
+  },
+
+  "appointments_page": {
+    "title": "Appointments List",
+    "subtitle": "Comprehensive overview of appointments information",
+    "columns": {
+      "name": "Name Patient",
+      "type_slot": "Type Slot",
+      "start_time": "From Date",
+      "end_time": "To Date",
+      "day": "Day",
+      "status": "Status",
+      "actions": "Actions",
+      "status_cancelled": "Cancelled",
+      "status_completed": "Completed",
+      "status_pending": "Pending",
+      "view": "View",
+      "delete_dialog": {
+        "title": "Delete Appointment",
+        "message": "Are you sure you want to delete the appointment?",
+        "cancel": "Cancel",
+        "delete": "Delete"
+      },
+      "change_status_dialog": {
+        "title": "Change Status",
+        "message": "Are you sure you want to change the status?",
+        "cancel": "Cancel",
+        "change": "Change"
+      }
+    },
+    "appointmentDetails": {
+      "title": "Appointment Details",
+      "subTitle": "Check your appointment details",
+      "doctorName": "Doctor Name",
+      "status": "Status Appointment",
+      "createdAt": "Created At",
+      "dayBooking": "Day Booking",
+      "endTime": "End Time",
+      "id": "ID Appointment",
+      "price": "Price Appointment",
+      "reason": "Reason Booking",
+      "slotId": "ID Slot",
+      "type": "Type Appointment",
+      "startTime": "Start Time",
+      "updatedAt": "Last Updated At"
+    },
+    "patientDetails": {
+      "title": "Patient Details",
+      "subTitle": "Comprehensive overview of patient information",
+      "imageAlt": "Patient",
+      "name": "Patient Name",
+      "email": "Email",
+      "phone": "Phone",
+      "age": "Age",
+      "gender": "Gender",
+      "createdAt": "Created At"
+    }
+  },
+
+  "doctorServices": {
+    "manageAppointments": "Manage Available Appointments",
+    "addNewAppointment": "Add New Appointment",
+    "errorLoading": "Failed to load data",
+    "deleteAppointment": "Delete Appointment",
+    "editAppointment": "Edit ",
+    "deleteConfirmation": "Are you sure you want to delete this appointment?"
+  },
+  "common": {
+    "close": "Close",
+    "delete": "Delete"
+  },
+
+  "days": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "slotTypes": {
+    "consultation": "Consultation",
+    "procedure": "Procedure",
+    "test": "Test",
+    "medication": "Medication"
+  },
+  "columns": {
+    "day": "Day",
+    "type": "Appointment Type",
+    "status": "Status",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "duration": "Duration (minutes)",
+    "actions": "Actions"
+  },
+  "statusChange": {
+    "title": "Change Status",
+    "confirmation": "Are you sure you want to change the status of this item?",
+    "available": "Available",
+    "booked": "Booked",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+
+  "add_appointment_dialog": {
+    "title": "Add Appointment",
+    "message": "Please fill out the form below to add a new appointment",
+    "submit_button": "Add Appointment",
+    "cancel_button": "Cancel",
+    "edit_button": "Edit Appointment",
+    "day_label": "Day",
+    "type_label": "Type",
+    "start_time_label": "Start Time",
+    "end_time_label": "End Time",
+    "duration_label": "Duration (minutes)"
+  },
+
+  "doctorArchive": {
+    "title": "Archived Appointments",
+    "patientName": "Patient Name",
+    "doctorName": "Doctor Name",
+    "day": "Day",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "reason": "Reason",
+    "unknown": "Unknown",
+    "addAppointment": "Add New Appointment",
+    "searchPlaceholder": "Search for a patient...",
+    "noAppointments": "No appointments currently",
+    "view": "View"
+  },
+  "archiveDetails": {
+    "title": "Archive Appointment Details",
+    "subTitle": "Archive Appointment Details Page",
+    "doctorName": "Doctor Name",
+    "status": "Status Appointment",
+    "completedAt": "Completed At",
+    "createdAt": "Created At",
+    "endTime": "End Time",
+    "endDate": "End Date",
+    "reason": "Reason",
+    "patientName": "Patient Name",
+    "type": "Type",
+    "patientPhone": "Patient Phone",
+    "price": "Price",
+    "startTime": "Start Time",
+    "lastUpdated": "Last Updated",
+    "appointmentId": "Appointment ID"
+  }
+}

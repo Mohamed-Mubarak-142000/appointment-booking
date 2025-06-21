@@ -83,7 +83,7 @@ export const DoctorLoginForm = () => {
       </Button>
 
       <Typography variant="body2" sx={{ mt: 2, textAlign: "center" }}>
-        <Link to="/doctor/forgot-password">
+        <Link to="/doctor/forget-password">
           {t("login_form.login_doctor.forgot_password")}
         </Link>
       </Typography>

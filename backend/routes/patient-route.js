@@ -5,10 +5,11 @@ const {
   getPatient,
 } = require("../controllers/patient-controller");
 const { protectPatient } = require("../middleware/auth");
+const upload = require("../config/multer");
 
 const router = express.Router();
 
-router.put("/:id", protectPatient, updatePatient);
+router.put("/:id", upload.single("photo"), protectPatient, updatePatient);
 
 router.get("/:id/doctors", protectPatient, getBookedDoctors);
 

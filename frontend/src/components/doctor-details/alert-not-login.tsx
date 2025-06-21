@@ -1,8 +1,10 @@
 import { Alert } from "@mui/material";
 import { usePatientAuth } from "../../context/auth-context";
+import { useTranslate } from "../../locales";
 
 const AlertNotLogin = () => {
   const { patient } = usePatientAuth();
+  const { t } = useTranslate("appointment");
   return (
     !patient && (
       <Alert
@@ -14,7 +16,7 @@ const AlertNotLogin = () => {
           justifyContent: "center",
         }}
       >
-        You must be logged in to add a review.
+        {t("comments.alert_login")}
       </Alert>
     )
   );

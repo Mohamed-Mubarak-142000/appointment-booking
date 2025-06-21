@@ -87,3 +87,49 @@ export function usePatientLogout(): UseMutationResult<
     },
   });
 }
+
+export function useRequestPatientPasswordReset(): UseMutationResult<
+  { message: string; email: string },
+  AxiosError,
+  { email: string }
+> {
+  return useMutation({
+    mutationFn: async ({ email }) => {
+      const { data } = await patientApiClient.post<{
+        message: string;
+        email: string;
+      }>("/auth/request-password-patient", { email });
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      const message = getErrorMessage(error) || "Failed to send OTP";
+      toast.error(message);
+    },
+  });
+}
+
+export function useResetPatientPasswordWithOTP(): UseMutationResult<
+  { message: string },
+  AxiosError,
+  { email: string; otp: string; newPassword: string }
+> {
+  return useMutation({
+    mutationFn: async ({ email, otp, newPassword }) => {
+      const { data } = await patientApiClient.post<{ message: string }>(
+        "/auth/reset-password-patient",
+        { email, otp, newPassword }
+      );
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      const message = getErrorMessage(error) || "Password reset failed";
+      toast.error(message);
+    },
+  });
+}

@@ -28,6 +28,15 @@ const DoctorSchema = new mongoose.Schema({
     required: [true, "Please add a specialty"],
     enum: specialties.map((spec) => spec.value),
   },
+
+  location: {
+    type: {
+      lat: { type: Number, required: true },
+      lng: { type: Number, required: true },
+    },
+    required: false,
+  },
+
   governorate: {
     type: String,
     required: [true, "Please add a governorate"],
@@ -41,6 +50,8 @@ const DoctorSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please add a phone number"],
   },
+  otp: String,
+  otpExpiry: Date,
   age: {
     type: Number,
     required: [true, "Please add an age"],
@@ -109,6 +120,16 @@ const DoctorSchema = new mongoose.Schema({
   photo: {
     type: String,
     default: "default.jpg",
+    validate: {
+      validator: function (v) {
+        return /\.(jpg|jpeg|png|gif)$/i.test(v) || /^https?:\/\/.+/i.test(v);
+      },
+      message: (props) => `${props.value} is not a valid image URL or path!`,
+    },
+  },
+  photoPublicId: {
+    type: String,
+    select: false,
   },
 
   createdAt: {

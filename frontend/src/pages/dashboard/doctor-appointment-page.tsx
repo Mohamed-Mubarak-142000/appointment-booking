@@ -8,11 +8,12 @@ import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../components/confirm-dailog";
 import ButtonAction from "../../components/button-action";
 import { columns } from "../../components/doctor-appointment/columns";
+import { useTranslate } from "../../locales";
 
 const DoctorAppointmentPage = () => {
   const { doctor } = useDoctorAuth();
   const navigate = useNavigate();
-
+  const { t } = useTranslate("overview");
   const {
     data: response,
     isLoading,
@@ -32,7 +33,7 @@ const DoctorAppointmentPage = () => {
   return (
     <>
       <DataTable<AppointmentRaw>
-        title="مواعيدي"
+        title={t("appointments_page.title")}
         columns={columns}
         data={tableData}
         loading={isLoading}
@@ -51,7 +52,7 @@ const DoctorAppointmentPage = () => {
                 },
               },
             }}
-            title="عرض"
+            title={t("appointments_page.columns.view")}
             onClick={() => {
               handleAppointmentDetails(row._id);
               handleMenuClose();
@@ -60,10 +61,14 @@ const DoctorAppointmentPage = () => {
         )}
         renderDeleteButton={(row, handleMenuClose) => (
           <ConfirmationDialog
-            title="حذف هذا الموعد"
-            content="هل تريد حذف هذا الموعد؟"
-            confirmButtonLabel="حذف"
-            cancelButtonLabel="الغاء"
+            title={t("appointments_page.columns.delete_dialog.title")}
+            content={t("appointments_page.columns.delete_dialog.message")}
+            confirmButtonLabel={t(
+              "appointments_page.columns.delete_dialog.delete"
+            )}
+            cancelButtonLabel={t(
+              "appointments_page.columns.delete_dialog.cancel"
+            )}
             isLoading={false}
             status="error"
             onConfirm={() => {
@@ -83,7 +88,7 @@ const DoctorAppointmentPage = () => {
                     },
                   },
                 }}
-                title="حذف"
+                title={t("appointments_page.columns.delete_dialog.delete")}
                 icon="icon-park-outline:delete"
                 onClick={openDialog}
                 // isLoading={deleteSlotMutation.isPending}

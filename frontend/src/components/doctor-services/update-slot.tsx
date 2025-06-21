@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { daysOfWeek, slotTypes } from "./columns";
 import type { AvailableSlot } from "../../apis/use-case/types";
-import { getCurrentLang } from "../../locales";
+import { getCurrentLang, useTranslate } from "../../locales";
 import ButtonAction from "../button-action";
 
 const UpdateSlotDialogSchema = z.object({
@@ -44,6 +44,7 @@ const UpdateSlotDialog = ({
 }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const updateSlotMutation = useUpdateAvailableSlot();
+  const { t } = useTranslate("overview");
 
   const {
     register,
@@ -85,7 +86,7 @@ const UpdateSlotDialog = ({
   return (
     <>
       <ButtonAction
-        title="تعديل موعد"
+        title={t("doctorServices.editAppointment")}
         icon="ic:baseline-edit"
         slotProps={{
           button: {
@@ -101,7 +102,10 @@ const UpdateSlotDialog = ({
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle sx={{ textAlign: "center" }}>تعديل موعد</DialogTitle>
+        <DialogTitle sx={{ textAlign: "center" }}>
+          {" "}
+          {t("add_appointment_dialog.edit_button")}
+        </DialogTitle>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
@@ -149,7 +153,7 @@ const UpdateSlotDialog = ({
               />
 
               <TextField
-                label="وقت البدء"
+                label={t("add_appointment_dialog.start_time_label")}
                 type="time"
                 {...register("startTime")}
                 fullWidth
@@ -166,7 +170,7 @@ const UpdateSlotDialog = ({
               />
 
               <TextField
-                label="وقت الانتهاء"
+                label={t("add_appointment_dialog.end_time_label")}
                 type="time"
                 {...register("endTime")}
                 fullWidth
@@ -183,7 +187,7 @@ const UpdateSlotDialog = ({
               />
 
               <TextField
-                label="مدة الموعد (بالدقائق)"
+                label={t("add_appointment_dialog.duration_label")}
                 type="number"
                 {...register("slotDuration", { valueAsNumber: true })}
                 fullWidth
@@ -202,7 +206,7 @@ const UpdateSlotDialog = ({
 
           <DialogActions sx={{ padding: 3 }}>
             <ButtonAction
-              title="اغلاق"
+              title={t("add_appointment_dialog.cancel_button")}
               isLoading={isSubmitting || updateSlotMutation.isPending}
               slotProps={{
                 button: {
@@ -215,7 +219,7 @@ const UpdateSlotDialog = ({
 
             <ButtonAction
               type="submit"
-              title="حفظ التعديلات"
+              title={t("add_appointment_dialog.edit_button")}
               isLoading={isSubmitting || updateSlotMutation.isPending}
               slotProps={{
                 button: {

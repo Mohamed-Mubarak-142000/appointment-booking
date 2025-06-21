@@ -7,6 +7,7 @@ import columns from "../../components/doctor-pateints/columns";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../components/confirm-dailog";
 import ButtonAction from "../../components/button-action";
+import { useTranslate } from "../../locales";
 
 const DoctorPatientsList = () => {
   const { doctor } = useDoctorAuth();
@@ -18,24 +19,24 @@ const DoctorPatientsList = () => {
   } = useDoctorPatients(doctor?._id || "", searchTerm);
 
   const navigate = useNavigate();
-
+  const { t } = useTranslate("overview");
   const handlePatientDetails = (patientId: string) => {
     navigate(`/doctor/patient-details/${patientId}`);
   };
 
   return (
     <DataTable<PatientColumn>
-      title="قائمة المرضى"
+      title={t("patient_page.title")}
       columns={columns}
       data={patients}
       loading={isPending}
       error={isError ? "فشل في تحميل البيانات" : null}
       renderDeleteButton={(row, handleMenuClose) => (
         <ConfirmationDialog
-          title="حذف المريض"
-          content="هل تريد حذف المريض؟"
-          confirmButtonLabel="حذف"
-          cancelButtonLabel="الغاء"
+          title={t("patient_page.columns.delete_dialog.title")}
+          content={t("patient_page.columns.delete_dialog.message")}
+          confirmButtonLabel={t("patient_page.columns.delete_dialog.delete")}
+          cancelButtonLabel={t("patient_page.columns.delete_dialog.cancel")}
           isLoading={false}
           status="error"
           onConfirm={() => {
@@ -55,7 +56,7 @@ const DoctorPatientsList = () => {
                   },
                 },
               }}
-              title="حذف"
+              title={t("patient_page.columns.delete_dialog.delete")}
               icon="icon-park-outline:delete"
               onClick={openDialog}
               // isLoading={deleteSlotMutation.isPending}
@@ -80,7 +81,7 @@ const DoctorPatientsList = () => {
               },
             },
           }}
-          title="عرض"
+          title={t("patient_page.columns.view")}
           onClick={() => {
             handlePatientDetails(row._id);
             handleMenuClose();

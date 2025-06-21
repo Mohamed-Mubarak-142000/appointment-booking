@@ -21,6 +21,7 @@ const DoctorRegister = () => {
         justifyContent: "center",
         height: "100%",
         width: "100%",
+        mb: 5,
       }}
     >
       <Box
@@ -29,7 +30,7 @@ const DoctorRegister = () => {
           flexDirection: "column",
           width: "100%",
           alignItems: "start",
-          mb: 4,
+          mb: 3,
         }}
       >
         <Typography
@@ -56,7 +57,7 @@ const DoctorRegister = () => {
       <Box sx={{ width: "100%" }}>
         <DoctorRegisterForm />
 
-        <Box sx={{ mt: 3, textAlign: "center" }}>
+        <Box sx={{ mt: 2, textAlign: "center" }}>
           <Typography variant="body2" sx={{ mb: 1 }}>
             {t("register_form.doctor_register.already_have_account")}
           </Typography>

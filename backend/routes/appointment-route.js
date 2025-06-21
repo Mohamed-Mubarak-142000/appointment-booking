@@ -6,6 +6,8 @@ const {
   getDoctorPatients,
   getDoctorAppointment,
   getDoctorAppointmentFromArchive,
+  getPatientAppointments,
+  updateAppointmentPatientStatus,
 } = require("../controllers/appointment-controller");
 const { protectPatient, protectDoctor } = require("../middleware/auth");
 const {
@@ -23,5 +25,15 @@ router.get("/archive-details/:archiveId", getDoctorAppointmentFromArchive);
 router.get("/doctor/:doctorId/patients", getDoctorPatients);
 
 router.get("/appointment-details/:appointmentId", getDoctorAppointment);
+
+// جلب مواعيد المريض
+router.get("/patient/:patientId", protectPatient, getPatientAppointments);
+
+// تحديث حالة الموعد
+router.put(
+  "patient/:appointmentId/status",
+  protectPatient,
+  updateAppointmentPatientStatus
+);
 
 module.exports = router;

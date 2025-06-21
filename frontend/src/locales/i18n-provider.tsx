@@ -18,6 +18,14 @@ import ContactUsEN from "./langs/en/contact-us.json";
 import ProfileAr from "./langs/ar/profile.json";
 import ProfileEn from "./langs/en/profile.json";
 
+import OverviewAr from "./langs/ar/overview.json";
+import OverviewEn from "./langs/en/overview.json";
+
+import AppointmentAr from "./langs/ar/appointment.json";
+import AppointmentEn from "./langs/en/appointment.json";
+
+import FilterDoctorAr from "./langs/ar/filter-doctor.json";
+import FilterDoctorEn from "./langs/en/filter-doctor.json";
 // ----------------------------------------------------------------------
 
 /**
@@ -39,6 +47,9 @@ i18next
         about: AboutEn,
         "contact-us": ContactUsEN,
         profile: ProfileEn,
+        overview: OverviewEn,
+        appointment: AppointmentEn,
+        "filter-doctor": FilterDoctorEn,
       },
 
       ar: {
@@ -47,6 +58,9 @@ i18next
         about: AboutAr,
         "contact-us": ContactUsAR,
         profile: ProfileAr,
+        overview: OverviewAr,
+        "filter-doctor": FilterDoctorAr,
+        appointment: AppointmentAr,
       },
     },
     detection: { caches: ["localStorage"] },

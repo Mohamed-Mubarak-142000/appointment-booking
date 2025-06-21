@@ -53,6 +53,16 @@ const ArchiveAppointmentDetails = lazy(
   () => import("./pages/dashboard/doctor-archive-appointment")
 );
 
+const DoctorChats = lazy(() => import("./pages/dashboard/doctor-chats-page"));
+
+const ForgetPasswordDoctor = lazy(
+  () => import("./pages/dashboard/forget-password-page")
+);
+
+const ResetPasswordDoctor = lazy(
+  () => import("./pages/dashboard/reset-password-page")
+);
+
 const FilterDoctorsPage = lazy(() => import("./pages/filter-doctors-page"));
 const DoctorDetailsPage = lazy(() => import("./pages/doctor-details-page"));
 
@@ -95,6 +105,14 @@ const router = createBrowserRouter([
         children: [
           { path: "login", element: <DoctorLoginPage /> },
           { path: "register", element: <DoctorRegisterPage /> },
+          {
+            path: "forget-password",
+            element: <ForgetPasswordDoctor />,
+          },
+          {
+            path: "reset-password",
+            element: <ResetPasswordDoctor />,
+          },
         ],
       },
 
@@ -110,6 +128,8 @@ const router = createBrowserRouter([
               { path: "appointments", element: <DoctorAppointmentPage /> },
               { path: "services", element: <DoctorServicesPage /> },
               { path: "archive", element: <DoctorArchive /> },
+              { path: "chats", element: <DoctorChats /> },
+
               {
                 path: "archive-details/:archiveId",
                 element: <ArchiveAppointmentDetails />,

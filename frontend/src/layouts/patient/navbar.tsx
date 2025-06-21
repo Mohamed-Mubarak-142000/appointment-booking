@@ -52,6 +52,7 @@ export const Navbar = () => {
 
   const handleAuthDialogClose = () => {
     setAuthDialogOpen(false);
+    setAuthDialogTab("login");
   };
 
   return (

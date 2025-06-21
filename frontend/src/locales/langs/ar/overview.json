@@ -1,0 +1,227 @@
+{
+  "sidebar": {
+    "dashboard": "لوحة التحكم",
+    "appointments": "المواعيد",
+    "patients": "المرضى",
+    "slots": "المواعيد المتاحة",
+    "archives": "الأرشيف",
+    "chats": "المحادثات",
+    "logout": "تسجيل الخروج"
+  },
+  "cards": {
+    "totalAppointments": "إجمالي المواعيد",
+    "totalPatients": "إجمالي المرضى",
+    "totalSlots": "إجمالي المواعيد المتاحة",
+    "rating": "التقييم",
+    "revenue": "الإيرادات"
+  },
+  "charts_titles": {
+    "appointments_chart": "نظرة عامة على المواعيد",
+    "patients_chart": "إحصائيات المرضى",
+    "rating_chart": "اتجاهات التقييم",
+    "revenue_chart": "الإيرادات حسب الفئة",
+    "slots_chart": "المواعيد المتاحة"
+  },
+  "chart_types": {
+    "bar": "عمودي",
+    "line": "خطي",
+    "pie": "دائري",
+    "doughnut": "دونات",
+    "radar": "رادار",
+    "polarArea": "منطقة قطبية"
+  },
+  "others": {
+    "time_range": "الفترة الزمنية",
+    "weekly": "أسبوعي",
+    "monthly": "شهري",
+    "yearly": "سنوي",
+    "quarterly": "ربع سنوي"
+  },
+  "status": {
+    "scheduled": "مجدولة",
+    "completed": "مكتملة",
+    "cancelled": "ملغاة"
+  },
+  "appointments_count_label": "عدد المواعيد",
+  "time_period_label": "الفترة الزمنية",
+  "no_data_message": "لا توجد بيانات متاحة",
+
+  "patient_types": {
+    "new_archived": "مرضى الأرشيف - جدد",
+    "returning_archived": "مرضى الأرشيف - عائدون",
+    "new_active": "مرضى غير الأرشيف - جدد",
+    "returning_active": "مرضى غير الأرشيف - عائدون"
+  },
+  "patient_page": {
+    "title": "قائمة المرضى",
+    "patient_details": "تفاصيل المريض",
+    "subtitle": "نظرة عامة على المرضى",
+    "search_placeholder": "ابحث بالاسم",
+    "columns": {
+      "name": "اسم المريض",
+      "email": "البريد الالكتروني",
+      "phone": "رقم الجوال",
+      "age": "العمر",
+      "gender": "النوع",
+      "createdAt": "تاريخ الانشاء",
+      "actions": "الاجراءات",
+
+      "view": "عرض",
+
+      "delete_dialog": {
+        "title": "حذف المريض",
+        "message": "هل انت متاكد من حذف المريض؟",
+        "cancel": "الغاء",
+        "delete": "حذف"
+      }
+    }
+  },
+
+  "appointments_page": {
+    "title": "قائمة المواعيد",
+    "subtitle": "نظرة شاملة على معلومات المواعيد",
+    "columns": {
+      "name": "اسم المريض",
+      "type_slot": "نوع الفترة",
+      "start_time": "من تاريخ",
+      "end_time": "إلى تاريخ",
+      "day": "اليوم",
+      "status": "الحالة",
+      "actions": "إجراءات",
+      "status_cancelled": "ملغى",
+      "status_completed": "مكتمل",
+      "status_pending": "قيد الانتظار",
+      "view": "عرض",
+      "delete_dialog": {
+        "title": "حذف الموعد",
+        "message": "هل أنت متأكد أنك تريد حذف الموعد؟",
+        "cancel": "إلغاء",
+        "delete": "حذف"
+      },
+      "change_status_dialog": {
+        "title": "تغيير الحالة",
+        "message": "هل أنت متأكد أنك تريد تغيير الحالة؟",
+        "cancel": "إلغاء",
+        "change": "تغيير"
+      }
+    },
+    "appointmentDetails": {
+      "title": "تفاصيل الموعد",
+      "subTitle": "تحقق من تفاصيل موعدك",
+      "doctorName": "اسم الطبيب",
+      "status": "حالة الموعد",
+      "createdAt": "تاريخ الإنشاء",
+      "dayBooking": "يوم الحجز",
+      "endTime": "وقت الانتهاء",
+      "id": "معرف الموعد",
+      "price": "سعر الموعد",
+      "reason": "سبب الحجز",
+      "slotId": "معرف الفترة",
+      "type": "نوع الموعد",
+      "startTime": "وقت البدء",
+      "updatedAt": "آخر تحديث في"
+    },
+    "patientDetails": {
+      "title": "تفاصيل المريض",
+      "subTitle": "نظرة شاملة على معلومات المريض",
+      "imageAlt": "المريض",
+      "name": "اسم المريض",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "age": "العمر",
+      "gender": "الجنس",
+      "createdAt": "تاريخ الإنشاء"
+    }
+  },
+
+  "doctorServices": {
+    "manageAppointments": "إدارة المواعيد المتاحة",
+    "addNewAppointment": "إضافة موعد جديد",
+    "errorLoading": "فشل في تحميل البيانات",
+    "deleteAppointment": "حذف الموعد",
+    "editAppointment": "تحرير الموعد",
+    "deleteConfirmation": "هل أنت متأكد من رغبتك في حذف هذا الموعد؟"
+  },
+  "common": {
+    "close": "إغلاق",
+    "delete": "حذف"
+  },
+  "days": {
+    "monday": "الاثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+    "saturday": "السبت",
+    "sunday": "الأحد"
+  },
+  "slotTypes": {
+    "consultation": "استشارة",
+    "procedure": "إجراء طبي",
+    "test": "فحص",
+    "medication": "دواء"
+  },
+  "columns": {
+    "day": "اليوم",
+    "type": "نوع الموعد",
+    "status": "الحالة",
+    "startTime": "وقت البدء",
+    "endTime": "وقت الانتهاء",
+    "duration": "المدة (دقيقة)",
+    "actions": "الاجراءات"
+  },
+  "statusChange": {
+    "title": "تغيير الحالة",
+    "confirmation": "هل أنت متأكد من رغبتك في تغيير حالة هذا العنصر؟",
+    "available": "متاح",
+    "booked": "محجوز",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء"
+  },
+
+  "add_appointment_dialog": {
+    "title": "اضافة موعد",
+    "message": "يرجى ملء النموذج التالي لاضافة موعد جديد",
+    "submit_button": "اضافة موعد",
+    "cancel_button": "الغاء",
+    "edit_button": "تحرير الموعد",
+    "day_label": "يوم",
+    "type_label": "نوع الموعد",
+    "start_time_label": "وقت البدء",
+    "end_time_label": "وقت الانتهاء",
+    "duration_label": "المدة (دقيقة)"
+  },
+
+  "doctorArchive": {
+    "title": "المواعيد المؤرشفة",
+    "patientName": "اسم المريض",
+    "doctorName": "اسم الطبيب",
+    "day": "اليوم",
+    "startTime": "وقت البدء",
+    "endTime": "وقت الانتهاء",
+    "reason": "السبب",
+    "unknown": "غير معروف",
+    "addAppointment": "إضافة موعد جديد",
+    "searchPlaceholder": "ابحث عن مريض...",
+    "noAppointments": "لا توجد مواعيد حالياً",
+    "view": "عرض"
+  },
+  "archiveDetails": {
+    "title": "تفاصيل الموعد المؤرشف",
+    "subTitle": "صفحة تفاصيل الموعد المؤرشف",
+    "doctorName": "اسم الطبيب",
+    "status": "حالة الموعد",
+    "completedAt": "تم الانتهاء في",
+    "createdAt": "تم الإنشاء في",
+    "endTime": "وقت الانتهاء",
+    "endDate": "تاريخ الانتهاء",
+    "reason": "السبب",
+    "patientName": "اسم المريض",
+    "type": "النوع",
+    "patientPhone": "هاتف المريض",
+    "price": "السعر",
+    "startTime": "وقت البدء",
+    "lastUpdated": "آخر تحديث",
+    "appointmentId": "معرف الموعد"
+  }
+}

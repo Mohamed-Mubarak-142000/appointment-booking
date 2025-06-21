@@ -1,4 +1,13 @@
-import { Box, CircularProgress, Grid } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+} from "@mui/material";
 import { assets } from "../assets/assets_frontend/assets";
 import DoctorInfo from "../components/doctor-details/doctor-info";
 import { useParams } from "react-router-dom";
@@ -9,11 +18,16 @@ import ShowVideoAndAppointmentBooking from "../components/doctor-details/show-vi
 import { PatientsComments } from "../components/doctor-details/comments";
 import TitleSection from "../components/title-section";
 import { useGetAvailableSlotsForPatient } from "../apis/use-case/doctor/get-available-slots";
-import { formatDateTimeByLang } from "../locales";
+import { formatDateTimeByLang, useTranslate } from "../locales";
+import DoctorMapView from "../components/overview/charts/doctor-map-view";
+import { useState } from "react";
+import { ErrorStateContent } from "../components/error-state-content";
+import ButtonAction from "../components/button-action";
 
 const DoctorDetailsPage = () => {
   const { id } = useParams();
-
+  const { t } = useTranslate("appointment");
+  const [openDialog, setDialog] = useState(false);
   const { data, isPending } = useGetDoctor(id || "", {
     enabled: !!id,
   });
@@ -24,13 +38,14 @@ const DoctorDetailsPage = () => {
       showAll: false,
     });
 
-  console.log("data", data);
+  const lat = data?.data?.location?.lat;
+  const lng = data?.data?.location?.lng;
 
   if (!id) {
     return (
       <EmptyStateContent
-        title="Doctor Not Found"
-        subtitle="The doctor you are looking for does not exist or has been removed."
+        title={t("doctorNotFound.title")}
+        subtitle={t("doctorNotFound.subtitle")}
       />
     );
   }
@@ -52,13 +67,35 @@ const DoctorDetailsPage = () => {
     );
   }
 
+  if (!data?.data) {
+    return (
+      <EmptyStateContent
+        title={t("doctorNotFound.title")}
+        subtitle={t("doctorNotFound.subtitle")}
+      />
+    );
+  }
+
+  // Check location only after we have data
+  if (typeof lat !== "number" || typeof lng !== "number") {
+    return (
+      <ErrorStateContent
+        icon="material-symbols:error-outline-rounded"
+        title={t("locationError.title")}
+        subtitle={t("locationError.subtitle")}
+      />
+    );
+  }
+
+  const markerLocation = { lat, lng };
+
   return (
     <>
       <Grid container spacing={2} sx={{ padding: 2 }}>
         <Grid item xs={12} md={6} lg={4}>
           <Box
             component={"img"}
-            src={assets.doc1}
+            src={data.data.photo || assets.doc1}
             alt="Doctor"
             sx={{ width: "100%", height: "auto", borderRadius: 1 }}
           />
@@ -67,66 +104,80 @@ const DoctorDetailsPage = () => {
         <DoctorInfo>
           <DoctorInfo.Row>
             <DoctorInfo.Item>
-              <DoctorInfo.Label>Doctor Name:</DoctorInfo.Label>
-              <DoctorInfo.Value>{data?.data?.name}</DoctorInfo.Value>
+              <DoctorInfo.Label>{t("doctorInfo.name")}</DoctorInfo.Label>
+              <DoctorInfo.Value>{data.data.name}</DoctorInfo.Value>
             </DoctorInfo.Item>
 
             <DoctorInfo.Item>
-              <DoctorInfo.Label>Specialization:</DoctorInfo.Label>
-              <DoctorInfo.Value>{data?.data?.specialty}</DoctorInfo.Value>
-            </DoctorInfo.Item>
-          </DoctorInfo.Row>
-
-          <DoctorInfo.Row>
-            <DoctorInfo.Item>
-              <DoctorInfo.Label>Experience:</DoctorInfo.Label>
-              <DoctorInfo.Value>{`${data?.data?.experience} years`}</DoctorInfo.Value>
-            </DoctorInfo.Item>
-
-            <DoctorInfo.Item>
-              <DoctorInfo.Label>Contact:</DoctorInfo.Label>
-              <DoctorInfo.Value>{data?.data?.phone}</DoctorInfo.Value>
+              <DoctorInfo.Label>
+                {t("doctorInfo.specialization")}
+              </DoctorInfo.Label>
+              <DoctorInfo.Value>{data.data.specialty}</DoctorInfo.Value>
             </DoctorInfo.Item>
           </DoctorInfo.Row>
 
           <DoctorInfo.Row>
             <DoctorInfo.Item>
-              <DoctorInfo.Label>Location:</DoctorInfo.Label>
-              <DoctorInfo.Value>{data?.data?.address}</DoctorInfo.Value>
+              <DoctorInfo.Label>{t("doctorInfo.experience")}</DoctorInfo.Label>
+              <DoctorInfo.Value>{`${data.data.experience} ${t(
+                "years"
+              )}`}</DoctorInfo.Value>
             </DoctorInfo.Item>
 
             <DoctorInfo.Item>
-              <DoctorInfo.Label>governorate:</DoctorInfo.Label>
-              <DoctorInfo.Value>{data?.data?.governorate}</DoctorInfo.Value>
+              <DoctorInfo.Label>{t("doctorInfo.contact")}</DoctorInfo.Label>
+              <DoctorInfo.Value>{data.data.phone}</DoctorInfo.Value>
             </DoctorInfo.Item>
           </DoctorInfo.Row>
 
           <DoctorInfo.Row>
             <DoctorInfo.Item>
-              <DoctorInfo.Label>Age:</DoctorInfo.Label>
-              <DoctorInfo.Value>{data?.data?.age}</DoctorInfo.Value>
+              <DoctorInfo.Label>{t("doctorInfo.location")}</DoctorInfo.Label>
+              <Button
+                sx={{
+                  backgroundColor: (theme) => theme.palette.primary.lighter,
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.primary.light,
+                  },
+                }}
+                onClick={() => setDialog(true)}
+              >
+                <DoctorInfo.Value>{data.data.address}</DoctorInfo.Value>
+              </Button>
             </DoctorInfo.Item>
 
             <DoctorInfo.Item>
-              <DoctorInfo.Label>Joined At:</DoctorInfo.Label>
+              <DoctorInfo.Label>{t("doctorInfo.governorate")}</DoctorInfo.Label>
+              <DoctorInfo.Value>{data.data.governorate}</DoctorInfo.Value>
+            </DoctorInfo.Item>
+          </DoctorInfo.Row>
+
+          <DoctorInfo.Row>
+            <DoctorInfo.Item>
+              <DoctorInfo.Label>{t("doctorInfo.age")}</DoctorInfo.Label>
+              <DoctorInfo.Value>{data.data.age}</DoctorInfo.Value>
+            </DoctorInfo.Item>
+
+            <DoctorInfo.Item>
+              <DoctorInfo.Label>{t("doctorInfo.joinedAt")}</DoctorInfo.Label>
               <DoctorInfo.Value>
-                {formatDateTimeByLang(data?.data?.createdAt)}
+                {formatDateTimeByLang(data.data.createdAt)}
               </DoctorInfo.Value>
             </DoctorInfo.Item>
           </DoctorInfo.Row>
 
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Biography:</DoctorInfo.Label>
+            <DoctorInfo.Label>{t("doctorInfo.biography")}</DoctorInfo.Label>
             <DoctorInfo.Value>
-              {data?.data?.bio || "No biography available."}
+              {data.data.bio || t("doctorInfo.noBio")}
             </DoctorInfo.Value>
           </DoctorInfo.Item>
         </DoctorInfo>
       </Grid>
 
       <TitleSection
-        title="Available Slots"
-        subTitle="Select a slot to book an appointment with the doctor for your convenience."
+        title={t("availableSlots.title")}
+        subTitle={t("availableSlots.subtitle")}
         slotProps={{
           title: {
             variant: "h3",
@@ -153,6 +204,61 @@ const DoctorDetailsPage = () => {
       <ShowVideoAndAppointmentBooking doctorId={id} data={availableSlots!} />
 
       <PatientsComments doctorId={id} />
+
+      <Dialog
+        open={openDialog}
+        onClose={() => setDialog(false)}
+        fullWidth
+        sx={{ p: 0, m: 0, overflow: "hidden" }}
+      >
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontSize: { xs: ".5rem", md: ".8rem", lg: "1rem" },
+            color: (theme) => theme.palette.primary.darker,
+          }}
+        >
+          {data.data.address}
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            p: 0,
+            overflow: "hidden",
+            height: 500,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <DoctorMapView markerLocation={markerLocation} />
+          </Box>
+        </DialogContent>
+
+        <DialogActions>
+          <ButtonAction
+            title={t("mapDialog.close")}
+            onClick={() => setDialog(false)}
+            slotProps={{
+              button: {
+                sx: {
+                  fontSize: { xs: ".5rem", md: ".5rem", lg: ".8rem" },
+                  color: (theme) => theme.palette.common.white,
+                  backgroundColor: (theme) => theme.palette.primary.dark,
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.primary.darker,
+                  },
+                },
+              },
+            }}
+          />
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

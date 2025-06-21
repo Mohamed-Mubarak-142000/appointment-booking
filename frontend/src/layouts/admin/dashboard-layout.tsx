@@ -8,12 +8,15 @@ import MainContent from "./main-content";
 import NotificationsMenu from "./notification-menu";
 import UserMenu from "./user-menu";
 import { useAuth } from "../../context/auth-context";
+import { useGetDoctorProfile } from "../../apis/use-case/doctor/profile";
 
 const drawerWidth = 240;
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
-  const { logout, doctor: user } = useAuth();
+  const { logout } = useAuth();
+
+  const { data: user, isPending } = useGetDoctorProfile();
 
   const [open, setOpen] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -48,6 +51,8 @@ const DashboardLayout = () => {
     { id: 3, text: "New test results", time: "1 day ago" },
   ];
 
+  console.log("user", user);
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -59,6 +64,8 @@ const DashboardLayout = () => {
         handleMenuOpen={handleMenuOpen}
         handleNotificationsOpen={handleNotificationsOpen}
         userInitial={user?.name?.charAt(0) || ""}
+        image={user?.photo}
+        isLoading={isPending}
         notificationsCount={notifications.length}
       />
 

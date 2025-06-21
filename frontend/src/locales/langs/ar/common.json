@@ -72,6 +72,19 @@
       "login_as_doctor": "تسجيل الدخول كطبيب",
       "register_button": "تسجيل كطبيب",
       "cancel_button": "إلغاء"
+    },
+
+    "reset_form": {
+      "title": "استعادة كلمة المرور",
+      "description": "يرجى ملء النموذج ادناه لاستعادة كلمة المرور",
+      "email_placeholder": "ادخل بريدك الالكتروني",
+      "get_code": "احصل علي كود التحقق",
+
+      "reset_title": "تاكيد استعادة كلمة المرور",
+      "reset_description": "يرجى ملء النموذج ادناه لاستعادة كلمة المرور وكلمة المرور الجديدة",
+      "reset_password_button": "استعادة كلمة المرور",
+      "otp_placeholder": "ادخل كود التحقق",
+      "new_password_placeholder": "ادخل كلمة المرور الجديدة"
     }
   },
 

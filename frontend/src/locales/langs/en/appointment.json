@@ -1,1 +1,91 @@
-{}
+{
+  "doctorNotFound": {
+    "title": "Doctor Not Found",
+    "subtitle": "The doctor you are looking for does not exist or has been removed."
+  },
+  "locationError": {
+    "title": "Error",
+    "subtitle": "Error while loading location"
+  },
+  "doctorInfo": {
+    "name": "Doctor Name:",
+    "specialization": "Specialization:",
+    "experience": "Experience:",
+    "contact": "Contact:",
+    "location": "Location:",
+    "governorate": "Governorate:",
+    "age": "Age:",
+    "joinedAt": "Joined At:",
+    "biography": "Biography:",
+    "noBio": "No biography available."
+  },
+  "availableSlots": {
+    "title": "Available Slots",
+    "subtitle": "Select a slot to book an appointment with the doctor for your convenience.",
+    "dayLabel": "Day:",
+    "startTimeLabel": "Start Time:",
+    "endTimeLabel": "End Time:",
+    "noSlots": "No available slots found."
+  },
+  "mapDialog": {
+    "close": "Close"
+  },
+  "years": "years",
+  "appointment": {
+    "title": "Book an Appointment",
+    "form": {
+      "doctorName": "Book an appointment with Dr. {name}",
+      "specialty": "Specialty: ",
+      "appointmentType": "Appointment Type",
+      "appointmentTypes": {
+        "consultation": "Consultation (100 SAR)",
+        "procedure": "Medical Procedure (200 SAR)",
+        "test": "Test (150 SAR)",
+        "medication": "Prescription (50 SAR)"
+      },
+      "day": "Day",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      },
+      "timeSlot": "Time Slot",
+      "selectTimeSlot": "Select a time slot",
+      "reason": "Reason for Appointment",
+      "reasonPlaceholder": "Please describe the reason for your appointment in detail",
+      "submit": "Confirm Booking"
+    },
+    "errors": {
+      "doctorId": "Doctor ID is required",
+      "day": "Please select a day",
+      "timeSlot": "Please select a time slot",
+      "appointmentType": "Please select an appointment type",
+      "reason": {
+        "min": "Reason must be at least 10 characters",
+        "max": "Reason must be less than 500 characters"
+      },
+      "loginRequired": "You must be logged in as a patient to complete the booking",
+      "slotUnavailable": "Time slot is not available. Please choose another one"
+    },
+    "success": {
+      "bookingSuccess": "Appointment booked successfully!"
+    },
+    "failure": {
+      "bookingFailed": "Failed to book appointment"
+    }
+  },
+  "comments": {
+    "patient_review": "Patient Review",
+    "review": "Review",
+    "alert_login": "You must be logged in to add a review.",
+    "add_review": "Add Your Review",
+    "rating": "Rating",
+    "add_review_label": "Add Your Review",
+    "send_comment": "Send",
+    "confirm_delete_comment": "Are you sure you want to delete this review?"
+  }
+}

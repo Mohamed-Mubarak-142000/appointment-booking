@@ -27,24 +27,6 @@ const TopContent = ({ user }: { user: DoctorData }) => {
       >
         {user?.specialty}
       </Typography>
-
-      {/* <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            mt: 2,
-            backgroundColor: (theme) => theme.palette.error.dark,
-            color: (theme) => theme.palette.common.white,
-            borderRadius: 0.5,
-            py: 1,
-            "&:hover": {
-              backgroundColor: (theme) => theme.palette.error.darker,
-            },
-          }}
-          onClick={() => logout(undefined)}
-        >
-          {t("profile.logout")}
-        </Button> */}
     </Stack>
   );
 };

@@ -21,6 +21,8 @@ const PatientSchema = new mongoose.Schema({
     minlength: 6,
     select: false,
   },
+  otp: String,
+  otpExpiry: Date,
   phone: {
     type: String,
     required: [true, "Please add a phone number"],
@@ -37,8 +39,18 @@ const PatientSchema = new mongoose.Schema({
   photo: {
     type: String,
     default: "default.jpg",
+    validate: {
+      validator: function (v) {
+        return /\.(jpg|jpeg|png|gif)$/i.test(v) || /^https?:\/\/.+/i.test(v);
+      },
+      message: (props) => `${props.value} is not a valid image URL or path!`,
+    },
   },
 
+  photoPublicId: {
+    type: String,
+    select: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

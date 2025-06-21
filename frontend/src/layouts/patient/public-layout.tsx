@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./navbar";
 import Footer from "./footer";
 import { Stack } from "@mui/material";
+import FloatingChatbot from "../../pages/chat-bot";
 
 const PublicLayout = () => {
   return (
@@ -19,6 +20,7 @@ const PublicLayout = () => {
         }}
       >
         <Outlet />
+        <FloatingChatbot />
       </Stack>
       <Footer />
     </>

@@ -11,8 +11,10 @@ import CreateSlot from "../../components/doctor-services/create-slot";
 import UpdateSlotDialog from "../../components/doctor-services/update-slot";
 import ConfirmationDialog from "../../components/confirm-dailog";
 import ButtonAction from "../../components/button-action";
+import { useTranslate } from "../../locales";
 
 const DoctorServicesPage = () => {
+  const { t } = useTranslate("overview");
   const { doctor } = useDoctorAuth();
   const { data, isPending, error } = useAvailableSlots({
     id: doctor?._id || "",
@@ -32,7 +34,7 @@ const DoctorServicesPage = () => {
   if (error) {
     return (
       <Box display="flex" justifyContent="center" mt={4}>
-        <Alert severity="error">فشل في تحميل البيانات</Alert>
+        <Alert severity="error">{t("doctorServices.errorLoading")}</Alert>
       </Box>
     );
   }
@@ -40,13 +42,13 @@ const DoctorServicesPage = () => {
   return (
     <Box>
       <DataTable<AvailableSlot>
-        title="إدارة المواعيد المتاحة"
+        title={t("doctorServices.manageAppointments")}
         columns={columns}
         data={data?.slots || []}
         loading={isPending}
-        error={error ? "فشل في تحميل البيانات" : null}
+        error={error ? t("doctorServices.errorLoading") : null}
         renderAddButton={<CreateSlot />}
-        addButtonText="إضافة موعد جديد"
+        addButtonText={t("doctorServices.addNewAppointment")}
         renderEditButton={(row, handleMenuClose) => (
           <UpdateSlotDialog
             handleMenuClose={handleMenuClose}
@@ -56,10 +58,10 @@ const DoctorServicesPage = () => {
         )}
         renderDeleteButton={(row, handleMenuClose) => (
           <ConfirmationDialog
-            title="حذف الموعد"
-            content="هل انت متاكد من حذف الموعد؟"
-            cancelButtonLabel="اغلاق"
-            confirmButtonLabel="حذف"
+            title={t("doctorServices.deleteAppointment")}
+            content={t("doctorServices.deleteConfirmation")}
+            cancelButtonLabel={t("common.close")}
+            confirmButtonLabel={t("common.delete")}
             status="warning"
             onCancel={handleMenuClose}
             onConfirm={() => {
@@ -80,7 +82,7 @@ const DoctorServicesPage = () => {
                     },
                   },
                 }}
-                title="حذف"
+                title={t("common.delete")}
                 icon="icon-park-outline:delete"
                 onClick={openDialog}
                 isLoading={deleteSlotMutation.isPending}

@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { assets } from "../../assets/assets_frontend/assets";
 import DoctorInfo from "../doctor-details/doctor-info";
 import TitleSection from "../title-section";
-import { formatDateTimeByLang } from "../../locales";
+import { formatDateTimeByLang, useTranslate } from "../../locales";
 
 interface PatientDetailsProps {
   name: string;
@@ -13,12 +13,15 @@ interface PatientDetailsProps {
   createdAt: string;
   photo?: string;
 }
+
 const PatientDetails = ({ patient }: { patient: PatientDetailsProps }) => {
+  const { t } = useTranslate("overview");
+
   return (
     <>
       <TitleSection
-        title="Patient Details"
-        subTitle="Comprehensive overview of patient information"
+        title={t("appointments_page.patientDetails.title")}
+        subTitle={t("appointments_page.patientDetails.subTitle")}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -38,8 +41,8 @@ const PatientDetails = ({ patient }: { patient: PatientDetailsProps }) => {
       />
       <Box
         component={"img"}
-        src={assets.doc1}
-        alt="Doctor"
+        src={patient?.photo || assets.doc1}
+        alt={t("appointments_page.patientDetails.imageAlt")}
         sx={{
           mx: "auto",
           width: 300,
@@ -57,36 +60,48 @@ const PatientDetails = ({ patient }: { patient: PatientDetailsProps }) => {
       >
         <DoctorInfo.Row>
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Doctor Name:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.patientDetails.name")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{patient?.name}</DoctorInfo.Value>
           </DoctorInfo.Item>
 
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Email:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.patientDetails.email")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{patient?.email}</DoctorInfo.Value>
           </DoctorInfo.Item>
         </DoctorInfo.Row>
 
         <DoctorInfo.Row>
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Phone:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.patientDetails.phone")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{patient?.phone}</DoctorInfo.Value>
           </DoctorInfo.Item>
 
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Age:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.patientDetails.age")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{patient?.age}</DoctorInfo.Value>
           </DoctorInfo.Item>
         </DoctorInfo.Row>
 
         <DoctorInfo.Row>
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Gender:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.patientDetails.gender")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>{patient?.gender}</DoctorInfo.Value>
           </DoctorInfo.Item>
 
           <DoctorInfo.Item>
-            <DoctorInfo.Label>Created At:</DoctorInfo.Label>
+            <DoctorInfo.Label>
+              {t("appointments_page.patientDetails.createdAt")}:
+            </DoctorInfo.Label>
             <DoctorInfo.Value>
               {formatDateTimeByLang(patient?.createdAt)}
             </DoctorInfo.Value>

@@ -20,6 +20,11 @@ export const doctorRegisterSchema = z
       required_error: "Specialty is required",
       invalid_type_error: "Specialty must be a string",
     }),
+    location: z.object({
+      lat: z.number(),
+      lng: z.number(),
+    }),
+
     governorate: z.string({
       required_error: "Governorate is required",
       invalid_type_error: "Governorate must be a string",
@@ -53,25 +58,40 @@ export const doctorUpdateSchema = z
       .string()
       .min(5, "Address must be at least 5 characters")
       .optional(),
+    location: z.object({
+      lat: z.number(),
+      lng: z.number(),
+    }),
     phone: z
       .string()
       .min(10, "Phone must be at least 10 digits")
       .regex(/^[0-9]+$/, "Phone must contain only numbers")
       .optional(),
     age: z.coerce
-      .number() // Converts strings to numbers
+      .number()
       .min(1, "Age must be at least 1")
-      .max(120, "Invalid age"),
+      .max(120, "Invalid age")
+      .optional(),
     bio: z.string().min(20, "Bio must be at least 20 characters").optional(),
     experience: z.coerce
       .number()
       .min(0, "Experience cannot be negative")
       .optional(),
-
-    photo: z.string().optional(), // Assuming photo is a URL or base64 string
+    photo: z.union([
+      z
+        .instanceof(File)
+        .refine(
+          (file) => file.size <= 5 * 1024 * 1024,
+          "File size must be <5MB"
+        )
+        .refine((file) => file.type.startsWith("image/"), "Must be an image"),
+      z.string().url().optional(),
+    ]),
     gender: z.enum(["male", "female", "other"]).optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided for update",
+    path: ["root"],
   });
+
 export type DoctorUpdateFormData = z.infer<typeof doctorUpdateSchema>;

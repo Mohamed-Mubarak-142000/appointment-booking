@@ -4,7 +4,8 @@ const Doctor = require("../models/Doctor.js");
 const Patient = require("../models/Patient");
 const { specialties } = require("./special-controller.js");
 const { governorates } = require("./government-controller.js");
-
+const { sendOTPEmail } = require("./email-service.js");
+const { generateOTP } = require("../utils/generate-otp.js");
 // Doctor Functions
 const registerDoctor = asyncHandler(async (req, res) => {
   const {
@@ -18,6 +19,7 @@ const registerDoctor = asyncHandler(async (req, res) => {
     age,
     bio,
     experience,
+    location,
   } = req.body;
 
   const doctorExists = await Doctor.findOne({ email });
@@ -50,6 +52,7 @@ const registerDoctor = asyncHandler(async (req, res) => {
     phone,
     age,
     bio,
+    location,
     experience,
   });
 
@@ -92,23 +95,91 @@ const loginDoctor = asyncHandler(async (req, res) => {
 const getDoctorProfile = asyncHandler(async (req, res) => {
   const doctor = await Doctor.findById(req.doctor._id);
 
-  if (doctor) {
-    res.json({
-      _id: doctor._id,
-      name: doctor.name,
-      email: doctor.email,
-      specialty: doctor.specialty,
-      address: doctor.address,
-      governorate: doctor.governorate,
-      phone: doctor.phone,
-      age: doctor.age,
-      bio: doctor.bio,
-      experience: doctor.experience,
-    });
-  } else {
+  if (!doctor) {
     res.status(404);
     throw new Error("Doctor not found");
   }
+
+  let photo = null;
+
+  if (doctor.photo) {
+    if (doctor.photo.includes("res.cloudinary.com")) {
+      photo = doctor.photo.replace(
+        "/upload/",
+        "/upload/w_500,h_500,c_fill,q_auto,f_auto/"
+      );
+    } else {
+      photo = `${process.env.BASE_URL}/uploads/doctors/${doctor.photo}`;
+    }
+  }
+
+  console.log("---------------------------------------------", doctor);
+
+  res.json({
+    _id: doctor._id,
+    name: doctor.name,
+    email: doctor.email,
+    specialty: doctor.specialty,
+    address: doctor.address,
+    governorate: doctor.governorate,
+    phone: doctor.phone,
+    age: doctor.age,
+    bio: doctor.bio,
+    experience: doctor.experience,
+    location: doctor.location,
+    photo, // ← هذا ما تستخدمه في الفرونت
+  });
+});
+
+// طلب تغيير كلمة المرور
+const requestPasswordReset = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const doctor = await Doctor.findOne({ email });
+
+  if (!doctor) {
+    res.status(404);
+    throw new Error("لا يوجد طبيب مسجل بهذا البريد الإلكتروني");
+  }
+
+  const otp = generateOTP();
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+  doctor.otp = otp;
+  doctor.otpExpiry = otpExpiry;
+  await doctor.save();
+
+  await sendOTPEmail(email, otp);
+
+  res.status(200).json({
+    message: "تم إرسال رمز التحقق إلى بريدك الإلكتروني",
+    email: email,
+  });
+});
+
+const resetPasswordWithOTP = asyncHandler(async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  const doctor = await Doctor.findOne({
+    email,
+    otp,
+    otpExpiry: { $gt: Date.now() },
+  });
+
+  if (!doctor) {
+    res.status(400);
+    throw new Error("رمز التحقق غير صالح أو منتهي الصلاحية");
+  }
+
+  doctor.password = newPassword;
+  doctor.otp = undefined;
+  doctor.otpExpiry = undefined;
+  await doctor.save();
+
+  res.status(200).json({
+    message: "تم تغيير كلمة المرور بنجاح",
+    email: email,
+  });
 });
 
 // Patient Functions
@@ -167,6 +238,24 @@ const loginPatient = asyncHandler(async (req, res) => {
 const getPatientProfile = asyncHandler(async (req, res) => {
   const patient = await Patient.findById(req.patient._id);
 
+  if (!patient) {
+    res.status(404);
+    throw new Error("Patient not found");
+  }
+
+  let photo = null;
+
+  if (patient.photo) {
+    if (patient.photo.includes("res.cloudinary.com")) {
+      photo = patient.photo.replace(
+        "/upload/",
+        "/upload/w_500,h_500,c_fill,q_auto,f_auto/"
+      );
+    } else {
+      photo = `${process.env.BASE_URL}/uploads/patients/${patient.photo}`;
+    }
+  }
+
   if (patient) {
     res.json({
       _id: patient._id,
@@ -175,11 +264,63 @@ const getPatientProfile = asyncHandler(async (req, res) => {
       phone: patient.phone,
       age: patient.age,
       gender: patient.gender,
+      photo,
     });
   } else {
     res.status(404);
     throw new Error("Patient not found");
   }
+});
+
+// طلب تغيير كلمة المرور
+const requestPasswordResetPatient = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const patient = await Patient.findOne({ email });
+
+  if (!patient) {
+    res.status(404);
+    throw new Error("لا يوجد مريض مسجل بهذا البريد الإلكتروني");
+  }
+
+  const otp = generateOTP();
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+  patient.otp = otp;
+  patient.otpExpiry = otpExpiry;
+  await patient.save();
+
+  await sendOTPEmail(email, otp);
+
+  res.status(200).json({
+    message: "تم إرسال رمز التحقق إلى بريدك الإلكتروني",
+    email: email,
+  });
+});
+
+const resetPasswordWithOTPPatient = asyncHandler(async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  const patient = await Patient.findOne({
+    email,
+    otp,
+    otpExpiry: { $gt: Date.now() },
+  });
+
+  if (!patient) {
+    res.status(400);
+    throw new Error("رمز التحقق غير صالح أو منتهي الصلاحية");
+  }
+
+  patient.password = newPassword;
+  patient.otp = undefined;
+  patient.otpExpiry = undefined;
+  await patient.save();
+
+  res.status(200).json({
+    message: "تم تغيير كلمة المرور بنجاح",
+    email: email,
+  });
 });
 
 // Token Generation
@@ -208,6 +349,11 @@ module.exports = {
   registerDoctor,
   loginDoctor,
   getDoctorProfile,
+  requestPasswordReset,
+  resetPasswordWithOTP,
+
+  requestPasswordResetPatient,
+  resetPasswordWithOTPPatient,
 
   // Patient exports
   registerPatient,

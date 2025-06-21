@@ -12,13 +12,14 @@ import TopSection from "../components/filter-doctors/top-section";
 import FilterOPtions from "../components/filter-doctors/filter-options";
 import { ErrorStateContent } from "../components/error-state-content";
 import { EmptyStateContent } from "../components/empty-state-content";
+import { useTranslate } from "../locales";
 
 const DoctorsFilterPage = () => {
   const doctorsPerPage = 8;
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: specialtiesData } = useSpecialties();
   const { data: governorates } = useGovernorates();
-
+  const { t } = useTranslate("filter-doctor");
   // Initialize state from URL
   const [filters, setFilters] = useState(() => {
     const params = new URLSearchParams(window.location.search);
@@ -148,8 +149,8 @@ const DoctorsFilterPage = () => {
   if (isErrorDoctors) {
     <ErrorStateContent
       icon="material-symbols:error-outline-rounded"
-      title="Error fetching doctors"
-      subtitle="There was an error fetching the doctors. Please try again later."
+      title={t("errorFetchingDoctors.title")}
+      subtitle={t("errorFetchingDoctors.subtitle")}
       sx={{ mt: 4 }}
     />;
   }
@@ -172,8 +173,8 @@ const DoctorsFilterPage = () => {
 
       {!data || !data.data || data.data.length === 0 ? (
         <EmptyStateContent
-          title="No Doctors Found"
-          subtitle="No doctors match your search criteria. Please try adjusting your filters."
+          title={t("noDoctorsFound.title")}
+          subtitle={t("noDoctorsFound.subtitle")}
           sx={{ mt: 4 }}
         />
       ) : (

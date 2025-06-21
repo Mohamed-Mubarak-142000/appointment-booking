@@ -73,6 +73,19 @@
       "login_as_doctor": "Login as Doctor",
       "register_button": "Create Account",
       "cancel_button": "Cancel"
+    },
+
+    "reset_form": {
+      "title": "Password Reset",
+      "description": "Please enter your email to reset your password",
+      "email_placeholder": "Enter your email",
+      "get_code": "Get Code",
+
+      "reset_title": "Password Reset Confirmation ",
+      "reset_description": "Please enter your OTP code to reset your password and new password",
+      "reset_password_button": "Reset Password",
+      "otp_placeholder": "Enter your OTP code",
+      "new_password_placeholder": "Enter your new password"
     }
   },
 

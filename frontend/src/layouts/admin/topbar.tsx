@@ -4,6 +4,7 @@ import {
   Avatar,
   Badge,
   IconButton,
+  Skeleton,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -22,6 +23,8 @@ interface TopBarProps {
   handleNotificationsOpen: (event: React.MouseEvent<HTMLElement>) => void;
   userInitial: string;
   notificationsCount: number;
+  image?: string;
+  isLoading: boolean;
 }
 
 const AppBarStyled = styled(AppBar, {
@@ -48,8 +51,10 @@ const TopBar = ({
   handleDrawerOpen,
   handleMenuOpen,
   handleNotificationsOpen,
-  userInitial,
+  // userInitial,
+  isLoading,
   notificationsCount,
+  image,
 }: TopBarProps) => {
   const { data: currentUser } = useGetDoctorProfile();
 
@@ -76,7 +81,13 @@ const TopBar = ({
           component="div"
           sx={{ flexGrow: 1, textTransform: "capitalize" }}
         >
-          {currentUser?.name ? `Dr. ${currentUser.name}` : "Doctor Dashboard"}
+          {isLoading ? (
+            <Skeleton animation="wave" width={200} height={20} />
+          ) : currentUser?.name ? (
+            `Dr. ${currentUser.name}`
+          ) : (
+            "Doctor Dashboard"
+          )}
         </Typography>
 
         <IconButton color="inherit" onClick={handleNotificationsOpen}>
@@ -86,7 +97,19 @@ const TopBar = ({
         </IconButton>
 
         <IconButton color="inherit" onClick={handleMenuOpen}>
-          <Avatar sx={{ width: 32, height: 32 }}>{userInitial}</Avatar>
+          {isLoading ? (
+            <Skeleton animation="wave" width={32} height={32} />
+          ) : (
+            <Avatar
+              src={image || "/default-avatar.png"}
+              sx={{
+                width: 32,
+                height: 32,
+                cursor: "pointer",
+                "&:hover": { opacity: 0.8 },
+              }}
+            />
+          )}
         </IconButton>
       </Toolbar>
     </AppBarStyled>

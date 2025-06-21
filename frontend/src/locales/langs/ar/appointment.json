@@ -1,1 +1,92 @@
-{}
+{
+  "doctorNotFound": {
+    "title": "طبيب غير موجود",
+    "subtitle": "الطبيب الذي تبحث عنه غير موجود أو تم إزالته."
+  },
+  "locationError": {
+    "title": "خطأ",
+    "subtitle": "حدث خطأ أثناء تحميل الموقع"
+  },
+  "doctorInfo": {
+    "name": "اسم الطبيب:",
+    "specialization": "التخصص:",
+    "experience": "الخبرة:",
+    "contact": "الاتصال:",
+    "location": "الموقع:",
+    "governorate": "المحافظة:",
+    "age": "العمر:",
+    "joinedAt": "تاريخ الانضمام:",
+    "biography": "السيرة الذاتية:",
+    "noBio": "لا توجد سيرة ذاتية متاحة."
+  },
+  "availableSlots": {
+    "title": "المواعيد المتاحة",
+    "subtitle": "اختر موعدًا لحجز مع الطبيب لتسهيل الأمر عليك.",
+    "dayLabel": "اليوم:",
+    "startTimeLabel": "وقت البدء:",
+    "endTimeLabel": "وقت الانتهاء:",
+    "noSlots": "لا توجد مواعيد متاحة."
+  },
+  "mapDialog": {
+    "close": "إغلاق"
+  },
+  "years": "سنوات",
+
+  "appointment": {
+    "title": "حجز موعد",
+    "form": {
+      "doctorName": "حجز موعد مع د.",
+      "specialty": "تخصص:",
+      "appointmentType": "نوع الموعد",
+      "appointmentTypes": {
+        "consultation": "استشارة (100 ريال)",
+        "procedure": "إجراء طبي (200 ريال)",
+        "test": "فحص (150 ريال)",
+        "medication": "وصفة طبية (50 ريال)"
+      },
+      "day": "اليوم",
+      "days": {
+        "monday": "الإثنين",
+        "tuesday": "الثلاثاء",
+        "wednesday": "الأربعاء",
+        "thursday": "الخميس",
+        "friday": "الجمعة",
+        "saturday": "السبت",
+        "sunday": "الأحد"
+      },
+      "timeSlot": "الفترة الزمنية",
+      "selectTimeSlot": "اختر فترة زمنية",
+      "reason": "سبب الحجز",
+      "reasonPlaceholder": "الرجاء وصف سبب الحجز بالتفصيل",
+      "submit": "تأكيد الحجز"
+    },
+    "errors": {
+      "doctorId": "معرف الطبيب مطلوب",
+      "day": "الرجاء اختيار يوم",
+      "timeSlot": "الرجاء اختيار موعد",
+      "appointmentType": "الرجاء اختيار نوع الموعد",
+      "reason": {
+        "min": "يجب أن يكون السبب 10 أحرف على الأقل",
+        "max": "يجب أن يكون السبب أقل من 500 حرف"
+      },
+      "loginRequired": "يجب تسجيل الدخول كـ مريض لإتمام عملية الحجز",
+      "slotUnavailable": "الفترة الزمنية غير متاحة. يرجى اختيار فترة أخرى"
+    },
+    "success": {
+      "bookingSuccess": "تم حجز الموعد بنجاح!"
+    },
+    "failure": {
+      "bookingFailed": "فشل في حجز الموعد"
+    }
+  },
+  "comments": {
+    "patient_review": "تقييم المريض",
+    "review": "التقييم",
+    "alert_login": "يجب تسجيل الدخول لإضافة تقييم.",
+    "add_review": "أضف تقييمك",
+    "rating": "التقييم",
+    "add_review_label": "أضف تقييمك",
+    "send_comment": "إرسال",
+    "confirm_delete_comment": "هل أنت متأكد أنك تريد حذف هذا التقييم؟"
+  }
+}

@@ -13,7 +13,6 @@ export const PatientsComments = ({ doctorId }: PatientsCommentsProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { reviewsQuery } = useReviews(doctorId);
-  console.log("reviewsQuery", reviewsQuery.data);
 
   return (
     <Box sx={{ mt: 4, p: isMobile ? 1 : 3 }}>

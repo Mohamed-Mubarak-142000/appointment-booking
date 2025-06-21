@@ -271,3 +271,21 @@ export const useGetArchivedAppointmentDetails = (archiveId: string) => {
     },
   });
 };
+
+export const useGetPatientAppointments = (patientId: string) => {
+  return useQuery({
+    queryKey: ["patient-appointments", patientId],
+    queryFn: async () => {
+      try {
+        const response = await patientApiClient.get(
+          `/appointments/patient/${patientId}`
+        );
+        return response.data;
+      } catch {
+        toast.error("فشل في جلب مواعيد الطبيب");
+        throw new Error("فشل في جلب مواعيد الطبيب");
+      }
+    },
+    enabled: !!patientId, // يتم تشغيل الاستعلام فقط عندما يكون patientId موجودًا
+  });
+};

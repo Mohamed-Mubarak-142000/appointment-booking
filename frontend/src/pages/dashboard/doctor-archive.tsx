@@ -8,8 +8,10 @@ import DataTable from "../../components/overview/common/data-table";
 import { useDoctorAuth } from "../../context/auth-context";
 import ButtonAction from "../../components/button-action";
 import { useNavigate } from "react-router-dom";
+import { useTranslate } from "../../locales";
 
 const DoctorArchive = () => {
+  const { t } = useTranslate("overview");
   const { doctor } = useDoctorAuth();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -17,52 +19,51 @@ const DoctorArchive = () => {
     patientName: searchTerm,
     doctorId: doctor?._id || "",
   });
-  console.log("data", data);
 
   const columns: Column<ArchivedAppointmentRaw>[] = [
     {
       id: "patientName",
-      label: "اسم المريض",
+      label: t("doctorArchive.patientName"),
       align: "left",
-      format: (_value, row) => row?.patientName || "غير معروف",
+      format: (_value, row) => row?.patientName || t("doctorArchive.unknown"),
     },
     {
       id: "doctorName",
-      label: "اسم الطبيب",
+      label: t("doctorArchive.doctorName"),
       align: "left",
-      format: (_value, row) => row?.doctorName || "غير معروف",
+      format: (_value, row) => row?.doctorName || t("doctorArchive.unknown"),
     },
     {
       id: "day",
-      label: "اليوم",
+      label: t("doctorArchive.day"),
       align: "left",
-      format: (_value, row) => row?.day || "غير معروف",
+      format: (_value, row) => row?.day || t("doctorArchive.unknown"),
     },
     {
       id: "startTime",
-      label: "وقت البدء",
+      label: t("doctorArchive.startTime"),
       align: "left",
-      format: (_value, row) => row?.startTime || "غير معروف",
+      format: (_value, row) => row?.startTime || t("doctorArchive.unknown"),
     },
     {
       id: "endTime",
-      label: "وقت الانتهاء",
+      label: t("doctorArchive.endTime"),
       align: "left",
-      format: (_value, row) => row?.endTime || "غير معروف",
+      format: (_value, row) => row?.endTime || t("doctorArchive.unknown"),
     },
     {
       id: "reason",
-      label: "السبب",
+      label: t("doctorArchive.reason"),
       align: "left",
-      format: (_value, row) => row?.reason || "غير معروف",
+      format: (_value, row) => row?.reason || t("doctorArchive.unknown"),
     },
   ];
 
   const tableData: ArchivedAppointmentRaw[] =
     data?.data.map((appointment: ArchivedAppointmentRaw) => ({
       ...appointment,
-      patientName: appointment.patient?.name || "غير معروف",
-      doctorName: appointment.doctor?.name || "غير معروف",
+      patientName: appointment.patient?.name || t("doctorArchive.unknown"),
+      doctorName: appointment.doctor?.name || t("doctorArchive.unknown"),
     })) || [];
 
   const navigate = useNavigate();
@@ -72,15 +73,15 @@ const DoctorArchive = () => {
 
   return (
     <DataTable<ArchivedAppointmentRaw>
-      title="مواعيدي"
+      title={t("doctorArchive.title")}
       columns={columns}
       data={tableData}
       loading={isPending}
       error={error?.message || null}
-      emptyMessage="لا توجد مواعيد حالياً"
-      addButtonText="إضافة موعد جديد"
+      emptyMessage={t("doctorArchive.noAppointments")}
+      addButtonText={t("doctorArchive.addAppointment")}
       showSearch
-      searchPlaceholder="ابحث عن مريض..."
+      searchPlaceholder={t("doctorArchive.searchPlaceholder")}
       onSearchChange={setSearchTerm}
       searchTerm={searchTerm}
       renderViewButton={(row, handleMenuClose) => (
@@ -96,7 +97,7 @@ const DoctorArchive = () => {
               },
             },
           }}
-          title="عرض"
+          title={t("doctorArchive.view")}
           onClick={() => {
             handleAppointmentDetails(row._id);
             handleMenuClose();

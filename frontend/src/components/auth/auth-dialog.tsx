@@ -1,11 +1,12 @@
 // components/auth/patient-auth-dialog.tsx
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import type { AuthTab } from "../../types";
 import AuthTabsToggle from "./auth-tabs";
 import { PatientLoginForm } from "./login-form";
 import { PatientRegisterForm } from "./register-form";
-
+import { PatientForgotPasswordForm } from "./forgot-password-form";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 interface PatientAuthDialogProps {
   open: boolean;
   onClose: () => void;
@@ -20,6 +21,12 @@ export const PatientAuthDialog = ({
   initialTab = "login",
 }: PatientAuthDialogProps) => {
   const [currentTab, setCurrentTab] = useState<AuthTab>(initialTab);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+
+  const handleBackToAuth = () => {
+    setShowForgotPassword(false);
+  };
+
   return (
     <Dialog
       open={open}
@@ -33,8 +40,23 @@ export const PatientAuthDialog = ({
         },
       }}
     >
-      <DialogTitle sx={{ textAlign: "center", py: 3 }}>
-        <AuthTabsToggle currentTab={currentTab} setCurrentTab={setCurrentTab} />
+      <DialogTitle sx={{ textAlign: "center", py: 3, position: "relative" }}>
+        {showForgotPassword && (
+          <IconButton
+            onClick={handleBackToAuth}
+            sx={{ position: "absolute", left: 24, top: 16 }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+        )}
+        {!showForgotPassword ? (
+          <AuthTabsToggle
+            currentTab={currentTab}
+            setCurrentTab={setCurrentTab}
+          />
+        ) : (
+          "استعادة كلمة السر"
+        )}
       </DialogTitle>
 
       <DialogContent
@@ -45,8 +67,16 @@ export const PatientAuthDialog = ({
           py: 0,
         }}
       >
-        {currentTab === "login" ? (
-          <PatientLoginForm onClose={onClose} />
+        {showForgotPassword ? (
+          <PatientForgotPasswordForm
+            onClose={onClose}
+            onBackToAuth={handleBackToAuth}
+          />
+        ) : currentTab === "login" ? (
+          <PatientLoginForm
+            onClose={onClose}
+            onForgotPassword={() => setShowForgotPassword(true)}
+          />
         ) : (
           <PatientRegisterForm
             onClose={onClose}

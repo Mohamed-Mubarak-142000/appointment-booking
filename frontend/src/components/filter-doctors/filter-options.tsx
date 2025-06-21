@@ -7,7 +7,7 @@ import {
   TextField,
   type SelectChangeEvent,
 } from "@mui/material";
-import { getCurrentLang } from "../../locales";
+import { getCurrentLang, useTranslate } from "../../locales";
 import type { Governorate } from "../../apis/use-case/get-all-government";
 import type { Specialty } from "../../apis/use-case/get-all-specialiste";
 
@@ -31,10 +31,11 @@ const FilterOPtions = ({
     page: number;
   };
 }) => {
+  const { t } = useTranslate("filter-doctor");
   return (
     <Box sx={{ display: "flex", gap: 2, mb: 4, flexWrap: "wrap" }}>
       <TextField
-        label="Search by name"
+        label={t("search_placeholder")}
         variant="outlined"
         name="name"
         value={filters.name}
@@ -43,12 +44,12 @@ const FilterOPtions = ({
       />
 
       <FormControl sx={{ minWidth: 200 }}>
-        <InputLabel>Specialty</InputLabel>
+        <InputLabel>{t("specialty")}</InputLabel>
         <Select
           name="specialty"
           value={filters.specialty}
           onChange={onFilterChange}
-          label="Specialty"
+          label={t("specialty")}
         >
           {specialtyData.map((specialty: Specialty) => (
             <MenuItem key={specialty.id} value={specialty.value}>
@@ -61,12 +62,12 @@ const FilterOPtions = ({
       </FormControl>
 
       <FormControl sx={{ minWidth: 200 }}>
-        <InputLabel>Governorate</InputLabel>
+        <InputLabel>{t("governorate")}</InputLabel>
         <Select
           name="governorate"
           value={filters.governorate}
           onChange={onFilterChange}
-          label="Governorate"
+          label={t("governorate")}
         >
           {governorateData.map((gov: Governorate) => (
             <MenuItem key={gov.id} value={gov.value}>

@@ -1,4 +1,12 @@
-import { Box, TextField, Button, Grid, CircularProgress } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  Grid,
+  CircularProgress,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDoctorRegister } from "../../../apis/use-case/doctor/auth";
@@ -9,24 +17,45 @@ import {
   doctorRegisterSchema,
   type DoctorRegisterFormData,
 } from "../../../schemas/doctor-schema";
+import { useState } from "react";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import MapSelector from "../../map/map-selector";
 
 export const DoctorRegisterForm = () => {
+  const [showMap, setShowMap] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<{
+    lat: number;
+    lng: number;
+    address: string;
+  } | null>(null);
+
   const { mutate: registerMutation, isPending } = useDoctorRegister();
   const { t } = useTranslate("common");
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
     control,
   } = useForm<DoctorRegisterFormData>({
     resolver: zodResolver(doctorRegisterSchema),
   });
 
+  const handleLocationSelect = (location: {
+    lat: number;
+    lng: number;
+    address: string;
+  }) => {
+    setValue("address", location.address);
+    setValue("location", { lat: location.lat, lng: location.lng });
+    setSelectedLocation(location);
+    setShowMap(false);
+  };
+
   const onSubmit = (data: DoctorRegisterFormData) => {
     registerMutation(data);
   };
 
-  console.log("errors", errors);
   return (
     <Box
       component="form"
@@ -38,7 +67,7 @@ export const DoctorRegisterForm = () => {
         alignItems: "center",
       }}
     >
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
@@ -53,7 +82,6 @@ export const DoctorRegisterForm = () => {
           <TextField
             fullWidth
             placeholder={t("register_form.doctor_register.email_placeholder")}
-            {...register("email")}
             type="email"
             {...register("email")}
             error={!!errors.email}
@@ -91,7 +119,7 @@ export const DoctorRegisterForm = () => {
           <SpecialtySelector
             name="specialty"
             control={control}
-            error={!!errors}
+            error={!!errors.specialty}
             helperText={errors.specialty?.message}
             placeholder={t(
               "register_form.doctor_register.specialty_placeholder"
@@ -113,9 +141,19 @@ export const DoctorRegisterForm = () => {
           <TextField
             fullWidth
             placeholder={t("register_form.doctor_register.address_placeholder")}
-            {...register("address")}
             error={!!errors.address}
             helperText={errors.address?.message}
+            value={selectedLocation?.address || ""}
+            InputProps={{
+              readOnly: true,
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowMap(true)}>
+                    <LocationOnIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </Grid>
 
@@ -150,8 +188,8 @@ export const DoctorRegisterForm = () => {
               "register_form.doctor_register.experience_placeholder"
             )}
             {...register("experience", { valueAsNumber: true })}
-            error={!!errors.age}
-            helperText={errors.age?.message}
+            error={!!errors.experience}
+            helperText={errors.experience?.message}
           />
         </Grid>
 
@@ -168,6 +206,13 @@ export const DoctorRegisterForm = () => {
         </Grid>
       </Grid>
 
+      <MapSelector
+        open={showMap}
+        onSelect={handleLocationSelect}
+        onClose={() => setShowMap(false)}
+        initialLocation={selectedLocation || undefined}
+      />
+
       <Button
         type="submit"
         fullWidth
@@ -180,7 +225,11 @@ export const DoctorRegisterForm = () => {
         }}
         disabled={isPending}
       >
-        {isPending ? <CircularProgress size={24} /> : "Register"}
+        {isPending ? (
+          <CircularProgress size={24} />
+        ) : (
+          t("register_form.register_button")
+        )}
       </Button>
     </Box>
   );

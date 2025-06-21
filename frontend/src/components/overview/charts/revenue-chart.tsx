@@ -48,7 +48,7 @@ const RevenueChart = () => {
       data={data}
       title="Revenue by Category"
       defaultChartType="pie"
-      showTabs={true} // Since we only want to show pie chart
+      showTabs={true}
     />
   );
 };

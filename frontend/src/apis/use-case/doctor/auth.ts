@@ -91,6 +91,58 @@ export function useDoctorLogout(): UseMutationResult<
   });
 }
 
+export function useRequestDoctorPasswordReset(): UseMutationResult<
+  { message: string; email: string },
+  AxiosError,
+  { email: string }
+> {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async ({ email }) => {
+      const { data } = await doctorApiClient.post<{
+        message: string;
+        email: string;
+      }>("/auth/request-password", { email });
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      navigate("/doctor/reset-password", { state: { email: data.email } });
+    },
+    onError: (error) => {
+      const message = getErrorMessage(error) || "Failed to send OTP";
+      toast.error(message);
+    },
+  });
+}
+
+export function useResetDoctorPasswordWithOTP(): UseMutationResult<
+  { message: string },
+  AxiosError,
+  { email: string; otp: string; newPassword: string }
+> {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async ({ email, otp, newPassword }) => {
+      const { data } = await doctorApiClient.post<{ message: string }>(
+        "/auth/reset-password",
+        { email, otp, newPassword }
+      );
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      navigate("/doctor/login");
+    },
+    onError: (error) => {
+      const message = getErrorMessage(error) || "Password reset failed";
+      toast.error(message);
+    },
+  });
+}
+
 // Helper functions
 export function getErrorMessage(error: AxiosError): string | undefined {
   return error.response?.data &&

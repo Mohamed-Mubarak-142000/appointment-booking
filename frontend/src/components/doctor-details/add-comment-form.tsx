@@ -11,10 +11,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useTranslate } from "../../locales";
 
 const AddCommentForm = ({ doctorId }: { doctorId: string }) => {
   const { reviewsQuery, addReviewMutation } = useReviews(doctorId);
   const { patient: user } = usePatientAuth();
+  const { t } = useTranslate("appointment");
   const {
     register,
     handleSubmit,
@@ -54,10 +56,10 @@ const AddCommentForm = ({ doctorId }: { doctorId: string }) => {
         }}
       >
         <Typography variant="h6" gutterBottom>
-          Add Your Review
+          {t("comments.add_review")}
         </Typography>
         <Box sx={{ mb: 2 }}>
-          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">{t("comments.rating")}</Typography>
           <Controller
             name="rating"
             control={control}
@@ -79,7 +81,7 @@ const AddCommentForm = ({ doctorId }: { doctorId: string }) => {
         </Box>
         <TextField
           {...register("comment")}
-          label="Your Review "
+          label={t("add_review_label")}
           multiline
           rows={4}
           fullWidth
@@ -101,7 +103,7 @@ const AddCommentForm = ({ doctorId }: { doctorId: string }) => {
           {addReviewMutation.isPending ? (
             <CircularProgress size={24} />
           ) : (
-            "Submit Review"
+            t("comments.send_comment")
           )}
         </Button>
       </Box>

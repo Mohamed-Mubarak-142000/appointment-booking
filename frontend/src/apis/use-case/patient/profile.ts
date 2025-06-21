@@ -34,12 +34,17 @@ export function useUpdatePatientProfile(): UseMutationResult<
   UpdatePatientData
 > {
   const queryClient = useQueryClient();
-
+  const config = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  };
   return useMutation({
     mutationFn: async (updateData: UpdatePatientData) => {
       const { data } = await patientApiClient.put<PatientData>(
         `/patients/${updateData._id}`,
-        updateData
+        updateData,
+        config
       );
       return data;
     },

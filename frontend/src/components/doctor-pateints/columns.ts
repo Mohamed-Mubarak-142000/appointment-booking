@@ -1,5 +1,5 @@
 import type { Column } from "../../apis/use-case/types";
-import { formatDateTimeByLang } from "../../locales";
+import { formatDateTimeByLang, tFn } from "../../locales";
 export interface PatientColumn {
   _id: string;
   name: string;
@@ -14,21 +14,21 @@ export interface PatientColumn {
 const columns: Column<PatientColumn>[] = [
   {
     id: "name",
-    label: "الاسم",
+    label: tFn("overview:patient_page.columns.name"),
     format(value, row) {
       return row?.name;
     },
   },
   {
     id: "email",
-    label: "البريد الإلكتروني",
+    label: tFn("overview:patient_page.columns.email"),
     format(value, row) {
       return row?.email;
     },
   },
   {
     id: "phone",
-    label: "رقم الهاتف",
+    label: tFn("overview:patient_page.columns.phone"),
     format(value, row) {
       return row?.phone;
     },
@@ -36,7 +36,7 @@ const columns: Column<PatientColumn>[] = [
 
   {
     id: "createdAt",
-    label: "تاريخ الإضافة",
+    label: tFn("overview:patient_page.columns.createdAt"),
     format(value, row) {
       return formatDateTimeByLang(row?.createdAt);
     },

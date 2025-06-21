@@ -20,9 +20,11 @@ import type {
 } from "../../apis/use-case/types";
 import { useEffect, useState } from "react";
 import { GetAvailableSlotsSelector } from "./select-available-slots";
+import { tFn, useTranslate } from "../../locales";
 
-const appointmentSchema = z.object({
-  doctorId: z.string().min(1, "معرف الطبيب مطلوب"),
+// Create schema with translated error messages
+const createAppointmentSchema = z.object({
+  doctorId: z.string().min(1, tFn("appointment:appointment.errors.doctorId")),
   day: z.enum(
     [
       "monday",
@@ -34,20 +36,20 @@ const appointmentSchema = z.object({
       "sunday",
     ],
     {
-      required_error: "الرجاء اختيار يوم",
+      required_error: tFn("appointment:appointment.errors.day"),
     }
   ),
-  startTime: z.string().min(1, "الرجاء اختيار موعد"),
+  startTime: z.string().min(1, tFn("appointment:appointment.errors.timeSlot")),
   type: z.enum(["consultation", "procedure", "test", "medication"], {
-    required_error: "الرجاء اختيار نوع الموعد",
+    required_error: tFn("appointment:appointment.errors.appointmentType"),
   }),
   reason: z
     .string()
-    .min(10, "يجب أن يكون السبب 10 أحرف على الأقل")
-    .max(500, "يجب أن يكون السبب أقل من 500 حرف"),
+    .min(10, tFn("appointment:appointment.errors.reason.min"))
+    .max(500, tFn("appointment:appointment.errors.reason.max")),
 });
 
-type AppointmentFormValues = z.infer<typeof appointmentSchema>;
+type AppointmentFormValues = z.infer<typeof createAppointmentSchema>;
 
 const AppointmentBooking = ({
   doctorId,
@@ -56,6 +58,7 @@ const AppointmentBooking = ({
   doctorId: string;
   data: AvailableSlotsData;
 }) => {
+  const { t } = useTranslate("appointment");
   const { mutateAsync: createAppointment, isPending } = useCreateAppointment();
   const { patient } = usePatientAuth();
   const [availableSlots, setAvailableSlots] = useState<AvailableSlot[]>([]);
@@ -69,7 +72,7 @@ const AppointmentBooking = ({
     control,
     setValue,
   } = useForm<AppointmentFormValues>({
-    resolver: zodResolver(appointmentSchema),
+    resolver: zodResolver(createAppointmentSchema),
     defaultValues: {
       doctorId,
       type: "consultation",
@@ -107,22 +110,13 @@ const AppointmentBooking = ({
   }
 
   const getDayLabel = (day: string) => {
-    const days: Record<string, string> = {
-      monday: "الإثنين",
-      tuesday: "الثلاثاء",
-      wednesday: "الأربعاء",
-      thursday: "الخميس",
-      friday: "الجمعة",
-      saturday: "السبت",
-      sunday: "الأحد",
-    };
-    return days[day.toLowerCase()] || day;
+    return t(`form.days.${day.toLowerCase()}`, { defaultValue: day });
   };
 
   const onSubmit = async (data: AppointmentFormValues) => {
     try {
       if (!patient?._id) {
-        toast.error("يجب تسجيل الدخول أولاً");
+        toast.error(t("appointment.errors.loginRequired"));
         return;
       }
 
@@ -131,7 +125,7 @@ const AppointmentBooking = ({
       );
 
       if (!selectedSlot || !selectedSlot._id) {
-        toast.error("الفترة الزمنية غير متاحة. يرجى اختيار فترة أخرى");
+        toast.error(t("appointment.errors.slotUnavailable"));
         return;
       }
 
@@ -148,10 +142,10 @@ const AppointmentBooking = ({
       });
 
       reset();
-      toast.success("تم حجز الموعد بنجاح!");
+      toast.success(t("appointment.success.bookingSuccess"));
     } catch (error) {
       console.error("Error details:", error);
-      toast.error("فشل في حجز الموعد");
+      toast.error(t("appointment.failure.bookingFailed"));
     }
   };
 
@@ -160,34 +154,39 @@ const AppointmentBooking = ({
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h5" gutterBottom>
-            حجز موعد مع د. {data?.doctor?.name}
+            {t("appointment.form.doctorName")}
+            {data?.doctor?.name}
           </Typography>
           <Typography variant="subtitle1" color="text.secondary">
-            تخصص: {data?.doctor?.specialty}
+            {t(`appointment.form.specialty`)}
+            {data?.doctor?.specialty}
           </Typography>
         </Grid>
 
         <Grid item xs={12} md={6}>
           <TextField
             select
-            label="نوع الموعد"
+            label={t("appointment.form.appointmentType")}
             {...register("type")}
             error={!!errors.type}
             helperText={errors.type?.message}
             fullWidth
             required
           >
-            <MenuItem value="consultation">استشارة ( 100 ريال)</MenuItem>
-            <MenuItem value="procedure">إجراء طبي (200 ريال)</MenuItem>
-            <MenuItem value="test">فحص (150 ريال)</MenuItem>
-            <MenuItem value="medication">وصفة طبية (50 ريال)</MenuItem>
+            {Object.entries(
+              t("appointment.form.appointmentTypes", { returnObjects: true })
+            ).map(([value, label]) => (
+              <MenuItem key={value} value={value}>
+                {label}
+              </MenuItem>
+            ))}
           </TextField>
         </Grid>
 
         <Grid item xs={12} md={6}>
           <TextField
             select
-            label="اليوم"
+            label={t("appointment.form.day")}
             {...register("day")}
             error={!!errors.day}
             helperText={errors.day?.message}
@@ -212,7 +211,7 @@ const AppointmentBooking = ({
           <GetAvailableSlotsSelector
             control={control}
             name="startTime"
-            placeholder="اختر فترة زمنية"
+            placeholder={t("appointment.form.selectTimeSlot")}
             error={!!errors.startTime}
             helperText={errors.startTime?.message}
             doctorId={doctorId}
@@ -221,7 +220,7 @@ const AppointmentBooking = ({
 
         <Grid item xs={12}>
           <TextField
-            label="سبب الحجز"
+            label={t("appointment.form.reason")}
             {...register("reason")}
             error={!!errors.reason}
             helperText={errors.reason?.message}
@@ -229,14 +228,14 @@ const AppointmentBooking = ({
             rows={4}
             fullWidth
             required
-            placeholder="الرجاء وصف سبب الحجز بالتفصيل"
+            placeholder={t("appointment.form.reasonPlaceholder")}
           />
         </Grid>
 
         {!patient?._id && (
           <Grid item xs={12}>
             <Alert severity="error">
-              يجب تسجيل الدخول كـ مريض لإتمام عملية الحجز
+              {t("appointment.errors.loginRequired")}
             </Alert>
           </Grid>
         )}
@@ -254,7 +253,7 @@ const AppointmentBooking = ({
             {isPending ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
-              "تأكيد الحجز"
+              t("appointment.form.submit")
             )}
           </Button>
         </Grid>

@@ -4,6 +4,7 @@ import {
   Button,
   CircularProgress,
   DialogActions,
+  Link,
   Stack,
   TextField,
 } from "@mui/material";
@@ -21,9 +22,13 @@ import {
 
 interface PatientLoginFormProps {
   onClose: () => void;
+  onForgotPassword: () => void;
 }
 
-export const PatientLoginForm = ({ onClose }: PatientLoginFormProps) => {
+export const PatientLoginForm = ({
+  onClose,
+  onForgotPassword,
+}: PatientLoginFormProps) => {
   const { t } = useTranslate("common");
   const { mutate: login, isPending } = usePatientLogin();
 
@@ -73,6 +78,22 @@ export const PatientLoginForm = ({ onClose }: PatientLoginFormProps) => {
           helperText={errors.password?.message}
           autoComplete="current-password"
         />
+
+        <Box sx={{ textAlign: "right", my: 2 }}>
+          <Link
+            component="button"
+            type="button"
+            onClick={onForgotPassword}
+            sx={{
+              fontSize: { xs: ".8rem", sm: ".9", md: "1rem" },
+              fontWeight: (theme) => theme.typography.fontWeightSemiBold,
+              color: "primary.dark",
+              textDecoration: "underline",
+            }}
+          >
+            نسيت كلمة السر؟
+          </Link>
+        </Box>
       </Stack>
 
       <DialogActions sx={{ px: 0, py: 3 }}>

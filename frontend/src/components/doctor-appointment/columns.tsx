@@ -10,37 +10,38 @@ import ConfirmationDialog, {
   type ConfirmationDialogRef,
 } from "../confirm-dailog";
 import { useRef, useState } from "react";
+import { tFn, useTranslate } from "../../locales";
 
 export const columns: Column<AppointmentRaw>[] = [
   {
     id: "patient",
-    label: "اسم المريض",
+    label: tFn("overview:appointments_page.columns.name"),
     align: "left",
     format: (_value, row) => row?.patient?.name || "غير معروف",
   },
   {
     id: "type",
-    label: "نوع الموعد",
+    label: tFn("overview:appointments_page.columns.type_slot"),
     align: "center",
   },
   {
     id: "day",
-    label: "اليوم",
+    label: tFn("overview:appointments_page.columns.day"),
     align: "center",
   },
   {
     id: "startTime",
-    label: "من الساعة",
+    label: tFn("overview:appointments_page.columns.start_time"),
     align: "center",
   },
   {
     id: "endTime",
-    label: "إلى الساعة",
+    label: tFn("overview:appointments_page.columns.end_time"),
     align: "center",
   },
   {
     id: "status",
-    label: "الحالة",
+    label: tFn("overview:appointments_page.columns.status"),
     align: "center",
     format: (value: string, row?: AppointmentRaw) => {
       if (!row) return null;
@@ -54,19 +55,19 @@ const ChangeStatusAppointment = ({ row }: { row: AppointmentRaw }) => {
   const [selectedStatus, setSelectedStatus] = useState<UpdateStatusData | "">(
     ""
   );
-
+  const { t } = useTranslate("overview");
   const dialogRef = useRef<ConfirmationDialogRef>(null);
 
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "مؤكد";
+        return t("appointments_page.columns.status_pending");
       case "cancelled":
-        return "ملغي";
+        return t("appointments_page.columns.status_cancelled");
       case "completed":
-        return "مكتمل";
+        return t("appointments_page.columns.status_completed");
       default:
-        return "قيد الانتظار";
+        return t("appointments_page.columns.status_pending");
     }
   };
 
@@ -109,11 +110,13 @@ const ChangeStatusAppointment = ({ row }: { row: AppointmentRaw }) => {
   return (
     <>
       <FormControl size="small" fullWidth>
-        <InputLabel id={`status-label-${row._id}`}>الحالة</InputLabel>
+        <InputLabel id={`status-label-${row._id}`}>
+          {t("appointments_page.columns.status")}
+        </InputLabel>
         <Select
           labelId={`status-label-${row._id}`}
           value={row.status}
-          label="الحالة"
+          label={t("appointments_page.columns.status")}
           onChange={(e) =>
             handleStatusChange(
               row,
@@ -121,21 +124,31 @@ const ChangeStatusAppointment = ({ row }: { row: AppointmentRaw }) => {
             )
           }
         >
-          <MenuItem value="confirmed">مؤكد</MenuItem>
-          <MenuItem value="cancelled">ملغي</MenuItem>
-          <MenuItem value="completed">مكتمل</MenuItem>
+          <MenuItem value="confirmed">
+            {t("appointments_page.columns.status_pending")}
+          </MenuItem>
+          <MenuItem value="cancelled">
+            {t("appointments_page.columns.status_cancelled")}
+          </MenuItem>
+          <MenuItem value="completed">
+            {t("appointments_page.columns.status_completed")}
+          </MenuItem>
         </Select>
       </FormControl>
 
       <ConfirmationDialog
         ref={dialogRef}
-        title="تغيير حالة الموعد"
+        title={t("appointments_page.columns.change_status_dialog.title")}
         content={
-          "هل تريد تغيير حالة الموعد؟" +
+          t("appointments_page.columns.change_status_dialog.message") +
           ` ${getStatusLabel(selectedStatus as string)}`
         }
-        confirmButtonLabel="تغيير"
-        cancelButtonLabel="الغاء"
+        confirmButtonLabel={t(
+          "appointments_page.columns.change_status_dialog.change"
+        )}
+        cancelButtonLabel={t(
+          "appointments_page.columns.change_status_dialog.cancel"
+        )}
         isLoading={isUpdating}
         status={getStatusColor(selectedStatus as string)}
         onConfirm={confirmStatusChange}

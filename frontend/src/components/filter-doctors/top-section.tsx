@@ -1,5 +1,5 @@
 import { Box, Chip, Typography } from "@mui/material";
-import { getCurrentLang } from "../../locales";
+import { getCurrentLang, useTranslate } from "../../locales";
 import type { Governorate } from "../../apis/use-case/get-all-government";
 import type { Specialty } from "../../apis/use-case/get-all-specialiste";
 
@@ -19,10 +19,11 @@ const TopSection = ({
   };
   clearFilter: (filter: "specialty" | "governorate" | "name") => void;
 }) => {
+  const { t } = useTranslate("filter-doctor");
   return (
     <>
       <Typography variant="h4" gutterBottom>
-        Find Doctors
+        {t("find_doctor")}
       </Typography>
       <Box sx={{ display: "flex", gap: 1, mb: 2, flexWrap: "wrap" }}>
         {filters.specialty && (

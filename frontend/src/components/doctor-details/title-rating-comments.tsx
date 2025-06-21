@@ -1,13 +1,14 @@
 import { Box, Rating, Stack, Typography } from "@mui/material";
 import { useReviews } from "../../apis/use-case/doctor/review";
+import { useTranslate } from "../../locales";
 
 const TitleRatingComments = ({ doctorId }: { doctorId: string }) => {
   const { reviewsQuery } = useReviews(doctorId);
-
+  const { t } = useTranslate("appointment");
   return (
     <Stack spacing={2}>
       <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
-        Patient Reviews
+        {t("comments.patient_review")}
       </Typography>
 
       {reviewsQuery.data && (
@@ -19,7 +20,7 @@ const TitleRatingComments = ({ doctorId }: { doctorId: string }) => {
           />
           <Typography variant="body1" sx={{ ml: 1 }}>
             {reviewsQuery.data.averageRating.toFixed(1)} (
-            {reviewsQuery.data.count} reviews)
+            {reviewsQuery.data.count}) {t("comments.review")}
           </Typography>
         </Box>
       )}

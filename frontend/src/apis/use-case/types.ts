@@ -1,4 +1,5 @@
 import type React from "react";
+import type { DoctorUpdateFormData } from "../../schemas/doctor-schema";
 
 // Base User Types
 export type AuthRole = "doctor" | "patient";
@@ -27,6 +28,10 @@ export interface Review {
   createdAt: string;
 }
 
+interface LocationProps {
+  lat: number;
+  lng: number;
+}
 // Doctor Specific Types
 export interface DoctorData extends BaseUser {
   role: "Doctor";
@@ -42,17 +47,10 @@ export interface DoctorData extends BaseUser {
   procedureFee?: number;
   testFee?: number;
   medicationFee?: number;
-}
+  photo?: string;
 
-// export interface AvailableSlot {
-//   _id: string;
-//   day: string;
-//   startTime: string;
-//   endTime: string;
-//   isAvailable: boolean;
-//   slotDuration?: number;
-//   type?: "Consultation" | "Procedure" | "Test" | "Medication";
-// }
+  location?: LocationProps;
+}
 
 export interface AddSlotData {
   doctorId: string;
@@ -64,6 +62,7 @@ export interface UpdateDoctorData
     Omit<DoctorData, "_id" | "role" | "createdAt" | "updatedAt">
   > {
   _id: string;
+  data: FormData | DoctorUpdateFormData;
 }
 
 // Patient Specific Types

@@ -20,9 +20,12 @@ import {
   MedicalServices as ServicesIcon,
   Logout as LogoutIcon,
   Archive as ArchiveIcon,
+  Chat,
 } from "@mui/icons-material";
 import Logo from "../../components/logo";
 import { useDoctorLogout } from "../../apis/use-case/doctor/auth";
+import { CustomerLanguagePopover } from "../../components/lang-switch";
+import { useTranslate } from "../../locales";
 
 interface SidebarProps {
   open: boolean;
@@ -39,22 +42,43 @@ const Sidebar = ({
 }: SidebarProps) => {
   const theme = useTheme();
   const { mutate } = useDoctorLogout();
-
+  const { t } = useTranslate("overview");
   const handleLogout = () => {
     mutate(undefined);
     handleNavigation("/");
   };
 
   const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/doctor/dashboard" },
-    { text: "Patients", icon: <PatientsIcon />, path: "/doctor/patients" },
     {
-      text: "Appointments",
+      text: t("sidebar.dashboard"),
+      icon: <DashboardIcon />,
+      path: "/doctor/dashboard",
+    },
+    {
+      text: t("sidebar.patients"),
+      icon: <PatientsIcon />,
+      path: "/doctor/patients",
+    },
+    {
+      text: t("sidebar.appointments"),
       icon: <AppointmentsIcon />,
       path: "/doctor/appointments",
     },
-    { text: "Services", icon: <ServicesIcon />, path: "/doctor/services" },
-    { text: "Archive", icon: <ArchiveIcon />, path: "/doctor/archive" },
+    {
+      text: t("sidebar.slots"),
+      icon: <ServicesIcon />,
+      path: "/doctor/services",
+    },
+    {
+      text: t("sidebar.archives"),
+      icon: <ArchiveIcon />,
+      path: "/doctor/archive",
+    },
+    {
+      text: t("sidebar.chats"),
+      icon: <Chat />,
+      path: "/doctor/chats",
+    },
   ];
 
   return (
@@ -79,6 +103,7 @@ const Sidebar = ({
           alignItems: "center",
           padding: (theme) => theme.spacing(1),
           justifyContent: "space-between",
+          my: 2,
         }}
       >
         <Logo />
@@ -93,7 +118,7 @@ const Sidebar = ({
       <Divider />
       <List>
         {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
+          <ListItem key={item.text}>
             <ListItemButton onClick={() => handleNavigation(item.path)}>
               <ListItemIcon
                 sx={{ color: (theme) => theme.palette.common.white }}
@@ -108,10 +133,14 @@ const Sidebar = ({
           </ListItem>
         ))}
       </List>
-      <Divider />
 
       <List sx={{ marginTop: "auto", paddingBottom: 0 }}>
         {/* logout button  */}
+
+        <ListItem sx={{ display: "flex", justifyContent: "center", my: 2 }}>
+          <CustomerLanguagePopover />
+        </ListItem>
+
         <ListItem sx={{ backgroundColor: (theme) => theme.palette.error.dark }}>
           <ListItemButton onClick={() => handleLogout()}>
             <ListItemIcon sx={{ color: (theme) => theme.palette.common.white }}>
@@ -119,7 +148,7 @@ const Sidebar = ({
             </ListItemIcon>
             <ListItemText
               sx={{ color: (theme) => theme.palette.common.white }}
-              primary="Logout"
+              primary={t("sidebar.logout")}
             />
           </ListItemButton>
         </ListItem>

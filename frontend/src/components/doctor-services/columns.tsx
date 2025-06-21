@@ -6,28 +6,28 @@ import type {
 } from "../../apis/use-case/types";
 import ConfirmationDialog from "../confirm-dailog";
 import { useUpdateIsAvailabilitySlot } from "../../apis/use-case/doctor/dashboard";
+import { tFn, useTranslate } from "../../locales";
 
 const daysOfWeek = [
-  { value: "monday", label: "الإثنين" },
-  { value: "tuesday", label: "الثلاثاء" },
-  { value: "wednesday", label: "الأربعاء" },
-  { value: "thursday", label: "الخميس" },
-  { value: "friday", label: "الجمعة" },
-  { value: "saturday", label: "السبت" },
-  { value: "sunday", label: "الأحد" },
+  { value: "monday", label: tFn("overview:days.monday") },
+  { value: "tuesday", label: tFn("overview:days.tuesday") },
+  { value: "wednesday", label: tFn("overview:days.wednesday") },
+  { value: "thursday", label: tFn("overview:days.thursday") },
+  { value: "friday", label: tFn("overview:days.friday") },
+  { value: "saturday", label: tFn("overview:days.saturday") },
+  { value: "sunday", label: tFn("overview:days.sunday") },
 ];
 
 const slotTypes: { value: SlotType; label: string }[] = [
-  { value: "consultation", label: "استشارة" },
-  { value: "procedure", label: "إجراء طبي" },
-  { value: "test", label: "فحص" },
-  { value: "medication", label: "دواء" },
+  { value: "consultation", label: tFn("overview:slotTypes.consultation") },
+  { value: "procedure", label: tFn("overview:slotTypes.procedure") },
+  { value: "test", label: tFn("overview:slotTypes.test") },
+  { value: "medication", label: tFn("overview:slotTypes.medication") },
 ];
-
 const columns: Column<AvailableSlot>[] = [
   {
     id: "day",
-    label: "اليوم",
+    label: tFn("overview:columns.day"),
     format: (value) =>
       daysOfWeek.find(
         (day) => typeof value === "string" && day.value === value.toLowerCase()
@@ -36,27 +36,35 @@ const columns: Column<AvailableSlot>[] = [
   },
   {
     id: "type",
-    label: "نوع الموعد",
+    label: tFn("overview:columns.type"),
     format: (value: SlotType) =>
       slotTypes.find((type) => type.value === value)?.label || value,
     sortable: true,
   },
   {
     id: "isAvailable",
-    label: "الحالة",
+    label: tFn("overview:columns.status"),
     format: (value: boolean, row) => (
       <ToggleIsAvailable id={row?._id || ""} value={value} />
     ),
   },
-  { id: "startTime", label: "وقت البدء", sortable: true },
-  { id: "endTime", label: "وقت الانتهاء", sortable: true },
-  { id: "slotDuration", label: "مدة الموعد (دقيقة)", sortable: true },
+  {
+    id: "startTime",
+    label: tFn("overview:columns.startTime"),
+    sortable: true,
+  },
+  { id: "endTime", label: tFn("overview:columns.endTime"), sortable: true },
+  {
+    id: "slotDuration",
+    label: tFn("overview:columns.duration"),
+    sortable: true,
+  },
 ];
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ToggleIsAvailable = ({ id, value }: { id: string; value: boolean }) => {
   const updateAvailableSlot = useUpdateIsAvailabilitySlot();
-
+  const { t } = useTranslate("overview");
   const handleStatusChange = (_id: string) => {
     updateAvailableSlot.mutate(_id);
   };
@@ -64,11 +72,11 @@ const ToggleIsAvailable = ({ id, value }: { id: string; value: boolean }) => {
   return (
     <ConfirmationDialog
       isLoading={updateAvailableSlot.isPending}
-      title="تغيير الحالة"
-      content="هل أنت متأكد من تغيير حالة هذا العنصر؟"
+      title={t("statusChange.title")}
+      content={t("statusChange.confirmation")}
       status={value ? "success" : "error"}
-      confirmButtonLabel="تأكيد"
-      cancelButtonLabel="إلغاء"
+      confirmButtonLabel={t("statusChange.confirm")}
+      cancelButtonLabel={t("statusChange.cancel")}
       onConfirm={() => handleStatusChange(id || "")}
       clickAction={({ openDialog }) => (
         <Button
@@ -84,7 +92,7 @@ const ToggleIsAvailable = ({ id, value }: { id: string; value: boolean }) => {
           }}
           onClick={openDialog}
         >
-          {value ? "غير محجوز" : "محجوز"}
+          {value ? t("statusChange.available") : t("statusChange.booked")}
         </Button>
       )}
     />

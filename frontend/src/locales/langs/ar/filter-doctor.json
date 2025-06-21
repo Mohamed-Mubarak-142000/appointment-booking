@@ -1,0 +1,16 @@
+{
+  "allSpecialties": "كل التخصصات",
+  "find_doctor": "ابحث عن طبيب",
+  "search_placeholder": "البحث بالاسم",
+  "specialty": "التخصص",
+  "governorate": "المحافظة",
+  "allGovernorates": "كل المحافظات",
+  "errorFetchingDoctors": {
+    "title": "خطأ في جلب بيانات الأطباء",
+    "subtitle": "حدث خطأ أثناء جلب بيانات الأطباء. يرجى المحاولة مرة أخرى لاحقًا."
+  },
+  "noDoctorsFound": {
+    "title": "لا يوجد أطباء",
+    "subtitle": "لا توجد أطباء تطابق معايير البحث الخاصة بك. يرجى تعديل عوامل التصفية الخاصة بك."
+  }
+}

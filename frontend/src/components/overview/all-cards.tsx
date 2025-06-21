@@ -2,10 +2,11 @@ import { useDashboardStats } from "../../apis/use-case/doctor/dashboard";
 import { Grid } from "@mui/material";
 import StatsCard from "./common/stats-card";
 import StatsCardSkeleton from "./stats-card-skeleton";
+import { useTranslate } from "../../locales";
 
 const AllCards = () => {
   const { data: stats, isPending } = useDashboardStats();
-
+  const { t } = useTranslate("overview");
   if (isPending)
     return (
       <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -21,7 +22,7 @@ const AllCards = () => {
     <Grid container spacing={3} sx={{ mb: 3 }}>
       <Grid item xs={12} md={6} lg={4}>
         <StatsCard
-          title="Total Appointments"
+          title={t("cards.totalAppointments")}
           value={stats?.totalAppointments || 0}
           change={stats?.appointmentsChange || 0}
           slotsProps={{
@@ -51,7 +52,7 @@ const AllCards = () => {
 
       <Grid item xs={12} md={6} lg={4}>
         <StatsCard
-          title="Total Available slots"
+          title={t("cards.totalSlots")}
           value={stats?.availableSlotsCount || 0}
           change={stats?.appointmentsChange || 0}
           slotsProps={{
@@ -81,7 +82,7 @@ const AllCards = () => {
 
       <Grid item xs={12} md={6} lg={4}>
         <StatsCard
-          title="Total Patients"
+          title={t("cards.totalPatients")}
           value={stats?.totalPatients || 0}
           change={stats?.patientsChange || 0}
           slotsProps={{
@@ -111,7 +112,7 @@ const AllCards = () => {
 
       <Grid item xs={12} md={6} lg={4}>
         <StatsCard
-          title="Revenue"
+          title={t("cards.revenue")}
           value={`$${stats?.totalRevenue || 0}`}
           change={stats?.revenueChange || 0}
           slotsProps={{
@@ -141,7 +142,7 @@ const AllCards = () => {
 
       <Grid item xs={12} md={6} lg={4}>
         <StatsCard
-          title="Rating"
+          title={t("cards.rating")}
           value={stats?.averageRating?.toFixed(1) || "0.0"}
           change={stats?.ratingChange || 0}
           slotsProps={{

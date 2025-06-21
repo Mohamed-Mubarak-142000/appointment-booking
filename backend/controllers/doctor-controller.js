@@ -4,6 +4,16 @@ const Doctor = require("../models/Doctor");
 const Review = require("../models/Review");
 const ArchivePatient = require("../models/Archive-patient");
 const mongoose = require("mongoose");
+const cloudinary = require("cloudinary").v2;
+const streamifier = require("streamifier");
+const dotenv = require("dotenv");
+dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
 
 const getDoctors = asyncHandler(async (req, res) => {
   let query;
@@ -65,12 +75,14 @@ const getDoctors = asyncHandler(async (req, res) => {
 });
 
 const getDoctor = asyncHandler(async (req, res) => {
-  const doctor = await Doctor.findById(req.params.id);
+  let doctor = await Doctor.findById(req.params.id);
 
   if (!doctor) {
     res.status(404);
     throw new Error("Doctor not found");
   }
+
+  console.log("---------------------------------------------", doctor);
 
   res.status(200).json({
     success: true,
@@ -79,25 +91,64 @@ const getDoctor = asyncHandler(async (req, res) => {
 });
 
 const updateDoctor = asyncHandler(async (req, res) => {
-  const doctorId = req.doctor._id;
-  const { availableSlots, ...updateData } = req.body;
+  const doctorId = req.params.id;
+  const updateData = req.body;
+  const file = req.file;
 
-  const doctor = await Doctor.findByIdAndUpdate(doctorId, updateData, {
-    new: true,
-    runValidators: true,
-  });
+  try {
+    if (file) {
+      const currentDoctor = await Doctor.findById(doctorId).select(
+        "photoPublicId"
+      );
 
-  if (!doctor) {
-    return res.status(404).json({
+      if (
+        currentDoctor?.photoPublicId &&
+        currentDoctor.photoPublicId !== "default"
+      ) {
+        await cloudinary.uploader.destroy(currentDoctor.photoPublicId);
+      }
+
+      const streamUpload = (buffer) =>
+        new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "doctor-photos",
+              width: 500,
+              height: 500,
+              crop: "fill",
+              format: "jpg",
+            },
+            (error, result) => {
+              if (result) resolve(result);
+              else reject(error);
+            }
+          );
+          streamifier.createReadStream(buffer).pipe(stream);
+        });
+
+      const result = await streamUpload(file.buffer);
+
+      updateData.photo = result.secure_url;
+      updateData.photoPublicId = result.public_id;
+    }
+    console.log("Uploaded file:", req.file);
+
+    const updatedDoctor = await Doctor.findByIdAndUpdate(doctorId, updateData, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
+
+    res.status(200).json({
+      success: true,
+      data: updatedDoctor,
+    });
+  } catch (error) {
+    console.error("Update error:", error.message, error.stack);
+    res.status(500).json({
       success: false,
-      message: "Doctor not found",
+      message: "Failed to update doctor profile",
     });
   }
-
-  res.status(200).json({
-    success: true,
-    data: doctor,
-  });
 });
 
 const getDoctorsBySpecialtyAndGovernorate = asyncHandler(async (req, res) => {

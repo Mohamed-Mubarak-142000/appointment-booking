@@ -31,9 +31,15 @@ export function useUpdateDoctorProfile(): UseMutationResult<
 
   return useMutation({
     mutationFn: async (updateData: UpdateDoctorData) => {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
       const { data } = await doctorApiClient.put<DoctorData>(
         `/doctors/${updateData._id}`,
-        updateData
+        updateData.data,
+        config
       );
       return data;
     },
